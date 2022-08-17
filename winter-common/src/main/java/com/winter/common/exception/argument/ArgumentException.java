@@ -1,0 +1,22 @@
+package com.winter.common.exception.argument;
+
+import com.winter.common.exception.base.BaseException;
+
+/**
+ * 由于参数引发的异常
+ * <p>
+ * </p>
+ *
+ * @author Damien
+ * @description
+ * @create 2022/8/15 18:22
+ */
+public class ArgumentException extends BaseException {
+
+    public ArgumentException() {
+    }
+
+    public ArgumentException(String code, String message, Object... args) {
+        super(null, code, args, message);
+    }
+}
