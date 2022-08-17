@@ -11,6 +11,8 @@ package com.winter.common.exception.argument;
  */
 public class ArgumentBlankException extends ArgumentException {
 
+    private static final long serialVersionUID = 6067120191589084064L;
+
     public ArgumentBlankException(String message, Object... args) {
         super("argument.blank", message, args);
     }

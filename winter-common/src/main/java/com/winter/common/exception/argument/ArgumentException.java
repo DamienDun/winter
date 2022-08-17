@@ -13,6 +13,8 @@ import com.winter.common.exception.base.BaseException;
  */
 public class ArgumentException extends BaseException {
 
+    private static final long serialVersionUID = -2467146507347359882L;
+
     public ArgumentException() {
     }
 
