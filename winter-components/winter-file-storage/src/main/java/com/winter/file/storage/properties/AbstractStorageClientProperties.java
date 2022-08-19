@@ -1,5 +1,6 @@
 package com.winter.file.storage.properties;
 
+import com.winter.common.config.WinterConfig;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,7 +26,7 @@ public class AbstractStorageClientProperties implements Serializable {
     /**
      * 通道 Bean 前缀
      */
-    public static final String CHANNEL_BEAN_PREFIX = "cell";
+    public static final String CHANNEL_BEAN_PREFIX = WinterConfig.PREFIX;
 
     /**
      * 通道 Bean 后缀
