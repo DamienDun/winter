@@ -330,7 +330,7 @@
         <module>winter-quartz</module>
         <module>winter-generator</module>
         <module>winter-common</module>
-        <module>winter-file-storage</module>
+        <module>winter-components</module>
     </modules>
     <packaging>pom</packaging>
 
