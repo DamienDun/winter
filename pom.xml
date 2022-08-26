@@ -42,6 +42,8 @@
         <minio.client.version>7.0.2</minio.client.version>
         <aliyun.sdk.oss.version>3.4.2</aliyun.sdk.oss.version>
         <aliyun.sdk.core.version>4.3.1</aliyun.sdk.core.version>
+        <dingtalk.old.version>2.0.0</dingtalk.old.version>
+        <dingtalk.new.version>1.4.15</dingtalk.new.version>
     </properties>
 
     <!-- 依赖声明 -->
