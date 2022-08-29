@@ -1,17 +1,16 @@
 package com.winter.common.utils.reflect;
 
-import java.lang.reflect.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.winter.common.core.text.Convert;
+import com.winter.common.utils.DateUtils;
+import com.winter.common.utils.TypeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.winter.common.core.text.Convert;
-import com.winter.common.utils.DateUtils;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * 反射工具类. 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
@@ -377,5 +376,63 @@ public class ReflectUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 查找属性的 Set 函数
+     *
+     * @param beanClass
+     * @return 属性名为 key
+     */
+    public static Map<String, Method> findPropertiesSetMethodMap(Class<?> beanClass) {
+        List<Method> methods = findMethods(beanClass);
+        Map<String, Method> methodMap = new HashMap<>(DEFAULT_OBJECT_PROPERTY_INITIAL_CAPACITY);
+        for (Method method : methods) {
+            if (method.getName().length() > 3 && method.getReturnType().equals(void.class)
+                    && method.getParameterCount() == 1 && method.getName().startsWith(SETTER_PREFIX)) {
+                String name = com.winter.common.utils.StringUtils.lowerCaseCapitalize(method.getName().substring(3));
+                methodMap.put(name, method);
+            }
+        }
+        methods.clear();
+        return methodMap;
+    }
+
+    /**
+     * 查找所有非静态的公有方法(包括基类)
+     *
+     * @param beanClass 类型
+     * @return 返回本类以及继承链上的方法集合，并按照父级向下顺序返回
+     */
+    public static List<Method> findMethods(Class<?> beanClass) {
+        List<Method> methodList = new ArrayList<>();
+        Class<?> superclass = beanClass.getSuperclass();
+        if (superclass != null && !superclass.equals(Object.class)) {
+            List<Method> superMethodList = findMethods(superclass);
+            methodList.addAll(superMethodList);
+        }
+        Method[] methods = beanClass.getDeclaredMethods();
+        for (Method method : methods) {
+            int modifiers = method.getModifiers();
+            if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers)) {
+                Iterator<Method> iter = methodList.iterator();
+                boolean isAdd = true;
+                int index = 0;
+                while (iter.hasNext()) {
+                    Method cruuentMethod = iter.next();
+                    if (cruuentMethod.getName().equals(method.getName())
+                            && TypeUtils.equalsTypes(cruuentMethod.getParameterTypes(), method.getParameterTypes())) {
+                        isAdd = false;
+                        methodList.set(index, method);
+                        break;
+                    }
+                    index++;
+                }
+                if (isAdd) {
+                    methodList.add(method);
+                }
+            }
+        }
+        return methodList;
     }
 }

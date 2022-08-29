@@ -2,6 +2,7 @@ package com.winter.common.utils;
 
 import com.winter.common.constant.Constants;
 import com.winter.common.core.text.StrFormatter;
+import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.*;
@@ -21,6 +22,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * 下划线
      */
     private static final char SEPARATOR = '_';
+
+    /**
+     * 包分隔表达式
+     */
+    private static final String PACKAGE_OR_URL_DELIMITERS = ",; \t\n";
 
     /**
      * 获取参数不为空值
@@ -516,6 +522,156 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             if (!Character.isWhitespace(ch)) {
                 sb.append(ch);
             }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * 根据标记解析为数组
+     * <p>
+     * {@link org.springframework.util.StringUtils#tokenizeToStringArray}
+     * </p>
+     *
+     * @param str
+     * @param delimiters
+     * @return
+     */
+    public static String[] tokenizeToStringArray(@Nullable String str, String delimiters) {
+        return org.springframework.util.StringUtils.tokenizeToStringArray(str, delimiters);
+    }
+
+    /**
+     * Url或包的拼接(,; \n\r) 转换为数组
+     *
+     * @param str
+     * @return
+     */
+    public static String[] urlOrPackageToStringArray(@Nullable String str) {
+        return tokenizeToStringArray(str, PACKAGE_OR_URL_DELIMITERS);
+    }
+
+    /**
+     * 获取配置属性名
+     *
+     * @param str 字符串
+     * @return <p>
+     * driver-class-name = driverClassName
+     * </p>
+     * <p>
+     * Driver-class-name = driverClassName
+     * </p>
+     * <p>
+     * type = type
+     * </p>
+     * <p>
+     * Type = type
+     * </p>
+     */
+    public static String configurePropertieName(String str) {
+        return nameCapitalize(str, '-');
+    }
+
+    /**
+     * 名称序列
+     *
+     * @param str
+     * @param delimiter
+     * @return
+     */
+    private static String nameCapitalize(String str, char delimiter) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        sb.append(Character.toLowerCase(str.charAt(0)));
+        boolean lastSeparate = false;
+        for (int i = 1; i < str.length(); i++) {
+            char chr = str.charAt(i);
+            lastSeparate = i > 1 && str.charAt(i - 1) == delimiter;
+            if (chr == delimiter) {
+                continue;
+            }
+            if (lastSeparate) {
+                sb.append(Character.toUpperCase(chr));
+            } else {
+                sb.append(chr);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String changeFirstCharacterCase(String str, boolean capitalize) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        if (capitalize) {
+            sb.append(Character.toUpperCase(str.charAt(0)));
+        } else {
+            sb.append(Character.toLowerCase(str.charAt(0)));
+        }
+        sb.append(str.substring(1));
+        return sb.toString();
+    }
+
+    /**
+     * 骆锋命名(首个字母为小写)
+     *
+     * @param str 字符串
+     * @return
+     * @author 老码农 2017-09-28 11:23:56
+     */
+    public static String lowerCaseCapitalize(String str) {
+        return changeFirstCharacterCase(str, false);
+    }
+
+    /**
+     * 帕斯卡命名(首个字母为大写)
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static String upperCaseCapitalize(String str) {
+        return changeFirstCharacterCase(str, true);
+    }
+
+    /**
+     * 数据库标准化命名(自动去掉两关空白)
+     *
+     * @param str 字符串
+     * @return <p>
+     * isDelete = is_delete
+     * </p>
+     * <p>
+     * ABC = a_b_c
+     * </p>
+     * <p>
+     * userName or UserName = user_name
+     * </p>
+     */
+    public static String dbStandardCapitalize(String str) {
+        if (str == null) {
+            return str;
+        }
+        str = str.trim();
+        if (str.length() == 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        sb.append(Character.toLowerCase(str.charAt(0)));
+        for (int i = 1; i < str.length(); i++) {
+            char chr = str.charAt(i);
+            if (Character.isUpperCase(chr)) {
+                boolean isAdd = i > 1 && str.charAt(i - 1) != '_';
+                if (i <= 1 || isAdd) {
+                    sb.append("_");
+                }
+            }
+            sb.append(Character.toLowerCase(chr));
         }
         return sb.toString();
     }
