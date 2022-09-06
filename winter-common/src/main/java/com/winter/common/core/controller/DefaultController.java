@@ -7,7 +7,6 @@ import com.winter.common.core.dto.IdsInput;
 import com.winter.common.core.service.IBaseService;
 import com.winter.common.enums.BusinessType;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,7 +62,7 @@ public class DefaultController<TService extends IBaseService<Long, TInput, TOutp
     }
 
     @ApiOperation("根据id获取")
-    @GetMapping("/get")
+    @PostMapping("/get")
     @ResponseBody
     public AjaxResult get(@Valid @RequestBody IdInput input) {
         return AjaxResult.success(service.get(input.getId()));
