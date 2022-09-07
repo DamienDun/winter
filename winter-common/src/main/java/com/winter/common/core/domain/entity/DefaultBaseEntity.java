@@ -5,6 +5,7 @@ import com.winter.common.core.domain.entity.audit.CreateAuditing;
 import com.winter.common.core.domain.entity.audit.DeleteAuditing;
 import com.winter.common.core.domain.entity.audit.Entity;
 import com.winter.common.core.domain.entity.audit.ModifiedAuditing;
+import com.winter.common.enums.CommonEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,7 +40,7 @@ public class DefaultBaseEntity implements Entity<Long>, CreateAuditing, Modified
      */
     @TableLogic(value = "0", delval = "1")
     @TableField(value = DeleteAuditing.COLUMN_DELETED)
-    private Integer deleted;
+    private Integer deleted = CommonEnum.Deleted.FALSE.getCode();
 
     /**
      * 创建时间
