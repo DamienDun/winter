@@ -82,6 +82,8 @@ public class WinterSwaggerConfiguration implements WebMvcConfigurer {
                 Predicate<RequestHandler> predicate = RequestHandlerSelectors.basePackage(pck);
                 if (apiRredicate == null) {
                     apiRredicate = predicate;
+                } else {
+                    apiRredicate = apiRredicate.or(predicate);
                 }
             }
             builder = builder.apis(apiRredicate);
