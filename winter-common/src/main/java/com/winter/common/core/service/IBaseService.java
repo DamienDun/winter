@@ -11,6 +11,11 @@ import java.util.List;
 public interface IBaseService<TKey extends Serializable, TInput, TOutput> {
 
     /**
+     * 默认批次提交数量
+     */
+    int DEFAULT_BATCH_SIZE = 1000;
+
+    /**
      * 根据id删除
      *
      * @param id
@@ -49,9 +54,31 @@ public interface IBaseService<TKey extends Serializable, TInput, TOutput> {
     TOutput get(TKey id);
 
     /**
+     * 获取所有列表
+     *
+     * @return
+     */
+    List<TOutput> listAll();
+
+    /**
      * 获取模块名称
      *
      * @return
      */
     String getModuleName();
+
+
+    /**
+     * 批量添加
+     *
+     * @param inputs
+     */
+    void batchAdd(List<TInput> inputs);
+
+    /**
+     * 批量更新
+     *
+     * @param inputs
+     */
+    void batchUpdate(List<TInput> inputs);
 }

@@ -1,19 +1,29 @@
 package com.winter.common.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.winter.common.core.domain.entity.audit.Entity;
 import com.winter.common.core.domain.entity.audit.PrimaryKey;
 import com.winter.common.core.mapper.DefaultBaseMapper;
 import com.winter.common.utils.AutoMapUtils;
 import com.winter.common.utils.GenericUtils;
 import com.winter.common.utils.reflect.ReflectUtils;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * @author Damien
@@ -26,15 +36,18 @@ public abstract class BaseService<TKey extends Serializable,
         TInput extends PrimaryKey<TKey>,
         TOutput> implements IBaseService<TKey, TInput, TOutput> {
 
+    protected Log log = LogFactory.getLog(getClass());
     @Autowired
     private TMapper mapper;
     private final Class<TEntity> entityClass;
     private final Class<TOutput> outputClass;
+    private final Class<TMapper> mapperClass;
     private Map<String, Class<?>> genericActualArgumentsTypeMap = null;
 
     public BaseService() {
         this.entityClass = this.getGenericActualClass("TEntity");
         this.outputClass = this.getGenericActualClass("TOutput");
+        this.mapperClass = this.getGenericActualClass("TMapper");
     }
 
     public TMapper getMapper() {
@@ -47,6 +60,10 @@ public abstract class BaseService<TKey extends Serializable,
 
     public Class<TOutput> getOutputClass() {
         return outputClass;
+    }
+
+    public Class<TMapper> getMapperClass() {
+        return mapperClass;
     }
 
     /**
@@ -223,5 +240,112 @@ public abstract class BaseService<TKey extends Serializable,
     @Override
     public TOutput get(TKey id) {
         return AutoMapUtils.map(mapper.selectById(id), this.getOutputClass());
+    }
+
+    /**
+     * 获取所有列表
+     *
+     * @return
+     */
+    @Override
+    public List<TOutput> listAll() {
+        return AutoMapUtils.mapForList(mapper.selectList(null), this.getOutputClass());
+    }
+
+    /**
+     * 批量添加
+     *
+     * @param inputs
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAdd(List<TInput> inputs) {
+        if (CollectionUtils.isEmpty(inputs)) {
+            return;
+        }
+        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
+        int batchSize = batchAddBefore(entities, inputs);
+        String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
+        executeBatch(entities, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        batchAddAfter(entities, inputs);
+    }
+
+    protected void batchAddAfter(List<TEntity> entities, List<TInput> inputs) {
+
+    }
+
+    /**
+     * 批量增加前
+     *
+     * @param entities
+     * @param inputs
+     * @return
+     */
+    protected int batchAddBefore(List<TEntity> entities, List<TInput> inputs) {
+
+        return DEFAULT_BATCH_SIZE;
+    }
+
+    @Override
+    public void batchUpdate(List<TInput> inputs) {
+        if (CollectionUtils.isEmpty(inputs)) {
+            return;
+        }
+        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
+        int batchSize = batchUpdateBefore(entities, inputs);
+        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
+        executeBatch(entities, batchSize, (sqlSession, entity) -> {
+            MapperMethod.ParamMap<TEntity> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, entity);
+            sqlSession.update(sqlStatement, param);
+        });
+        batchUpdateAfter(entities, inputs);
+    }
+
+    /**
+     * 批量更新后
+     *
+     * @param entities
+     * @param inputs
+     */
+    protected void batchUpdateAfter(List<TEntity> entities, List<TInput> inputs) {
+
+    }
+
+    /**
+     * 批量更新前
+     *
+     * @param entities
+     * @param inputs
+     * @return
+     */
+    protected int batchUpdateBefore(List<TEntity> entities, List<TInput> inputs) {
+
+        return DEFAULT_BATCH_SIZE;
+    }
+
+    /**
+     * 获取mapperStatementId
+     *
+     * @param sqlMethod 方法名
+     * @return 命名id
+     * @since 3.4.0
+     */
+    protected String getSqlStatement(SqlMethod sqlMethod) {
+        return SqlHelper.getSqlStatement(mapperClass, sqlMethod);
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param list      数据集合
+     * @param batchSize 批量大小
+     * @param consumer  执行方法
+     * @param <E>       泛型
+     * @return 操作结果
+     * @since 3.3.1
+     */
+    protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        return SqlHelper.executeBatch(this.entityClass, this.log, list, batchSize, consumer);
     }
 }
