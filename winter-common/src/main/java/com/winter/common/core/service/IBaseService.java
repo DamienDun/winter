@@ -76,7 +76,7 @@ public interface IBaseService<TKey extends Serializable, TInput, TOutput> {
     void batchAdd(List<TInput> inputs);
 
     /**
-     * 批量更新
+     * 批量更新(默认更新全部字段,如果需要指定,请在batchUpdateBefore重置wrapper的updateFields)
      *
      * @param inputs
      */

@@ -1,5 +1,6 @@
 package com.winter.common.core.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.github.yulichang.base.MPJBaseMapper;
@@ -24,4 +25,22 @@ public interface DefaultBaseMapper<T> extends BaseMapper<T>, MPJBaseMapper<T> {
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
     int batchDeleteWithFill(@Param(Constants.COLLECTION) Collection<?> idList);
+
+
+    /**
+     * 批量插入
+     *
+     * @param entities
+     * @return
+     */
+    int insertBatch(@Param(Constants.COLLECTION) Collection<?> entities);
+
+    /**
+     * 批量更新  updateWrapper 更新对应设置的字段
+     *
+     * @param entities
+     * @param updateWrapper
+     * @return
+     */
+    int updateBatchById(@Param(Constants.COLLECTION) Collection<?> entities, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
 }
