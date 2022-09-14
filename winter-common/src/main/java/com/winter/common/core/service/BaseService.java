@@ -291,6 +291,7 @@ public abstract class BaseService<TKey extends Serializable,
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void batchUpdate(List<TInput> inputs) {
         if (CollectionUtils.isEmpty(inputs)) {
             return;
