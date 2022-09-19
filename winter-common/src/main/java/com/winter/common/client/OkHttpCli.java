@@ -6,6 +6,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,24 @@ public class OkHttpCli {
 
     @Autowired
     private OkHttpClient okHttpClient;
+
+    public OkHttpClient getOkHttpClient() {
+        return okHttpClient;
+    }
+
+    public List<Cookie> loadForRequest(HttpUrl httpUrl) {
+        return okHttpClient.cookieJar().loadForRequest(httpUrl);
+    }
+
+    /**
+     * 加载cookie
+     *
+     * @param httpUrl
+     * @param cookies
+     */
+    public void saveFromResponse(HttpUrl httpUrl, List<Cookie> cookies) {
+        okHttpClient.cookieJar().saveFromResponse(httpUrl, cookies);
+    }
 
     /**
      * get 请求

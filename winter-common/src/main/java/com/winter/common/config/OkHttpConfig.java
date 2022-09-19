@@ -2,8 +2,7 @@ package com.winter.common.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +16,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,6 +35,16 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 public class OkHttpConfig {
+
+    /**
+     * cookie存储
+     */
+    private static final ConcurrentHashMap<String, List<Cookie>> COOKIE_STORE = new ConcurrentHashMap<>();
+
+    /**
+     * cookie管理器
+     */
+    public static CookieJar cookieJar;
 
     /**
      * 连接时间
@@ -112,6 +124,18 @@ public class OkHttpConfig {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .hostnameVerifier((hostname, session) -> true)
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        COOKIE_STORE.put(url.host(), cookies);
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = COOKIE_STORE.get(url.host());
+                        return cookies != null ? cookies : new ArrayList<>();
+                    }
+                })
                 // 设置代理
 //            	.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888)))
                 // 拦截器
