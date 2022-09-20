@@ -94,4 +94,43 @@ public class UpdateBatchWrapper<T> extends AbstractLambdaWrapper<T, UpdateBatchW
                 fieldName, lambdaClass.getName());
         return columnCache;
     }
+
+    /**
+     * 添加要更新的字段(如果不存在)
+     *
+     * @param column
+     */
+    public void addFieldIfAbsent(SFunction<T, ?> column) {
+        String columnName = columnToString(column);
+        if (!getUpdateFields().contains(columnName)) {
+            getUpdateFields().add(columnName);
+        }
+    }
+
+    /**
+     * 添加要更新的字段(如果不存在)
+     *
+     * @param columns
+     */
+    public void addFieldIfAbsent(SFunction<T, ?>... columns) {
+        List<String> columnNames = Arrays.asList(columnsToString(columns).split(","));
+        columnNames.forEach(columnName -> {
+            if (!getUpdateFields().contains(columnName)) {
+                getUpdateFields().add(columnName);
+            }
+        });
+    }
+
+    /**
+     * 添加要更新的字段(如果不存在)
+     *
+     * @param columnNames 列名
+     */
+    public void addFieldIfAbsent(String... columnNames) {
+        for (String columnName : columnNames) {
+            if (!getUpdateFields().contains(columnName)) {
+                getUpdateFields().add(columnName);
+            }
+        }
+    }
 }

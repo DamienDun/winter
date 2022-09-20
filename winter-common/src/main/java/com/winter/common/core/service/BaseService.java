@@ -2,6 +2,7 @@ package com.winter.common.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.winter.common.core.domain.entity.audit.Entity;
+import com.winter.common.core.domain.entity.audit.ModifiedAuditing;
 import com.winter.common.core.domain.entity.audit.PrimaryKey;
 import com.winter.common.core.injector.wrappers.UpdateBatchWrapper;
 import com.winter.common.core.mapper.DefaultBaseMapper;
@@ -299,6 +300,10 @@ public abstract class BaseService<TKey extends Serializable,
         final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
         UpdateBatchWrapper<TEntity> wrapper = new UpdateBatchWrapper<>(getEntityClass());
         int batchSize = batchUpdateBefore(entities, inputs, wrapper);
+        // 如果实现了修改审计接口,默认更新字段
+        if (ModifiedAuditing.class.isAssignableFrom(entityClass)) {
+            wrapper.addFieldIfAbsent(ModifiedAuditing.COLUMN_MODIFIED_USER_ID, ModifiedAuditing.COLUMN_GMT_MODIFIED);
+        }
         if (CollectionUtils.isEmpty(wrapper.getUpdateFields())) {
             throw new RuntimeException("未设置要更新的字段");
         }
