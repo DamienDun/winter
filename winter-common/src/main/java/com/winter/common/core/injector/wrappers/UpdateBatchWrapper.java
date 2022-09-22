@@ -36,6 +36,7 @@ public class UpdateBatchWrapper<T> extends AbstractLambdaWrapper<T, UpdateBatchW
     private List<String> updateFields = null;
 
     public UpdateBatchWrapper() {
+        this.updateFields = new ArrayList<>();
     }
 
     public UpdateBatchWrapper(Class<?> entityClass) {
@@ -53,7 +54,9 @@ public class UpdateBatchWrapper<T> extends AbstractLambdaWrapper<T, UpdateBatchW
      */
     @SafeVarargs
     public final UpdateBatchWrapper<T> setUpdateFields(SFunction<T, ?>... columns) {
-        this.updateFields = Arrays.asList(columnsToString(columns).split(","));
+        List<String> newUpdateFields = Arrays.asList(columnsToString(columns).split(","));
+        this.updateFields.clear();
+        newUpdateFields.forEach(field -> this.updateFields.add(field));
         return this;
     }
 
