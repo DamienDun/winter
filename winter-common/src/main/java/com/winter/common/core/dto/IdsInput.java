@@ -1,9 +1,9 @@
 package com.winter.common.core.dto;
 
+import com.winter.common.annotation.valid.NotEmptyCollection;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -14,8 +14,8 @@ import java.util.List;
 @ApiModel("id列表入参")
 public class IdsInput {
 
-    @ApiModelProperty("id列表")
-    @NotEmpty(message = "id列表不能为空")
+    @ApiModelProperty(value = "id列表", required = true)
+    @NotEmptyCollection(message = "id列表不能为空")
     private List<Long> ids;
 
     public List<Long> getIds() {

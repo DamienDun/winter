@@ -20,7 +20,7 @@ public class IdInput implements PrimaryKey<Long> {
 
     private static final long serialVersionUID = 5857956409070863601L;
 
-    @ApiModelProperty("id")
+    @ApiModelProperty(value = "id", required = true)
     @NotNull(message = "id不能为空")
     private Long id;
 
