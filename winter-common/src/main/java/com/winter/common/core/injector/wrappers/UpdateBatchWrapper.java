@@ -136,4 +136,14 @@ public class UpdateBatchWrapper<T> extends AbstractLambdaWrapper<T, UpdateBatchW
             }
         }
     }
+
+    /**
+     * 配置不想更新的字段(如果不存在)
+     *
+     * @param columns
+     */
+    public void delFields(SFunction<T, ?>... columns) {
+        List<String> columnNames = Arrays.asList(columnsToString(columns).split(","));
+        columnNames.forEach(columnName -> getUpdateFields().remove(columnName));
+    }
 }
