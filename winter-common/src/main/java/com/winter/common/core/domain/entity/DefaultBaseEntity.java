@@ -45,7 +45,7 @@ public class DefaultBaseEntity implements Entity<Long>, CreateAuditing, Modified
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private Date gmtCreate;
 
     /**
@@ -63,7 +63,7 @@ public class DefaultBaseEntity implements Entity<Long>, CreateAuditing, Modified
     /**
      * 创建人
      */
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private Long createdUserId;
 
     /**
