@@ -8,6 +8,7 @@ import com.winter.common.core.domain.model.LoginUser;
 import com.winter.common.enums.CommonEnum;
 import com.winter.common.utils.DateUtils;
 import com.winter.common.utils.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,11 +20,17 @@ import java.util.Date;
  * @create 2022/7/20 14:32
  */
 @Configuration
+@Slf4j
 public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = null;
+        try {
+            loginUser = SecurityUtils.getLoginUser();
+        } catch (Exception e) {
+            log.error("获取不到当前登录用户信息,跳过新增审计字段的自动填充");
+        }
         if (loginUser == null) {
             return;
         }
@@ -34,15 +41,25 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         }
     }
 
+    /**
+     * 更新填充
+     * 逻辑删除时,deleteById要传入实体,只传id的话不会自动填充
+     * 通过deleted字段值识别更新操作还是逻辑删除操作
+     *
+     * @param metaObject
+     */
     @Override
     public void updateFill(MetaObject metaObject) {
-        // 逻辑删除时,deleteById要传入实体,只传id的话不会自动填充
-        // 通过deleted字段值识别更新操作还是逻辑删除操作
-        Date nowDate = DateUtils.getNowDate();
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = null;
+        try {
+            loginUser = SecurityUtils.getLoginUser();
+        } catch (Exception e) {
+            log.error("获取不到当前登录用户信息,跳过自动填充字段");
+        }
         if (loginUser == null) {
             return;
         }
+        Date nowDate = DateUtils.getNowDate();
         if (metaObject.hasGetter(DeleteAuditing.FIELD_DELETED) &&
                 CommonEnum.Deleted.TRUE.getCode().equals(metaObject.getValue(DeleteAuditing.FIELD_DELETED))) {
             if (DeleteAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
