@@ -1,6 +1,11 @@
 package com.winter.framework.web.exception;
 
-import javax.servlet.http.HttpServletRequest;
+import com.winter.common.constant.HttpStatus;
+import com.winter.common.core.domain.AjaxResult;
+import com.winter.common.exception.BusinessException;
+import com.winter.common.exception.DemoModeException;
+import com.winter.common.exception.ServiceException;
+import com.winter.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,11 +14,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.winter.common.constant.HttpStatus;
-import com.winter.common.core.domain.AjaxResult;
-import com.winter.common.exception.DemoModeException;
-import com.winter.common.exception.ServiceException;
-import com.winter.common.utils.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理器
@@ -110,5 +112,15 @@ public class GlobalExceptionHandler
     public AjaxResult handleDemoModeException(DemoModeException e)
     {
         return AjaxResult.error("演示模式，不允许操作");
+    }
+
+    /**
+     * 业务模块异常
+     */
+    @ExceptionHandler(BusinessException.class)
+    public AjaxResult handleBindException(BusinessException e)
+    {
+        log.error(e.getMessage(), e);
+        return AjaxResult.error(e.getResultEnum().getCode(),e.getResultEnum().getMsg());
     }
 }
