@@ -25,19 +25,18 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        LoginUser loginUser = null;
-        try {
-            loginUser = SecurityUtils.getLoginUser();
-        } catch (Exception e) {
-            log.error("获取不到当前登录用户信息,跳过新增审计字段的自动填充");
-        }
-        if (loginUser == null) {
-            return;
-        }
         if (CreateAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
             Date nowDate = DateUtils.getNowDate();
             setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, nowDate, metaObject);
-            setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
+            try {
+                LoginUser loginUser = SecurityUtils.getLoginUser();
+                if (loginUser != null) {
+                    setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
+                }
+            } catch (Exception e) {
+                log.error("获取不到当前登录用户信息,跳过字段{}的自动填充", CreateAuditing.FIELD_CREATED_USER_ID);
+            }
+
         }
     }
 
@@ -54,22 +53,23 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         try {
             loginUser = SecurityUtils.getLoginUser();
         } catch (Exception e) {
-            log.error("获取不到当前登录用户信息,跳过自动填充字段");
-        }
-        if (loginUser == null) {
-            return;
+            log.error("获取不到当前登录用户信息,跳过审计字段的自动填充");
         }
         Date nowDate = DateUtils.getNowDate();
         if (metaObject.hasGetter(DeleteAuditing.FIELD_DELETED) &&
                 CommonEnum.Deleted.TRUE.getCode().equals(metaObject.getValue(DeleteAuditing.FIELD_DELETED))) {
             if (DeleteAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
                 setFieldValByName(DeleteAuditing.FIELD_GMT_DELETE, nowDate, metaObject);
-                setFieldValByName(DeleteAuditing.FIELD_DELETED_USER_ID, loginUser.getUserId(), metaObject);
+                if (loginUser != null) {
+                    setFieldValByName(DeleteAuditing.FIELD_DELETED_USER_ID, loginUser.getUserId(), metaObject);
+                }
             }
         } else {
             if (CreateAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
                 setFieldValByName(ModifiedAuditing.FIELD_GMT_MODIFIED, nowDate, metaObject);
-                setFieldValByName(ModifiedAuditing.FIELD_MODIFIED_USER_ID, loginUser.getUserId(), metaObject);
+                if (loginUser != null) {
+                    setFieldValByName(ModifiedAuditing.FIELD_MODIFIED_USER_ID, loginUser.getUserId(), metaObject);
+                }
             }
         }
     }
