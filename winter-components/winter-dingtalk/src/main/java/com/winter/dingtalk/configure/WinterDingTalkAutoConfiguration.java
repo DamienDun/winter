@@ -57,4 +57,11 @@ public class WinterDingTalkAutoConfiguration {
     public DtAuthClient dtAuthClient(WinterDingtalkProperties properties) {
         return new DtAuthClient(properties);
     }
+
+    @Bean
+    @ConditionalOnClass({IDtClient.class, AbstractDtClient.class})
+    @ConditionalOnMissingBean(DtUserClient.class)
+    public DtUserClient dtUserClient(WinterDingtalkProperties properties) {
+        return new DtUserClient(properties);
+    }
 }
