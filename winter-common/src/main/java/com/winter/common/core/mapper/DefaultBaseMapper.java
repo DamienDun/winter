@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Damien
@@ -45,6 +46,49 @@ public interface DefaultBaseMapper<T> extends BaseMapper<T>, MPJBaseMapper<T> {
      * @return
      */
     int updateBatchById(@Param(Constants.COLLECTION) Collection<?> entities, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
+
+    /**
+     * 分批插入
+     *
+     * @param entities
+     * @param batchSize
+     * @return
+     */
+    default int insertInBatch(@Param(Constants.COLLECTION) Collection<?> entities, int batchSize) {
+        int frequency = entities.size() / batchSize;
+        int count = 0;
+        for (int i = 0; i < frequency; i++) {
+            count += insertBatch(entities.stream().skip(i * batchSize).limit(batchSize).collect(Collectors.toList()));
+        }
+        // 不足一次批量的一起插入
+        int lastCount = entities.size() - frequency * batchSize;
+        if (lastCount > 0) {
+            count += insertBatch(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()));
+        }
+        return count;
+    }
+
+    /**
+     * 分批更新
+     *
+     * @param entities
+     * @param updateWrapper
+     * @param batchSize
+     * @return
+     */
+    default int updateInBatch(@Param(Constants.COLLECTION) Collection<?> entities, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper, int batchSize) {
+        int frequency = entities.size() / batchSize;
+        int count = 0;
+        for (int i = 0; i < frequency; i++) {
+            count += updateBatchById(entities.stream().skip(i * batchSize).limit(batchSize).collect(Collectors.toList()), updateWrapper);
+        }
+        // 不足一次批量的一起插入
+        int lastCount = entities.size() - frequency * batchSize;
+        if (lastCount > 0) {
+            count += updateBatchById(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()), updateWrapper);
+        }
+        return count;
+    }
 
     /**
      * 根据 entity 条件，查询一条记录

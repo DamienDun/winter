@@ -261,17 +261,7 @@ public abstract class BaseService<TKey extends Serializable,
         }
         final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
         int batchSize = batchAddBefore(entities, inputs);
-
-        int frequency = entities.size() / batchSize;
-        for (int i = 0; i < frequency; i++) {
-            mapper.insertBatch(entities.stream().skip(i * batchSize).limit(batchSize).collect(Collectors.toList()));
-        }
-        // 不足一次批量的一起插入
-        int lastCount = entities.size() - frequency * batchSize;
-        if (lastCount > 0) {
-            mapper.insertBatch(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()));
-        }
-
+        mapper.insertInBatch(entities, batchSize);
         batchAddAfter(entities, inputs);
     }
 
@@ -307,15 +297,7 @@ public abstract class BaseService<TKey extends Serializable,
         if (CollectionUtils.isEmpty(wrapper.getUpdateFields())) {
             throw new RuntimeException("未设置要更新的字段");
         }
-        int frequency = entities.size() / batchSize;
-        for (int i = 0; i < frequency; i++) {
-            mapper.updateBatchById(entities.stream().skip(i * batchSize).limit(batchSize).collect(Collectors.toList()), wrapper);
-        }
-        // 不足一次批量的一起插入
-        int lastCount = entities.size() - frequency * batchSize;
-        if (lastCount > 0) {
-            mapper.updateBatchById(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()), wrapper);
-        }
+        mapper.updateInBatch(entities, wrapper, batchSize);
         batchUpdateAfter(entities, inputs);
     }
 
