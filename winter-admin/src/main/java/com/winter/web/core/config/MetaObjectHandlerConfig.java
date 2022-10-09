@@ -13,6 +13,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author Damien
@@ -26,8 +27,9 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         if (CreateAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
-            Date nowDate = DateUtils.getNowDate();
-            setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, nowDate, metaObject);
+            if (Objects.isNull(getFieldValByName(CreateAuditing.FIELD_GMT_CREATE, metaObject))) {
+                setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, DateUtils.getNowDate(), metaObject);
+            }
             try {
                 LoginUser loginUser = SecurityUtils.getLoginUser();
                 if (loginUser != null) {
