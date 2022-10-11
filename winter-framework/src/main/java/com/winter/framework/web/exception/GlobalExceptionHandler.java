@@ -121,6 +121,6 @@ public class GlobalExceptionHandler
     public AjaxResult handleBindException(BusinessException e)
     {
         log.error(e.getMessage(), e);
-        return AjaxResult.error(e.getResultEnum().getCode(),e.getResultEnum().getMsg());
+        return AjaxResult.error(e.getResultEnum().getCode(),e.getMessage());
     }
 }
