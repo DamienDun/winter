@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.winter.common.core.page.PageDomain;
 import com.winter.common.core.page.TableSupport;
+import com.winter.common.utils.function.FunctionTwoAction;
 import com.winter.common.utils.sql.SqlUtil;
 
 import java.util.List;
@@ -62,5 +63,36 @@ public class PageUtils extends PageHelper {
      */
     public static <T, E> Page<T> load(IPage<E> page, Class<T> targetClass) {
         return load(page, page.getRecords(), targetClass);
+    }
+
+    /**
+     * 转换为 Page 对象
+     *
+     * @param page
+     * @param sourceList
+     * @param targetClass
+     * @param <T>
+     * @param <E>
+     * @return
+     */
+    public static <T, E> Page<T> load(IPage<E> page, List<E> sourceList, Class<T> targetClass,
+                                      FunctionTwoAction<E, T> convertAction) {
+        Page<T> pageResult = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        pageResult.setPages(page.getPages());
+        pageResult.setRecords(AutoMapUtils.mapForList(sourceList, targetClass, convertAction));
+        return pageResult;
+    }
+
+    /**
+     * 转换为 Page 对象
+     *
+     * @param page
+     * @param targetClass
+     * @param <T>
+     * @param <E>
+     * @return
+     */
+    public static <T, E> Page<T> load(IPage<E> page, Class<T> targetClass, FunctionTwoAction<E, T> convertAction) {
+        return load(page, page.getRecords(), targetClass, convertAction);
     }
 }
