@@ -1,12 +1,13 @@
 package com.winter.common.core.controller;
 
 import com.winter.common.annotation.Log;
-import com.winter.common.core.domain.AjaxResult;
+import com.winter.common.core.domain.R;
 import com.winter.common.core.dto.IdInput;
 import com.winter.common.core.dto.IdsInput;
 import com.winter.common.core.service.IBaseService;
 import com.winter.common.enums.BusinessType;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,40 +50,40 @@ public class DefaultController<TService extends IBaseService<Long, TInput, TOutp
     @ApiOperation("新增")
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult add(@Valid @RequestBody TInput input) {
-        return AjaxResult.success(service.add(input));
+    public R<TOutput> add(@Valid @RequestBody TInput input) {
+        return R.ok(service.add(input));
     }
 
     @Log(businessType = BusinessType.UPDATE, useServiceModuleName = true)
     @ApiOperation("根据id修改")
     @PostMapping("/update")
     @ResponseBody
-    public AjaxResult update(@Valid @RequestBody TInput input) {
-        return AjaxResult.success(service.update(input));
+    public R<TOutput> update(@Valid @RequestBody TInput input) {
+        return R.ok(service.update(input));
     }
 
     @ApiOperation("根据id获取")
     @PostMapping("/get")
     @ResponseBody
-    public AjaxResult get(@Valid @RequestBody IdInput input) {
-        return AjaxResult.success(service.get(input.getId()));
+    public R<TOutput> get(@Valid @RequestBody IdInput input) {
+        return R.ok(service.get(input.getId()));
     }
 
     @Log(businessType = BusinessType.DELETE, useServiceModuleName = true)
     @ApiOperation("根据id删除")
     @PostMapping("/delete")
     @ResponseBody
-    public AjaxResult delete(@Valid @RequestBody IdInput input) {
+    public R<T> delete(@Valid @RequestBody IdInput input) {
         service.deleteById(input.getId());
-        return AjaxResult.success();
+        return R.ok();
     }
 
     @Log(businessType = BusinessType.DELETE, useServiceModuleName = true)
     @ApiOperation("批量删除")
     @PostMapping("/batchDelete")
     @ResponseBody
-    public AjaxResult batchDelete(@Valid @RequestBody IdsInput input) {
+    public R<T> batchDelete(@Valid @RequestBody IdsInput input) {
         service.batchDelete(input.getIds());
-        return AjaxResult.success();
+        return R.ok();
     }
 }
