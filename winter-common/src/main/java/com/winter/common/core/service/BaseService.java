@@ -6,6 +6,7 @@ import com.winter.common.core.domain.entity.audit.ModifiedAuditing;
 import com.winter.common.core.domain.entity.audit.PrimaryKey;
 import com.winter.common.core.injector.wrappers.UpdateBatchWrapper;
 import com.winter.common.core.mapper.DefaultBaseMapper;
+import com.winter.common.exception.ValidException;
 import com.winter.common.utils.AutoMapUtils;
 import com.winter.common.utils.GenericUtils;
 import com.winter.common.utils.reflect.ReflectUtils;
@@ -90,6 +91,9 @@ public abstract class BaseService<TKey extends Serializable,
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(TKey id) {
         TEntity entity = mapper.selectById(id);
+        if (entity == null) {
+            throw new ValidException("无法删除不存在的数据记录。");
+        }
         deleteBefore(entity);
         entity.setDeleted(1);
         mapper.deleteById(entity);
@@ -122,6 +126,9 @@ public abstract class BaseService<TKey extends Serializable,
             return;
         }
         List<TEntity> entities = mapper.selectBatchIds(ids);
+        if (CollectionUtils.isEmpty(entities)) {
+            throw new ValidException("无法删除不存在的数据记录。");
+        }
         batchDeleteBefore(entities);
         entities.forEach(entity -> entity.setDeleted(1));
         mapper.batchDeleteWithFill(entities);
