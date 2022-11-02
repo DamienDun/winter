@@ -1,6 +1,7 @@
 package com.winter.swagger.configure;
 
 import com.github.xiaoymin.knife4j.spring.configuration.Knife4jProperties;
+import com.winter.common.config.TokenConfig;
 import com.winter.common.config.WinterConfig;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.spring.SpringUtils;
@@ -46,16 +47,16 @@ import java.util.function.Predicate;
  */
 @EnableOpenApi
 @EnableConfigurationProperties({Knife4jProperties.class, WinterSwaggerProperties.class})
-@Import({SpringfoxWebConfiguration.class, SwaggerCommonConfiguration.class, WinterConfig.class})
+@Import({SpringfoxWebConfiguration.class, SwaggerCommonConfiguration.class, WinterConfig.class, TokenConfig.class})
 public class WinterSwaggerConfiguration implements WebMvcConfigurer {
 
     @Bean
-    public boolean createWinterSwaggerDockets(WinterConfig winterConfig, WinterSwaggerProperties winterSwaggerProperties,
+    public boolean createWinterSwaggerDockets(WinterConfig winterConfig, TokenConfig tokenConfig, WinterSwaggerProperties winterSwaggerProperties,
                                               WinterSwaggerApiInfo winterSwaggerApiInfo) {
         if (StringUtils.isEmpty(winterSwaggerApiInfo.getVersion())) {
             winterSwaggerApiInfo.setVersion(winterConfig.getVersion());
         }
-        winterSwaggerApiInfo.getGroups().forEach(group -> loadDocket(winterSwaggerApiInfo, group, winterSwaggerProperties));
+        winterSwaggerApiInfo.getGroups().forEach(group -> loadDocket(tokenConfig, winterSwaggerApiInfo, group, winterSwaggerProperties));
         return true;
     }
 
@@ -66,7 +67,7 @@ public class WinterSwaggerConfiguration implements WebMvcConfigurer {
      * @param group
      * @return
      */
-    private void loadDocket(WinterSwaggerApiInfo api, WinterSwaggerApiGroupInfo group, WinterSwaggerProperties winterSwaggerProperties) {
+    private void loadDocket(TokenConfig tokenConfig, WinterSwaggerApiInfo api, WinterSwaggerApiGroupInfo group, WinterSwaggerProperties winterSwaggerProperties) {
         Docket docket = SpringUtils.getBean(group.getBeanId());
         ApiSelectorBuilder builder = docket.groupName(group.getGroupName())
                 .enable(winterSwaggerProperties.isEnabled())
@@ -93,8 +94,8 @@ public class WinterSwaggerConfiguration implements WebMvcConfigurer {
         docket = builder.paths(PathSelectors.any())
                 .build()
                 /* 设置安全模式，swagger可以设置访问token */
-                .securitySchemes(securitySchemes())
-                .securityContexts(securityContexts())
+                .securitySchemes(securitySchemes(tokenConfig))
+                .securityContexts(securityContexts(tokenConfig))
                 .pathMapping(winterSwaggerProperties.getPathMapping());
         List<RequestParameter> operationParameters = new ArrayList<>();
 
@@ -109,20 +110,20 @@ public class WinterSwaggerConfiguration implements WebMvcConfigurer {
     /**
      * 安全模式，这里指定token通过Authorization头请求头传递
      */
-    private List<SecurityScheme> securitySchemes() {
+    private List<SecurityScheme> securitySchemes(TokenConfig tokenConfig) {
         List<SecurityScheme> apiKeyList = new ArrayList<SecurityScheme>();
-        apiKeyList.add(new ApiKey("Authorization", "Authorization", In.HEADER.toValue()));
+        apiKeyList.add(new ApiKey(tokenConfig.getHeader(), tokenConfig.getHeader(), In.HEADER.toValue()));
         return apiKeyList;
     }
 
     /**
      * 安全上下文
      */
-    private List<SecurityContext> securityContexts() {
+    private List<SecurityContext> securityContexts(TokenConfig tokenConfig) {
         List<SecurityContext> securityContexts = new ArrayList<>();
         securityContexts.add(
                 SecurityContext.builder()
-                        .securityReferences(defaultAuth())
+                        .securityReferences(defaultAuth(tokenConfig))
                         .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
                         .build());
         return securityContexts;
@@ -131,12 +132,12 @@ public class WinterSwaggerConfiguration implements WebMvcConfigurer {
     /**
      * 默认的安全上引用
      */
-    private List<SecurityReference> defaultAuth() {
+    private List<SecurityReference> defaultAuth(TokenConfig tokenConfig) {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         List<SecurityReference> securityReferences = new ArrayList<>();
-        securityReferences.add(new SecurityReference("Authorization", authorizationScopes));
+        securityReferences.add(new SecurityReference(tokenConfig.getHeader(), authorizationScopes));
         return securityReferences;
     }
 
