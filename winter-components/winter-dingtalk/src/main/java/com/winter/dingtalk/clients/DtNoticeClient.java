@@ -72,6 +72,20 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
     }
 
     /**
+     * 发送卡片类的钉钉工作通知
+     *
+     * @param actionCard 卡片内容
+     * @param useridList 用户id集合(,分隔)
+     * @return
+     */
+    public Long sendActionCardMsg(OapiMessageCorpconversationAsyncsendV2Request.ActionCard actionCard, String useridList) {
+        OapiMessageCorpconversationAsyncsendV2Request.Msg msg = new OapiMessageCorpconversationAsyncsendV2Request.Msg();
+        msg.setMsgtype(DtMsgTypeEnum.ACTION_CARD.getName());
+        msg.setActionCard(actionCard);
+        return send(msg, useridList);
+    }
+
+    /**
      * 获取工作通知消息的发送结果
      *
      * @param taskId 创建的异步发送任务id
