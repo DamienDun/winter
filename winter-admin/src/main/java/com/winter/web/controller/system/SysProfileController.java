@@ -26,7 +26,7 @@ import com.winter.system.service.ISysUserService;
 
 /**
  * 个人信息 业务处理
- * 
+ *
  * @author winter
  */
 @RestController
@@ -78,10 +78,7 @@ public class SysProfileController extends BaseController
         if (userService.updateUserProfile(user) > 0)
         {
             // 更新缓存用户信息
-            sysUser.setNickName(user.getNickName());
-            sysUser.setPhonenumber(user.getPhonenumber());
-            sysUser.setEmail(user.getEmail());
-            sysUser.setSex(user.getSex());
+            loginUser.setUser(userService.selectUserById(user.getUserId()));
             tokenService.setLoginUser(loginUser);
             return AjaxResult.success();
         }
