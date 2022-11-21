@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds;
 import com.github.yulichang.injector.MPJSqlInjector;
 import com.winter.common.core.injector.methods.InsertBatchMethod;
+import com.winter.common.core.injector.methods.ReplaceBatchMethod;
 import com.winter.common.core.injector.methods.UpdateBatchMethod;
 import com.winter.common.core.mapper.DefaultBaseMapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -29,6 +30,7 @@ public class MyBatisPlusSqlInjector extends MPJSqlInjector {
         List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
         methodList.add(new LogicDeleteBatchByIds(DefaultBaseMapper.METHOD_BATCH_DELETE_WITH_FILL));
         methodList.add(new InsertBatchMethod());
+        methodList.add(new ReplaceBatchMethod());
         methodList.add(new UpdateBatchMethod());
         return methodList;
     }

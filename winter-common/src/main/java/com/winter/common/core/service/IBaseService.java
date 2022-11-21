@@ -81,4 +81,11 @@ public interface IBaseService<TKey extends Serializable, TInput, TOutput> {
      * @param inputs
      */
     void batchUpdate(List<TInput> inputs);
+
+    /**
+     * 批量替换
+     *
+     * @param inputs
+     */
+    void batchReplace(List<TInput> inputs);
 }

@@ -329,4 +329,45 @@ public abstract class BaseService<TKey extends Serializable,
 
         return DEFAULT_BATCH_SIZE;
     }
+
+    /**
+     * 批量替换
+     *
+     * @param inputs
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchReplace(List<TInput> inputs) {
+        if (CollectionUtils.isEmpty(inputs)) {
+            return;
+        }
+        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
+        int batchSize = batchReplaceBefore(entities, inputs);
+
+        mapper.replaceInBatch(entities, batchSize);
+
+        batchReplaceAfter(entities, inputs);
+    }
+
+    /**
+     * 批量替换后
+     *
+     * @param entities
+     * @param inputs
+     */
+    protected void batchReplaceAfter(List<TEntity> entities, List<TInput> inputs) {
+
+    }
+
+    /**
+     * 批量替换前
+     *
+     * @param entities
+     * @param inputs
+     * @return
+     */
+    protected int batchReplaceBefore(List<TEntity> entities, List<TInput> inputs) {
+
+        return DEFAULT_BATCH_SIZE;
+    }
 }

@@ -39,6 +39,14 @@ public interface DefaultBaseMapper<T> extends BaseMapper<T>, MPJBaseMapper<T> {
     int insertBatch(@Param(Constants.COLLECTION) Collection<?> entities);
 
     /**
+     * 批量替换
+     *
+     * @param entities
+     * @return
+     */
+    int replaceBatch(@Param(Constants.COLLECTION) Collection<?> entities);
+
+    /**
      * 批量更新  updateWrapper 更新对应设置的字段
      *
      * @param entities
@@ -64,6 +72,27 @@ public interface DefaultBaseMapper<T> extends BaseMapper<T>, MPJBaseMapper<T> {
         int lastCount = entities.size() - frequency * batchSize;
         if (lastCount > 0) {
             count += insertBatch(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()));
+        }
+        return count;
+    }
+
+    /**
+     * 分批替换
+     *
+     * @param entities
+     * @param batchSize
+     * @return
+     */
+    default int replaceInBatch(@Param(Constants.COLLECTION) Collection<?> entities, int batchSize) {
+        int frequency = entities.size() / batchSize;
+        int count = 0;
+        for (int i = 0; i < frequency; i++) {
+            count += replaceBatch(entities.stream().skip(i * batchSize).limit(batchSize).collect(Collectors.toList()));
+        }
+        // 不足一次批量的一起插入
+        int lastCount = entities.size() - frequency * batchSize;
+        if (lastCount > 0) {
+            count += replaceBatch(entities.stream().skip(frequency * batchSize).limit(lastCount).collect(Collectors.toList()));
         }
         return count;
     }
