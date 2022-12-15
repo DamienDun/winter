@@ -136,7 +136,22 @@ public class Constants
             "org.springframework", "org.apache", "com.winter.common.utils.file" };
 
     /**
+     * 逗号切割正则
+     */
+    public static final String COMMA_SPLIT_REGEX = ",|，";
+
+    /**
      * 冒号
      */
     public static final String COLON = ":";
+
+    /**
+     * 英文逗号
+     */
+    public static final String ENGLISH_COMMA = ",";
+
+    /**
+     * 响应头code
+     */
+    public static final String RESP_HEADER_CODE = "resp-code";
 }
