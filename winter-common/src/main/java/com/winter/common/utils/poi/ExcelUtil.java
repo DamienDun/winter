@@ -368,7 +368,7 @@ public class ExcelUtil<T> {
     public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String title) {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
-        response.addHeader("Access-Control-Expose-Headers", Constants.RESP_HEADER_CODE);
+        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
         response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.SUCCESS));
         this.init(list, sheetName, title, Type.EXPORT);
         exportExcel(response);

@@ -675,4 +675,14 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * 是否是空白字符或换行字符
+     *
+     * @param c
+     * @return
+     */
+    public static boolean isWhiteChar(char c) {
+        return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+    }
 }
