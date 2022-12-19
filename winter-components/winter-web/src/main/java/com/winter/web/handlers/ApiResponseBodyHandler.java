@@ -7,6 +7,7 @@ import com.winter.common.constant.Constants;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.R;
 import com.winter.common.core.domain.Rpage;
+import com.winter.common.core.page.TableDataInfo;
 import com.winter.common.exception.ServiceException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.MethodParameter;
@@ -67,6 +68,9 @@ public class ApiResponseBodyHandler implements ResponseBodyAdvice<Object> {
             return body;
         }
         if (body instanceof AjaxResult) {
+            return body;
+        }
+        if (body instanceof TableDataInfo) {
             return body;
         }
         // String类型不能直接包装，所以要进行些特别的处理
