@@ -16,6 +16,7 @@
         <module>winter-dingtalk</module>
         <module>winter-swagger</module>
         <module>winter-web</module>
+        <module>winter-oauth2</module>
     </modules>
 
 

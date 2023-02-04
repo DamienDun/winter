@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.winter.oauth2.configure.WinterOauthResourceServerConfiguration,\
+com.winter.oauth2.configure.WinterOauthAuthorizationServerConfiguration,\
+com.winter.oauth2.configure.WinterOauthSecurityConfiguration,\
+com.winter.oauth2.configure.WinterOauthAutoConfiguration

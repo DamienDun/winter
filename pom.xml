@@ -44,6 +44,8 @@
         <aliyun.sdk.core.version>4.3.1</aliyun.sdk.core.version>
         <dingtalk.old.version>2.0.0</dingtalk.old.version>
         <dingtalk.new.version>1.4.15</dingtalk.new.version>
+        <spring.security.oauth2.version>2.3.8.RELEASE</spring.security.oauth2.version>
+        <security.jwt.version>1.0.9.RELEASE</security.jwt.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -335,6 +337,18 @@
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
                 <version>${dingtalk.new.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>${spring.security.oauth2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>${security.jwt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
