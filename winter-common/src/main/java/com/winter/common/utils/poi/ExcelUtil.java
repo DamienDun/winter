@@ -110,6 +110,11 @@ public class ExcelUtil<T> {
     private short maxHeight;
 
     /**
+     * 公式计算器
+     */
+    private FormulaEvaluator formulaEvaluator = null;
+
+    /**
      * 统计列表
      */
     private Map<Integer, Double> statistics = new HashMap<Integer, Double>();
@@ -203,6 +208,7 @@ public class ExcelUtil<T> {
     public List<T> importExcel(String sheetName, InputStream is, int titleNum) throws Exception {
         this.type = Type.IMPORT;
         this.wb = WorkbookFactory.create(is);
+        this.formulaEvaluator = this.wb.getCreationHelper().createFormulaEvaluator();
         List<T> list = new ArrayList<T>();
         // 如果指定sheet名,则取指定sheet中的内容 否则默认指向第1个sheet
         Sheet sheet = StringUtils.isNotEmpty(sheetName) ? wb.getSheet(sheetName) : wb.getSheetAt(0);
@@ -1043,6 +1049,7 @@ public class ExcelUtil<T> {
      */
     public void createWorkbook() {
         this.wb = new SXSSFWorkbook(500);
+        this.formulaEvaluator = this.wb.getCreationHelper().createFormulaEvaluator();
         this.sheet = wb.createSheet();
         wb.setSheetName(0, sheetName);
         this.styles = createStyles(wb);
@@ -1078,7 +1085,7 @@ public class ExcelUtil<T> {
         try {
             Cell cell = row.getCell(column);
             if (StringUtils.isNotNull(cell)) {
-                if (cell.getCellType() == CellType.NUMERIC || cell.getCellType() == CellType.FORMULA) {
+                if (cell.getCellType() == CellType.NUMERIC) {
                     val = cell.getNumericCellValue();
                     if (DateUtil.isCellDateFormatted(cell)) {
                         val = DateUtil.getJavaDate((Double) val); // POI Excel 日期格式转换
@@ -1089,6 +1096,9 @@ public class ExcelUtil<T> {
                             val = new DecimalFormat("0").format(val);
                         }
                     }
+                } else if (cell.getCellType() == CellType.FORMULA) {
+                    formulaEvaluator.evaluateInCell(cell);
+                    return getCellValue(row, column);
                 } else if (cell.getCellType() == CellType.STRING) {
                     val = cell.getStringCellValue();
                 } else if (cell.getCellType() == CellType.BOOLEAN) {
