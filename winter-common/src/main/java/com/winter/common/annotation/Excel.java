@@ -1,14 +1,14 @@
 package com.winter.common.annotation;
 
+import com.winter.common.utils.poi.ExcelHandlerAdapter;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.math.BigDecimal;
-
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import com.winter.common.utils.poi.ExcelHandlerAdapter;
 
 /**
  * 自定义导出Excel数据注解
@@ -87,6 +87,11 @@ public @interface Excel {
      * 设置只能选择不能输入的列内容.
      */
     String[] combo() default {};
+
+    /**
+     * 是否需要纵向合并单元格,应对需求:含有list集合单元格)
+     */
+    boolean needMerge() default false;
 
     /**
      * 是否导出数据,应对需求:有时我们需要导出一份模板,这是标题需要但内容需要用户手工填写.
