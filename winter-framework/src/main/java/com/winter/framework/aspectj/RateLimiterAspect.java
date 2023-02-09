@@ -1,8 +1,11 @@
 package com.winter.framework.aspectj;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
+import com.winter.common.annotation.RateLimiter;
+import com.winter.common.enums.LimitType;
+import com.winter.common.exception.ServiceException;
+import com.winter.common.utils.ServletUtils;
+import com.winter.common.utils.StringUtils;
+import com.winter.common.utils.ip.IpUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -13,12 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
-import com.winter.common.annotation.RateLimiter;
-import com.winter.common.enums.LimitType;
-import com.winter.common.exception.ServiceException;
-import com.winter.common.utils.ServletUtils;
-import com.winter.common.utils.StringUtils;
-import com.winter.common.utils.ip.IpUtils;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 限流处理
@@ -50,7 +51,6 @@ public class RateLimiterAspect
     @Before("@annotation(rateLimiter)")
     public void doBefore(JoinPoint point, RateLimiter rateLimiter) throws Throwable
     {
-        String key = rateLimiter.key();
         int time = rateLimiter.time();
         int count = rateLimiter.count();
 
@@ -63,7 +63,7 @@ public class RateLimiterAspect
             {
                 throw new ServiceException("访问过于频繁，请稍候再试");
             }
-            log.info("限制请求'{}',当前请求'{}',缓存key'{}'", count, number.intValue(), key);
+            log.info("限制请求'{}',当前请求'{}',缓存key'{}'", count, number.intValue(), combineKey);
         }
         catch (ServiceException e)
         {
