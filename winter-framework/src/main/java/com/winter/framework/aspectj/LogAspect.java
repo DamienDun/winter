@@ -6,6 +6,7 @@ import com.winter.common.core.controller.DefaultController;
 import com.winter.common.core.domain.model.LoginUser;
 import com.winter.common.enums.BusinessStatus;
 import com.winter.common.enums.HttpMethod;
+import com.winter.common.filter.PropertyPreExcludeFilter;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.ServletUtils;
 import com.winter.common.utils.StringUtils;
@@ -39,6 +40,11 @@ import java.util.Map;
 @Component
 public class LogAspect {
     private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
+
+    /**
+     * 排除敏感属性字段
+     */
+    public static final String[] EXCLUDE_PROPERTIES = {"password", "oldPassword", "newPassword", "confirmPassword"};
 
     /**
      * 处理完请求后执行
@@ -156,19 +162,27 @@ public class LogAspect {
      * 参数拼装
      */
     private String argsArrayToString(Object[] paramsArray) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object o : paramsArray) {
                 if (StringUtils.isNotNull(o) && !isFilterObject(o)) {
                     try {
-                        Object jsonObj = JSON.toJSON(o);
-                        params += jsonObj.toString() + " ";
+                        String jsonObj = JSON.toJSONString(o, excludePropertyPreFilter());
+                        params.append(jsonObj).append(" ");
                     } catch (Exception e) {
+                        log.error("日志切面拼接参数失败", e);
                     }
                 }
             }
         }
-        return params.trim();
+        return params.toString().trim();
+    }
+
+    /**
+     * 忽略敏感属性
+     */
+    public PropertyPreExcludeFilter excludePropertyPreFilter() {
+        return new PropertyPreExcludeFilter().addExcludes(EXCLUDE_PROPERTIES);
     }
 
     /**
