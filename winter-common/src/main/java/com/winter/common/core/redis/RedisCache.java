@@ -1,17 +1,14 @@
 package com.winter.common.core.redis;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * spring redis 工具类
@@ -233,7 +230,7 @@ public class RedisCache
 
     /**
      * 删除Hash中的数据
-     * 
+     *
      * @param key
      * @param hKey
      */
@@ -253,6 +250,18 @@ public class RedisCache
     public <T> List<T> getMultiCacheMapValue(final String key, final Collection<Object> hKeys)
     {
         return redisTemplate.opsForHash().multiGet(key, hKeys);
+    }
+
+    /**
+     * 删除Hash中的某条数据
+     *
+     * @param key Redis键
+     * @param hKey Hash键
+     * @return 是否成功
+     */
+    public boolean deleteCacheMapValue(final String key, final String hKey)
+    {
+        return redisTemplate.opsForHash().delete(key, hKey) > 0;
     }
 
     /**
