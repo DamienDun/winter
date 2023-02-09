@@ -1,20 +1,7 @@
 package com.winter.web.controller.system;
 
-import java.util.Iterator;
-import java.util.List;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.winter.common.annotation.Log;
+import com.winter.common.constant.Constants;
 import com.winter.common.constant.UserConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
@@ -22,10 +9,17 @@ import com.winter.common.core.domain.entity.SysDept;
 import com.winter.common.enums.BusinessType;
 import com.winter.common.utils.StringUtils;
 import com.winter.system.service.ISysDeptService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 部门信息
- * 
+ *
  * @author winter
  */
 @RestController
@@ -54,16 +48,7 @@ public class SysDeptController extends BaseController
     public AjaxResult excludeChild(@PathVariable(value = "deptId", required = false) Long deptId)
     {
         List<SysDept> depts = deptService.selectDeptList(new SysDept());
-        Iterator<SysDept> it = depts.iterator();
-        while (it.hasNext())
-        {
-            SysDept d = (SysDept) it.next();
-            if (d.getDeptId().intValue() == deptId
-                    || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""))
-            {
-                it.remove();
-            }
-        }
+        depts.removeIf(d -> d.getDeptId().intValue() == deptId || ArrayUtils.contains(StringUtils.split(d.getAncestors(), Constants.ENGLISH_COMMA), deptId + ""));
         return AjaxResult.success(depts);
     }
 
