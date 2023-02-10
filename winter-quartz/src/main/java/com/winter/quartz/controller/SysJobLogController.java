@@ -1,15 +1,5 @@
 package com.winter.quartz.controller;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
@@ -18,10 +8,16 @@ import com.winter.common.enums.BusinessType;
 import com.winter.common.utils.poi.ExcelUtil;
 import com.winter.quartz.domain.SysJobLog;
 import com.winter.quartz.service.ISysJobLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 调度日志操作处理
- * 
+ *
  * @author winter
  */
 @RestController
@@ -55,7 +51,7 @@ public class SysJobLogController extends BaseController
         ExcelUtil<SysJobLog> util = new ExcelUtil<SysJobLog>(SysJobLog.class);
         util.exportExcel(response, list, "调度日志");
     }
-    
+
     /**
      * 根据调度编号获取详细信息
      */
@@ -63,7 +59,7 @@ public class SysJobLogController extends BaseController
     @GetMapping(value = "/{configId}")
     public AjaxResult getInfo(@PathVariable Long jobLogId)
     {
-        return AjaxResult.success(jobLogService.selectJobLogById(jobLogId));
+        return success(jobLogService.selectJobLogById(jobLogId));
     }
 
 
@@ -87,6 +83,6 @@ public class SysJobLogController extends BaseController
     public AjaxResult clean()
     {
         jobLogService.cleanJobLog();
-        return AjaxResult.success();
+        return success();
     }
 }

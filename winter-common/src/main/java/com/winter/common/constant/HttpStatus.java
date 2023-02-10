@@ -2,11 +2,10 @@ package com.winter.common.constant;
 
 /**
  * 返回状态码
- * 
+ *
  * @author winter
  */
-public class HttpStatus
-{
+public class HttpStatus {
     /**
      * 操作成功
      */
@@ -86,4 +85,9 @@ public class HttpStatus
      * 接口未实现
      */
     public static final int NOT_IMPLEMENTED = 501;
+
+    /**
+     * 系统警告消息
+     */
+    public static final int WARN = 601;
 }

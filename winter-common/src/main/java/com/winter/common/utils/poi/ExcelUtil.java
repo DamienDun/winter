@@ -565,11 +565,15 @@ public class ExcelUtil<T> {
             // 得到导出对象.
             T vo = (T) list.get(i);
             Collection<?> subList = null;
-            if (isSubListValue(vo)) {
-                subList = getListCellValue(vo);
-                subMergedLastRowNum = subMergedLastRowNum + subList.size();
+            if (isSubList()) {
+                if (isSubListValue(vo)) {
+                    subList = getListCellValue(vo);
+                    subMergedLastRowNum = subMergedLastRowNum + subList.size();
+                } else {
+                    subMergedFirstRowNum++;
+                    subMergedLastRowNum++;
+                }
             }
-
             int column = 0;
             for (Object[] os : fields) {
                 Field field = (Field) os[0];
