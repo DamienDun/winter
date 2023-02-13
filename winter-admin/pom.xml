@@ -61,11 +61,6 @@
             <artifactId>winter-generator</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.winter</groupId>
-            <artifactId>winter-oauth2</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>
