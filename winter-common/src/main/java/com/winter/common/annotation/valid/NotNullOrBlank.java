@@ -42,7 +42,7 @@ public @interface NotNullOrBlank {
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
+    @interface List {
         NotNullOrBlank[] value();
     }
 

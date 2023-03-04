@@ -43,8 +43,8 @@ public @interface NotEmptyCollection {
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
-        NotNullOrBlank[] value();
+    @interface List {
+        NotEmptyCollection[] value();
     }
 
     class ValidChecker implements ConstraintValidator<NotEmptyCollection, Collection<?>> {

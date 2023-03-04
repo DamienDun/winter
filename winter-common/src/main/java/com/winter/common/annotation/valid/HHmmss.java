@@ -42,8 +42,8 @@ public @interface HHmmss {
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
-        MobilePhone[] value();
+    @interface List {
+        HHmmss[] value();
     }
 
     class ValidChecker implements ConstraintValidator<HHmmss, String> {
