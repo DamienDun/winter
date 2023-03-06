@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.winter</groupId>
         <artifactId>winter-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>winter</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <name>winter</name>
     <description>Winter Management System</description>

@@ -1,6 +1,6 @@
 
 
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Winter v1.0.1</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Winter v1.0.2</h1>
 <h4 align="center">基于SpringBoot+Vue前后端分离的Java快速开发框架(基于RuoYi v.3.8.5)</h4>
 
 
