@@ -1,4 +1,4 @@
-package com.winter.web.core.config;
+package com.winter.common.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;

@@ -1,4 +1,4 @@
-package com.winter.web.core.config;
+package com.winter.common.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.winter.common.core.domain.entity.audit.CreateAuditing;
