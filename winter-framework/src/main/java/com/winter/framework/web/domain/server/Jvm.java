@@ -1,12 +1,13 @@
 package com.winter.framework.web.domain.server;
 
-import java.lang.management.ManagementFactory;
 import com.winter.common.utils.Arith;
 import com.winter.common.utils.DateUtils;
 
+import java.lang.management.ManagementFactory;
+
 /**
  * JVM相关信息
- * 
+ *
  * @author winter
  */
 public class Jvm
@@ -117,7 +118,7 @@ public class Jvm
      */
     public String getRunTime()
     {
-        return DateUtils.getDatePoor(DateUtils.getNowDate(), DateUtils.getServerStartDate());
+        return DateUtils.timeDistance(DateUtils.getNowDate(), DateUtils.getServerStartDate());
     }
 
     /**

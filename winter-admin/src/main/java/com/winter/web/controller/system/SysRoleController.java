@@ -1,7 +1,6 @@
 package com.winter.web.controller.system;
 
 import com.winter.common.annotation.Log;
-import com.winter.common.constant.UserConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysDept;
@@ -83,10 +82,10 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysRole role) {
-        if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role))) {
+        if (!roleService.checkRoleNameUnique(role)) {
             return error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
         }
-        if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
+        if (!roleService.checkRoleKeyUnique(role)) {
             return error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
         role.setCreateBy(getUsername());
@@ -103,10 +102,10 @@ public class SysRoleController extends BaseController {
     public AjaxResult edit(@Validated @RequestBody SysRole role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
-        if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role))) {
+        if (!roleService.checkRoleNameUnique(role)) {
             return error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
         }
-        if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
+        if (!roleService.checkRoleKeyUnique(role)) {
             return error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
         role.setUpdateBy(getUsername());

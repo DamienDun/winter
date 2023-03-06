@@ -1,17 +1,7 @@
 package com.winter.web.controller.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import com.winter.common.annotation.Log;
 import com.winter.common.config.WinterConfig;
-import com.winter.common.constant.UserConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysUser;
@@ -23,6 +13,9 @@ import com.winter.common.utils.file.FileUploadUtils;
 import com.winter.common.utils.file.MimeTypeUtils;
 import com.winter.framework.web.service.TokenService;
 import com.winter.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 个人信息 业务处理
@@ -60,12 +53,10 @@ public class SysProfileController extends BaseController {
         LoginUser loginUser = getLoginUser();
         SysUser sysUser = loginUser.getUser();
         user.setUserName(sysUser.getUserName());
-        if (StringUtils.isNotEmpty(user.getPhonenumber())
-                && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user))) {
+        if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
             return error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
         }
-        if (StringUtils.isNotEmpty(user.getEmail())
-                && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user))) {
+        if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
             return error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         user.setUserId(sysUser.getUserId());

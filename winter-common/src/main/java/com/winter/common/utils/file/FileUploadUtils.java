@@ -1,11 +1,5 @@
 package com.winter.common.utils.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Objects;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.web.multipart.MultipartFile;
 import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.Constants;
 import com.winter.common.exception.file.FileNameLengthLimitExceededException;
@@ -14,6 +8,13 @@ import com.winter.common.exception.file.InvalidExtensionException;
 import com.winter.common.utils.DateUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.uuid.Seq;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * 文件上传工具类
@@ -123,7 +124,7 @@ public class FileUploadUtils
     public static final String extractFilename(MultipartFile file)
     {
         return StringUtils.format("{}/{}_{}.{}", DateUtils.datePath(),
-                FilenameUtils.getBaseName(file.getOriginalFilename()), Seq.getId(Seq.uploadSeqType), getExtension(file));
+                FilenameUtils.getBaseName(file.getOriginalFilename()), Seq.getId(Seq.UPLOAD_SEQ_TYPE), getExtension(file));
     }
 
     public static final File getAbsoluteFile(String uploadDir, String fileName) throws IOException

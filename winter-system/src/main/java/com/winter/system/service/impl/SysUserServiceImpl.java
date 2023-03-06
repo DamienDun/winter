@@ -152,7 +152,7 @@ public class SysUserServiceImpl implements ISysUserService {
      * @return 结果
      */
     @Override
-    public String checkUserNameUnique(SysUser user) {
+    public boolean checkUserNameUnique(SysUser user) {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
         SysUser info = userMapper.checkUserNameUnique(user.getUserName());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue()) {
@@ -168,7 +168,7 @@ public class SysUserServiceImpl implements ISysUserService {
      * @return
      */
     @Override
-    public String checkPhoneUnique(SysUser user) {
+    public boolean checkPhoneUnique(SysUser user) {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
         SysUser info = userMapper.checkPhoneUnique(user.getPhonenumber());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue()) {
@@ -184,7 +184,7 @@ public class SysUserServiceImpl implements ISysUserService {
      * @return
      */
     @Override
-    public String checkEmailUnique(SysUser user) {
+    public boolean checkEmailUnique(SysUser user) {
         Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
         SysUser info = userMapper.checkEmailUnique(user.getEmail());
         if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue()) {

@@ -1,7 +1,6 @@
 package com.winter.web.controller.system;
 
 import com.winter.common.annotation.Log;
-import com.winter.common.constant.UserConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
@@ -72,7 +71,7 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysConfig config) {
-        if (UserConstants.NOT_UNIQUE.equals(configService.checkConfigKeyUnique(config))) {
+        if (!configService.checkConfigKeyUnique(config)) {
             return error("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
         config.setCreateBy(getUsername());
@@ -86,7 +85,7 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysConfig config) {
-        if (UserConstants.NOT_UNIQUE.equals(configService.checkConfigKeyUnique(config))) {
+        if (!configService.checkConfigKeyUnique(config)) {
             return error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
         config.setUpdateBy(getUsername());
