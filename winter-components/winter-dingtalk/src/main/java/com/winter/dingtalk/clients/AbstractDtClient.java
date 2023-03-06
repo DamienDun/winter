@@ -3,11 +3,24 @@ package com.winter.dingtalk.clients;
 import com.aliyun.dingtalkoauth2_1_0.models.*;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
+import com.dingtalk.api.DefaultDingTalkClient;
+import com.dingtalk.api.DingTalkClient;
+import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
+import com.dingtalk.api.request.OapiGettokenRequest;
+import com.dingtalk.api.request.OapiServiceGetCorpTokenRequest;
+import com.dingtalk.api.request.OapiSsoGettokenRequest;
+import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
+import com.dingtalk.api.response.OapiGettokenResponse;
+import com.dingtalk.api.response.OapiServiceGetCorpTokenResponse;
+import com.dingtalk.api.response.OapiSsoGettokenResponse;
+import com.taobao.api.ApiException;
 import com.winter.common.config.WinterConfig;
+import com.winter.common.enums.HttpMethod;
 import com.winter.common.exception.ConfigureException;
 import com.winter.common.exception.base.BaseException;
 import com.winter.common.utils.ExceptionUtil;
 import com.winter.common.utils.LocalCacheUtil;
+import com.winter.dingtalk.constants.DtConstant;
 import com.winter.dingtalk.properties.WinterDingtalkProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,18 +57,18 @@ public abstract class AbstractDtClient implements IDtClient {
      */
     private WinterDingtalkProperties properties;
 
-    private static com.aliyun.dingtalkoauth2_1_0.Client client;
-
-    static {
-        try {
-            client = new com.aliyun.dingtalkoauth2_1_0.Client(new Config().setProtocol("https").setRegionId("central"));
-        } catch (Exception e) {
-            log.error("dingtalkoauth2_1_0 client create fail");
-        }
-    }
+    private com.aliyun.dingtalkoauth2_1_0.Client client;
 
     public AbstractDtClient(WinterDingtalkProperties properties) {
         this.properties = properties;
+        try {
+            client = new com.aliyun.dingtalkoauth2_1_0.Client(new Config()
+                    .setProtocol(properties.getNewProtocol())
+                    .setEndpoint(properties.getNewHost())
+                    .setRegionId("central"));
+        } catch (Exception e) {
+            log.error("dingtalkoauth2_1_0 client create fail");
+        }
     }
 
     /**
@@ -91,6 +104,18 @@ public abstract class AbstractDtClient implements IDtClient {
         if (cacheObj != null) {
             return String.valueOf(cacheObj);
         }
+        if (DtConstant.VERSION_OLD.equals(properties.getVersion())) {
+            DingTalkClient client = new DefaultDingTalkClient(composeUrl("/get_jsapi_ticket"));
+            OapiGetJsapiTicketRequest req = new OapiGetJsapiTicketRequest();
+            req.setHttpMethod("GET");
+            try {
+                OapiGetJsapiTicketResponse body = client.execute(req, getAccessToken());
+                LocalCacheUtil.set(JSAPI_TICKET, body.getTicket(), body.getExpiresIn() * 1000);
+            } catch (ApiException e) {
+                log.error(e.getMessage(), e);
+                throw new BaseException("创建jsapi ticket失败");
+            }
+        }
         CreateJsapiTicketHeaders createJsapiTicketHeaders = new CreateJsapiTicketHeaders();
         createJsapiTicketHeaders.xAcsDingtalkAccessToken = getAccessToken();
         String jsapiTicket = null;
@@ -118,6 +143,21 @@ public abstract class AbstractDtClient implements IDtClient {
         Object cacheObj = LocalCacheUtil.get(cacheKey);
         if (cacheObj != null) {
             return String.valueOf(cacheObj);
+        }
+        if (DtConstant.VERSION_OLD.equals(properties.getVersion())) {
+            DingTalkClient client = new DefaultDingTalkClient(composeUrl("/gettoken"));
+            OapiGettokenRequest request = new OapiGettokenRequest();
+            request.setAppkey(properties.getAppKey());
+            request.setAppsecret(properties.getAppSecret());
+            request.setHttpMethod(HttpMethod.GET.name());
+            try {
+                OapiGettokenResponse body = client.execute(request);
+                LocalCacheUtil.set(cacheKey, body.getAccessToken(), body.getExpiresIn() * 1000);
+                return body.getAccessToken();
+            } catch (ApiException e) {
+                log.error(e.getMessage(), e);
+                throw new BaseException("获取企业内部应用的accessToken失败");
+            }
         }
         GetAccessTokenRequest request = new GetAccessTokenRequest()
                 .setAppKey(properties.getAppKey())
@@ -147,6 +187,19 @@ public abstract class AbstractDtClient implements IDtClient {
         Object cacheObj = LocalCacheUtil.get(cacheKey);
         if (cacheObj != null) {
             return String.valueOf(cacheObj);
+        }
+        if (DtConstant.VERSION_OLD.equals(properties.getVersion())) {
+            DefaultDingTalkClient client = new DefaultDingTalkClient(composeUrl("/service/get_corp_token"));
+            OapiServiceGetCorpTokenRequest req = new OapiServiceGetCorpTokenRequest();
+            req.setAuthCorpid(properties.getCorpId());
+            try {
+                OapiServiceGetCorpTokenResponse body = client.execute(req, properties.getAppKey(), properties.getAppSecret(), properties.getSuiteTicket());
+                LocalCacheUtil.set(cacheKey, body.getAccessToken(), body.getExpiresIn() * 1000);
+                return body.getAccessToken();
+            } catch (ApiException e) {
+                log.error(e.getMessage(), e);
+                throw new BaseException("获取第三方应用授权企业的accessToken失败");
+            }
         }
         GetCorpAccessTokenRequest request = new GetCorpAccessTokenRequest()
                 .setSuiteKey(this.properties.getAppKey())
@@ -207,6 +260,21 @@ public abstract class AbstractDtClient implements IDtClient {
         if (cacheObj != null) {
             return String.valueOf(cacheObj);
         }
+        if (DtConstant.VERSION_OLD.equals(properties.getVersion())) {
+            DingTalkClient client = new DefaultDingTalkClient(composeUrl("/sso/gettoken"));
+            OapiSsoGettokenRequest req = new OapiSsoGettokenRequest();
+            req.setCorpid(properties.getCorpId());
+            req.setCorpsecret(properties.getSsoSecret());
+            req.setHttpMethod(HttpMethod.GET.name());
+            try {
+                OapiSsoGettokenResponse body = client.execute(req);
+                LocalCacheUtil.set(cacheKey, body.getAccessToken(), 7200 * 1000);
+                return body.getAccessToken();
+            } catch (ApiException e) {
+                log.error(e.getMessage(), e);
+                throw new BaseException("获取微应用后台免登的access_token失败");
+            }
+        }
         GetSsoAccessTokenRequest request = new GetSsoAccessTokenRequest()
                 .setCorpid(properties.getCorpId())
                 .setSsoSecret(properties.getSsoSecret());
@@ -218,5 +286,15 @@ public abstract class AbstractDtClient implements IDtClient {
             log.error(e.getMessage(), e);
             throw new BaseException("获取微应用后台免登的access_token失败");
         }
+    }
+
+    /**
+     * 组成url
+     *
+     * @param pathname
+     * @return
+     */
+    protected String composeUrl(String pathname) {
+        return properties.getProtocol() + "://" + properties.getHost() + pathname;
     }
 }

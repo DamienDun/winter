@@ -1,6 +1,5 @@
 package com.winter.dingtalk.clients;
 
-import com.alibaba.fastjson2.JSON;
 import com.winter.dingtalk.properties.WinterDingtalkProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class DtH5Client extends AbstractDtClient implements IDtClient {
      * @param request
      * @return
      */
-    public String getConfig(HttpServletRequest request) {
+    public Map<String, Object> getConfig(HttpServletRequest request) {
         //获取当前页面的完整URL路径，用于获取签名signature
         String urlString = request.getRequestURL().toString();
         String queryString = request.getQueryString();
@@ -65,7 +65,7 @@ public class DtH5Client extends AbstractDtClient implements IDtClient {
         configValue.put("timeStamp", timeStamp);
         configValue.put("corpId", getProperties().getCorpId());
         configValue.put("agentId", getProperties().getAgentId());
-        return JSON.toJSONString(configValue);
+        return configValue;
     }
 
     /**
@@ -83,7 +83,7 @@ public class DtH5Client extends AbstractDtClient implements IDtClient {
         try {
             MessageDigest crypt = MessageDigest.getInstance("SHA-256");
             crypt.reset();
-            crypt.update(plainTex.getBytes("UTF-8"));
+            crypt.update(plainTex.getBytes(StandardCharsets.UTF_8));
             signature = byteToHex(crypt.digest());
             return signature;
         } catch (Exception e) {

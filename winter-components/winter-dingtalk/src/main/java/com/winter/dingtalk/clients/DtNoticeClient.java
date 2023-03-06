@@ -37,7 +37,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @return taskId    创建的异步发送任务ID
      */
     public Long send(OapiMessageCorpconversationAsyncsendV2Request.Msg msg, String useridList) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/asyncsend_v2"));
         OapiMessageCorpconversationAsyncsendV2Request request = new OapiMessageCorpconversationAsyncsendV2Request();
         request.setAgentId(getProperties().getAgentId());
         request.setUseridList(useridList);
@@ -92,7 +92,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiMessageCorpconversationGetsendresultResponse sendMsgResultRsp(Long taskId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/getsendresult");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/getsendresult"));
         OapiMessageCorpconversationGetsendresultRequest req = new OapiMessageCorpconversationGetsendresultRequest();
         req.setAgentId(getProperties().getAgentId());
         req.setTaskId(taskId);
@@ -127,7 +127,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @param statusBg    状态栏背景色，推荐0xFF加六位颜色值
      */
     public void updateStatus(Long taskId, String statusValue, String statusBg) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/status_bar/update");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/status_bar/update"));
         OapiMessageCorpconversationStatusBarUpdateRequest request = new OapiMessageCorpconversationStatusBarUpdateRequest();
         request.setAgentId(getProperties().getAgentId());
         request.setStatusValue(statusValue);
@@ -153,7 +153,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiMessageCorpconversationGetsendprogressResponse getsendprogress(Long taskId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/getsendprogress");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/getsendprogress"));
         OapiMessageCorpconversationGetsendprogressRequest req = new OapiMessageCorpconversationGetsendprogressRequest();
         req.setAgentId(getProperties().getAgentId());
         req.setTaskId(taskId);
@@ -177,7 +177,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiMessageCorpconversationGetsendresultResponse getsendresult(Long taskId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/getsendresult");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/getsendresult"));
         OapiMessageCorpconversationGetsendresultRequest req = new OapiMessageCorpconversationGetsendresultRequest();
         req.setAgentId(getProperties().getAgentId());
         req.setTaskId(taskId);
@@ -200,7 +200,7 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
      * @param taskId 工作通知任务ID
      */
     public void recall(Long taskId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/message/corpconversation/recall");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/message/corpconversation/recall"));
         OapiMessageCorpconversationRecallRequest req = new OapiMessageCorpconversationRecallRequest();
         req.setAgentId(getProperties().getAgentId());
         req.setMsgTaskId(taskId);

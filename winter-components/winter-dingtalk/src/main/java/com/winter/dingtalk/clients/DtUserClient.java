@@ -44,7 +44,7 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
      */
     public OapiV2UserGetResponse.UserGetResponse get(String userId) {
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/v2/user/get");
+            DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/v2/user/get"));
             OapiV2UserGetRequest req = new OapiV2UserGetRequest();
             req.setUserid(userId);
             req.setLanguage("zh_CN");
@@ -68,7 +68,7 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
      */
     public String getByMobile(String mobile) {
         try {
-            DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/v2/user/getbymobile");
+            DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/v2/user/getbymobile"));
             OapiV2UserGetbymobileRequest req = new OapiV2UserGetbymobileRequest();
             req.setMobile(mobile);
             OapiV2UserGetbymobileResponse rsp = client.execute(req, getAccessToken());
@@ -90,7 +90,7 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public String getByUnionid(String unionid) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/user/getbyunionid");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/user/getbyunionid"));
         OapiUserGetbyunionidRequest req = new OapiUserGetbyunionidRequest();
         req.setUnionid(unionid);
         try {
@@ -113,7 +113,7 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public List<String> listByDeptId(Long deptId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/user/listid");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/user/listid"));
         OapiUserListidRequest req = new OapiUserListidRequest();
         req.setDeptId(deptId);
 

@@ -39,7 +39,7 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiV2UserGetuserinfoResponse.UserGetByCodeResponse getUserInfo(String code) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/topapi/v2/user/getuserinfo");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/topapi/v2/user/getuserinfo"));
         OapiV2UserGetuserinfoRequest req = new OapiV2UserGetuserinfoRequest();
         req.setCode(code);
         try {
@@ -62,7 +62,7 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiSsoGetuserinfoResponse getSsoUserInfo(String code) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sso/getuserinfo");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/sso/getuserinfo"));
         OapiSsoGetuserinfoRequest req = new OapiSsoGetuserinfoRequest();
         req.setCode(code);
         req.setHttpMethod("GET");
@@ -86,7 +86,7 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiSnsGetuserinfoBycodeResponse.UserInfo getSnsUserInfo(String tmpAuthCode) {
-        DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
+        DefaultDingTalkClient client = new DefaultDingTalkClient(composeUrl("/sns/getuserinfo_bycode"));
         OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
         req.setTmpAuthCode(tmpAuthCode);
         try {

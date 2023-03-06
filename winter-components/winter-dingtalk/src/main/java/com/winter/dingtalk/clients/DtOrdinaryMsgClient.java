@@ -37,7 +37,7 @@ public class DtOrdinaryMsgClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public String send(OapiMessageSendToConversationRequest.Msg msg, String sender, String cid) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/message/send_to_conversation");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/message/send_to_conversation"));
         OapiMessageSendToConversationRequest req = new OapiMessageSendToConversationRequest();
         req.setSender(sender);
         req.setCid(cid);

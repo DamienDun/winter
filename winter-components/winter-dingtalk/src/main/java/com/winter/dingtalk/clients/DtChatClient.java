@@ -38,7 +38,7 @@ public class DtChatClient extends AbstractDtClient implements IDtClient {
      * @param chatId 群会话id
      */
     public String send(OapiChatSendRequest.Msg msg, String chatId) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/send");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/chat/send"));
         OapiChatSendRequest req = new OapiChatSendRequest();
         req.setMsg(msg);
         req.setChatid(chatId);
@@ -82,7 +82,7 @@ public class DtChatClient extends AbstractDtClient implements IDtClient {
      * @return
      */
     public OapiChatGetReadListResponse getReadList(String messageId, Long cursor, Long size) {
-        DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/chat/getReadList");
+        DingTalkClient client = new DefaultDingTalkClient(composeUrl("/chat/getReadList"));
         OapiChatGetReadListRequest req = new OapiChatGetReadListRequest();
         req.setMessageId(messageId);
         req.setCursor(cursor);

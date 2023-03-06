@@ -2,6 +2,7 @@ package com.winter.dingtalk.properties;
 
 import com.winter.common.config.WinterConfig;
 import com.winter.dingtalk.constants.DtAccessTokenTypeConstant;
+import com.winter.dingtalk.constants.DtConstant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -89,6 +90,31 @@ public class WinterDingtalkProperties implements Serializable {
      * sso密钥，可以在开发者后台基本信息—开发信息（旧版）页面查看。
      */
     private String ssoSecret;
+
+    /**
+     * 旧版api调用的服务地址
+     */
+    private String host = DtConstant.OLD_HOST;
+
+    /**
+     * 旧版api协议
+     */
+    private String protocol = DtConstant.HTTPS_PROTOCOL;
+
+    /**
+     * 新版api调用的服务地址
+     */
+    private String newHost = DtConstant.NEW_HOST;
+
+    /**
+     * 新版api协议
+     */
+    private String newProtocol = DtConstant.HTTPS_PROTOCOL;
+
+    /**
+     * 版本
+     */
+    private String version = DtConstant.VERSION_OLD;
 
     public WinterDingtalkProperties() {
     }
