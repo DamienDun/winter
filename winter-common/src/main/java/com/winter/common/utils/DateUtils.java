@@ -14,19 +14,19 @@ import java.util.Date;
  * @author winter
  */
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
-    public static String YYYY = "yyyy";
+    public static final String YYYY = "yyyy";
 
-    public static String YYYY_MM = "yyyy-MM";
+    public static final String YYYY_MM = "yyyy-MM";
 
-    public static String YYYY_MM_DD = "yyyy-MM-dd";
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
-    public static String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
+    public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
-    public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
-    public static String YYYY_MM_DD_T_HH_MM_SS_SSS = "yyyy-MM-dd'T'hh:mm:ss.SSS";
+    public static final String YYYY_MM_DD_T_HH_MM_SS_SSS = "yyyy-MM-dd'T'hh:mm:ss.SSS";
 
-    public static String YYYY_MM_DD_T_HH_MM_SS_SSSZ = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
+    public static final String YYYY_MM_DD_T_HH_MM_SS_SSSZ = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
 
     private static String[] parsePatterns = {
             "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
