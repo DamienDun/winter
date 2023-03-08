@@ -7,7 +7,7 @@ import com.winter.common.core.domain.R;
 import com.winter.common.core.dto.IdInput;
 import com.winter.common.core.dto.IdsInput;
 import com.winter.common.core.service.IBaseService;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -137,7 +137,7 @@ public class LogAspect {
      */
     public void getControllerMethodDescription(JoinPoint joinPoint, Log log, SysOperLog operLog, Object jsonResult) throws Exception {
         // 设置action动作
-        operLog.setBusinessType(log.businessType().ordinal());
+        operLog.setBusinessType(log.businessType());
         // 设置标题
         // 如果设置了useServiceModuleName true 且title为空,则从Controller.getModuleName来设置title
         String logTitle = log.title();
@@ -147,7 +147,7 @@ public class LogAspect {
         }
         operLog.setTitle(logTitle);
         // 设置操作人类别
-        operLog.setOperatorType(log.operatorType().ordinal());
+        operLog.setOperatorType(log.operatorType());
         // 是否需要保存request，参数和值
         if (log.isSaveRequestData()) {
             // 获取参数的信息，传入到数据库中。

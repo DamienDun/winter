@@ -1,59 +1,58 @@
-package com.winter.common.enums;
+package com.winter.common.constant;
 
 /**
  * 业务操作类型
- * 
+ *
  * @author winter
  */
-public enum BusinessType
-{
+public interface BusinessType {
     /**
      * 其它
      */
-    OTHER,
+    int OTHER = 1;
 
     /**
      * 新增
      */
-    INSERT,
+    int INSERT = 2;
 
     /**
      * 修改
      */
-    UPDATE,
+    int UPDATE = 3;
 
     /**
      * 删除
      */
-    DELETE,
+    int DELETE = 4;
 
     /**
      * 授权
      */
-    GRANT,
+    int GRANT = 5;
 
     /**
      * 导出
      */
-    EXPORT,
+    int EXPORT = 6;
 
     /**
      * 导入
      */
-    IMPORT,
+    int IMPORT = 7;
 
     /**
      * 强退
      */
-    FORCE,
+    int FORCE = 8;
 
     /**
      * 生成代码
      */
-    GENCODE,
-    
+    int GENCODE = 9;
+
     /**
      * 清空数据
      */
-    CLEAN,
+    int CLEAN = 10;
 }

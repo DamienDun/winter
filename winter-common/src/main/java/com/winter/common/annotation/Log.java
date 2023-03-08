@@ -1,7 +1,7 @@
 package com.winter.common.annotation;
 
-import com.winter.common.enums.BusinessType;
-import com.winter.common.enums.OperatorType;
+import com.winter.common.constant.BusinessType;
+import com.winter.common.constant.OperatorType;
 
 import java.lang.annotation.*;
 
@@ -22,12 +22,12 @@ public @interface Log {
     /**
      * 功能
      */
-    BusinessType businessType() default BusinessType.OTHER;
+    int businessType() default BusinessType.OTHER;
 
     /**
      * 操作人类别
      */
-    OperatorType operatorType() default OperatorType.MANAGE;
+    int operatorType() default OperatorType.MANAGE;
 
     /**
      * 是否保存请求的参数

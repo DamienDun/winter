@@ -6,7 +6,7 @@ import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginUser;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.file.FileUploadUtils;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import ${packageName}.domain.${ClassName};
 import ${packageName}.service.I${ClassName}Service;
 import com.winter.common.utils.poi.ExcelUtil;
@@ -26,7 +26,7 @@ import com.winter.common.core.page.TableDataInfo;
 
 /**
  * ${functionName}Controller
- * 
+ *
  * @author ${author}
  * @date ${datetime}
  */

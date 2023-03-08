@@ -5,7 +5,7 @@ import com.winter.common.constant.Constants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.exception.job.TaskException;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.poi.ExcelUtil;

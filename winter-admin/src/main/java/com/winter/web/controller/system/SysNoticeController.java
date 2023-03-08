@@ -4,7 +4,7 @@ import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.system.domain.SysNotice;
 import com.winter.system.service.ISysNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;

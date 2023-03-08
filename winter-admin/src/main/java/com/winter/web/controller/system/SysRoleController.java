@@ -8,7 +8,7 @@ import com.winter.common.core.domain.entity.SysRole;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginUser;
 import com.winter.common.core.page.TableDataInfo;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.poi.ExcelUtil;
 import com.winter.framework.web.service.SysPermissionService;

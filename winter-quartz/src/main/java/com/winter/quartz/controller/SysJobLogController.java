@@ -4,7 +4,7 @@ import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.poi.ExcelUtil;
 import com.winter.quartz.domain.SysJobLog;
 import com.winter.quartz.service.ISysJobLogService;

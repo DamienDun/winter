@@ -1,24 +1,23 @@
-package com.winter.common.enums;
+package com.winter.common.constant;
 
 /**
  * 操作人类别
- * 
+ *
  * @author winter
  */
-public enum OperatorType
-{
+public interface OperatorType {
     /**
      * 其它
      */
-    OTHER,
+    int OTHER = 1;
 
     /**
      * 后台用户
      */
-    MANAGE,
+    int MANAGE = 2;
 
     /**
      * 手机端用户
      */
-    MOBILE
+    int MOBILE = 3;
 }

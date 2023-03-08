@@ -5,7 +5,7 @@ import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysDictType;
 import com.winter.common.core.page.TableDataInfo;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.poi.ExcelUtil;
 import com.winter.system.service.ISysDictTypeService;
 import org.springframework.beans.factory.annotation.Autowired;

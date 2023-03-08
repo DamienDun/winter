@@ -6,7 +6,7 @@ import com.winter.common.constant.UserConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysDept;
-import com.winter.common.enums.BusinessType;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.StringUtils;
 import com.winter.system.service.ISysDeptService;
 import org.apache.commons.lang3.ArrayUtils;
