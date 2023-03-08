@@ -23,6 +23,9 @@ public class PageQuery implements Serializable {
     @ApiModelProperty("页码")
     private int pageSize = 10;
 
+    @ApiModelProperty(value = "最大索引")
+    private Long maxId;
+
     public int getPageNum() {
         return pageNum <= 0 ? 1 : pageNum;
     }
