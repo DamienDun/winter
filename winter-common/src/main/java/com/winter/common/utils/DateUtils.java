@@ -6,6 +6,7 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -28,7 +29,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static final String YYYY_MM_DD_T_HH_MM_SS_SSSZ = "yyyy-MM-dd'T'hh:mm:ss.SSS'Z'";
 
-    private static String[] parsePatterns = {
+    private static final String[] parsePatterns = {
             "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
             "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
             "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM",
@@ -152,6 +153,27 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
+     * 计算相差秒数
+     */
+    public static long timeDistanceSecond(Date endDate, Date nowDate) {
+        return (endDate.getTime() - nowDate.getTime()) / 1000;
+    }
+
+    /**
+     * 计算两个时间差多少小时
+     */
+    public static Integer timeDistanceHour(Date endDate, Date nowDate) {
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        // long ns = 1000;
+        // 获得两个时间的毫秒时间差异
+        long diff = endDate.getTime() - nowDate.getTime();
+        // 计算差多少小时
+        long hour = diff % nd / nh;
+        return Integer.valueOf(String.valueOf(hour));
+    }
+
+    /**
      * 增加 LocalDateTime ==> Date
      */
     public static Date toDate(LocalDateTime temporalAccessor) {
@@ -231,6 +253,22 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
+     * 获取指定时间的结束时间,区别于getDayEndDateTime(Date date)方法(这个方法得到的23:59.59.999,插入数据库,会自动变成第二天的凌晨)
+     *
+     * @param date
+     * @return
+     */
+    public static Date getEndTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    /**
      * 转换为 LocalDateTime
      *
      * @param date 日期
@@ -263,5 +301,98 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             return null;
         }
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    /**
+     * 获取昨天
+     *
+     * @return
+     */
+    public static String getYesterdayStr() {
+        return DateUtils.dateTime(getYesterday());
+    }
+
+    /**
+     * 获取昨天
+     *
+     * @return
+     */
+    public static Date getYesterday() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return calendar.getTime();
+    }
+
+    /**
+     * 获取本周的周一
+     *
+     * @param format
+     * @return
+     */
+    public static String getMondayOfThisWeek(String format) {
+        Calendar c = Calendar.getInstance();
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        if (dayOfWeek == 0) {
+            dayOfWeek = 7;
+        }
+        c.add(Calendar.DATE, -dayOfWeek + 1);
+        return parseDateToStr(format, c.getTime());
+    }
+
+    /**
+     * 获取指定日期的周一
+     *
+     * @param date
+     * @param format
+     * @return
+     */
+    public static String getMondayOfWeek(Date date, String format) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        if (dayOfWeek == 0) {
+            dayOfWeek = 7;
+        }
+        c.add(Calendar.DATE, -dayOfWeek + 1);
+        return parseDateToStr(format, c.getTime());
+    }
+
+    /**
+     * 获取当月的第一天
+     *
+     * @param format
+     * @return
+     */
+    public static String getFirstDayOfThisMonth(String format) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        return parseDateToStr(format, c.getTime());
+    }
+
+    /**
+     * 获取指定时间的月第一天
+     *
+     * @param date
+     * @param format
+     * @return
+     */
+    public static String getFirstDayOfMonth(Date date, String format) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        return parseDateToStr(format, c.getTime());
+    }
+
+    /**
+     * 获取当年的1月1号
+     *
+     * @param format
+     * @return
+     */
+    public static String getFirstDayOfThisYear(String format) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, 0);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        return parseDateToStr(format, c.getTime());
     }
 }
