@@ -126,12 +126,12 @@ public class OkHttpCli {
      * @param params 请求参数 map
      * @return string
      */
-    public String doPost(String url, Map<String, String> params) {
+    public String doPost(String url, Map<String, Object> params) {
         FormBody.Builder builder = new FormBody.Builder();
 
         if (params != null && params.keySet().size() > 0) {
             for (String key : params.keySet()) {
-                builder.add(key, params.get(key));
+                builder.add(key, String.valueOf(params.get(key)));
             }
         }
         Request request = new Request.Builder().url(url).post(builder.build()).build();
