@@ -2,17 +2,19 @@ package com.winter.web.controller.system;
 
 import com.winter.common.annotation.Log;
 import com.winter.common.config.WinterConfig;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginUser;
-import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.file.FileUploadUtils;
 import com.winter.common.utils.file.MimeTypeUtils;
 import com.winter.framework.web.service.TokenService;
 import com.winter.system.service.ISysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/system/user/profile")
+@Api(tags = "个人信息管理")
 public class SysProfileController extends BaseController {
     @Autowired
     private ISysUserService userService;
@@ -35,6 +38,7 @@ public class SysProfileController extends BaseController {
      * 个人信息
      */
     @GetMapping
+    @ApiOperation("获取个人信息")
     public AjaxResult profile() {
         LoginUser loginUser = getLoginUser();
         SysUser user = loginUser.getUser();
@@ -49,6 +53,7 @@ public class SysProfileController extends BaseController {
      */
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改用户信息")
     public AjaxResult updateProfile(@RequestBody SysUser user) {
         LoginUser loginUser = getLoginUser();
         SysUser sysUser = loginUser.getUser();
@@ -75,6 +80,7 @@ public class SysProfileController extends BaseController {
      */
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PutMapping("/updatePwd")
+    @ApiOperation("重置密码")
     public AjaxResult updatePwd(String oldPassword, String newPassword) {
         LoginUser loginUser = getLoginUser();
         String userName = loginUser.getUsername();
@@ -99,6 +105,7 @@ public class SysProfileController extends BaseController {
      */
     @Log(title = "用户头像", businessType = BusinessType.UPDATE)
     @PostMapping("/avatar")
+    @ApiOperation("头像上传")
     public AjaxResult avatar(@RequestParam("avatarfile") MultipartFile file) throws Exception {
         if (!file.isEmpty()) {
             LoginUser loginUser = getLoginUser();
