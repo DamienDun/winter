@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 表格分页数据对象
- * 
+ *
  * @author winter
  */
 public class TableDataInfo implements Serializable
@@ -13,7 +13,7 @@ public class TableDataInfo implements Serializable
     private static final long serialVersionUID = 1L;
 
     /** 总记录数 */
-    private long total;
+    private int total;
 
     /** 列表数据 */
     private List<?> rows;
@@ -33,7 +33,7 @@ public class TableDataInfo implements Serializable
 
     /**
      * 分页
-     * 
+     *
      * @param list 列表数据
      * @param total 总记录数
      */
@@ -48,7 +48,7 @@ public class TableDataInfo implements Serializable
         return total;
     }
 
-    public void setTotal(long total)
+    public void setTotal(int total)
     {
         this.total = total;
     }

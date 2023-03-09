@@ -79,7 +79,7 @@ public class BaseController {
         rspData.setCode(HttpStatus.SUCCESS);
         rspData.setMsg("查询成功");
         rspData.setRows(list);
-        rspData.setTotal(new PageInfo(list).getTotal());
+        rspData.setTotal(Long.valueOf(new PageInfo(list).getTotal()).intValue());
         return rspData;
     }
 
@@ -90,7 +90,7 @@ public class BaseController {
         TableDataInfo rspData = new TableDataInfo();
         rspData.setCode(0);
         rspData.setRows(page.getRecords());
-        rspData.setTotal(page.getTotal());
+        rspData.setTotal(Long.valueOf(page.getTotal()).intValue());
         rspData.setMsg("操作成功");
         return rspData;
     }
