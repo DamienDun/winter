@@ -238,7 +238,7 @@ public class MinioStorageClient extends AbstractStorageClient<MinioBucket> {
      * @return
      */
     public String getAccessUrl(String bucketName, FileInfo fileInfo) {
-        return this.getPathAddress(this.getEndpoint(), bucketName, fileInfo.getFullPath());
+        return this.getPathAddress(this.getServerUrl(), bucketName, fileInfo.getFullPath());
     }
 
     @Override
