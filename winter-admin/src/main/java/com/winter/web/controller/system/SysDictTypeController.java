@@ -9,7 +9,7 @@ import com.winter.common.core.page.TableDataInfo;
 import com.winter.common.utils.poi.ExcelUtil;
 import com.winter.system.service.ISysDictTypeService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +32,7 @@ public class SysDictTypeController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
-    @ApiModelProperty(value = "获取列表")
+    @ApiOperation(value = "获取列表")
     public TableDataInfo list(SysDictType dictType) {
         startPage();
         List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
@@ -42,7 +42,7 @@ public class SysDictTypeController extends BaseController {
     @Log(title = "字典类型", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:dict:export')")
     @PostMapping("/export")
-    @ApiModelProperty(value = "导出数据")
+    @ApiOperation(value = "导出数据")
     public void export(HttpServletResponse response, SysDictType dictType) {
         List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
         ExcelUtil<SysDictType> util = new ExcelUtil<SysDictType>(SysDictType.class);
@@ -54,7 +54,7 @@ public class SysDictTypeController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:dict:query')")
     @GetMapping(value = "/{dictId}")
-    @ApiModelProperty(value = "查询字典类型详细")
+    @ApiOperation(value = "查询字典类型详细")
     public AjaxResult getInfo(@PathVariable Long dictId) {
         return success(dictTypeService.selectDictTypeById(dictId));
     }
@@ -65,7 +65,7 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:add')")
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @PostMapping
-    @ApiModelProperty(value = "新增字典类型")
+    @ApiOperation(value = "新增字典类型")
     public AjaxResult add(@Validated @RequestBody SysDictType dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
             return error("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
@@ -80,7 +80,7 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:edit')")
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @PutMapping
-    @ApiModelProperty(value = "修改字典类型")
+    @ApiOperation(value = "修改字典类型")
     public AjaxResult edit(@Validated @RequestBody SysDictType dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
             return error("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
@@ -95,7 +95,7 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictIds}")
-    @ApiModelProperty(value = "删除字典类型")
+    @ApiOperation(value = "删除字典类型")
     public AjaxResult remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(dictIds);
         return success();
@@ -107,7 +107,7 @@ public class SysDictTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dict:remove')")
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
-    @ApiModelProperty(value = "刷新字典缓存")
+    @ApiOperation(value = "刷新字典缓存")
     public AjaxResult refreshCache() {
         dictTypeService.resetDictCache();
         return success();
@@ -117,7 +117,7 @@ public class SysDictTypeController extends BaseController {
      * 获取字典选择框列表
      */
     @GetMapping("/optionselect")
-    @ApiModelProperty(value = "获取字典选择框列表")
+    @ApiOperation(value = "获取字典选择框列表")
     public AjaxResult optionselect() {
         List<SysDictType> dictTypes = dictTypeService.selectDictTypeAll();
         return success(dictTypes);

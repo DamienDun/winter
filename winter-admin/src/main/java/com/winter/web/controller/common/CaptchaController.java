@@ -10,7 +10,7 @@ import com.winter.common.utils.sign.Base64;
 import com.winter.common.utils.uuid.IdUtils;
 import com.winter.system.service.ISysConfigService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +47,7 @@ public class CaptchaController {
      * 生成验证码
      */
     @GetMapping("/captchaImage")
-    @ApiModelProperty(value = "生成验证码")
+    @ApiOperation(value = "生成验证码")
     public AjaxResult getCode(HttpServletResponse response) throws IOException {
         AjaxResult ajax = AjaxResult.success();
         boolean captchaEnabled = configService.selectCaptchaEnabled();

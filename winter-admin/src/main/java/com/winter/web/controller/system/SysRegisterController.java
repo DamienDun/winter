@@ -1,7 +1,7 @@
 package com.winter.web.controller.system;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +28,7 @@ public class SysRegisterController extends BaseController {
     private ISysConfigService configService;
 
     @PostMapping("/register")
-    @ApiModelProperty(value = "注册")
+    @ApiOperation(value = "注册")
     public AjaxResult register(@RequestBody RegisterBody user) {
         if (!("true".equals(configService.selectConfigByKey("sys.account.registerUser")))) {
             return error("当前系统没有开启注册功能！");
