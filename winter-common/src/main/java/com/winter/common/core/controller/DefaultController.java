@@ -1,6 +1,7 @@
 package com.winter.common.core.controller;
 
 import com.winter.common.annotation.Log;
+import com.winter.common.annotation.RepeatSubmit;
 import com.winter.common.annotation.WinterPreAuthorize;
 import com.winter.common.constant.ApiConstants;
 import com.winter.common.core.domain.R;
@@ -56,6 +57,7 @@ public abstract class DefaultController<TService extends IBaseService<Long, TInp
         return service.getModuleName();
     }
 
+    @RepeatSubmit
     @WinterPreAuthorize(hasPermi = ApiConstants.ADD, useControllerModule = true)
     @Log(businessType = BusinessType.INSERT, useServiceModuleName = true)
     @ApiOperation("新增")
@@ -65,6 +67,7 @@ public abstract class DefaultController<TService extends IBaseService<Long, TInp
         return R.ok(service.add(input));
     }
 
+    @RepeatSubmit
     @WinterPreAuthorize(hasPermi = ApiConstants.UPDATE, useControllerModule = true)
     @Log(businessType = BusinessType.UPDATE, useServiceModuleName = true)
     @ApiOperation("根据id修改")
@@ -82,6 +85,7 @@ public abstract class DefaultController<TService extends IBaseService<Long, TInp
         return R.ok(service.get(input.getId()));
     }
 
+    @RepeatSubmit
     @WinterPreAuthorize(hasPermi = ApiConstants.DELETE, useControllerModule = true)
     @Log(businessType = BusinessType.DELETE, useServiceModuleName = true)
     @ApiOperation("根据id删除")
@@ -92,6 +96,7 @@ public abstract class DefaultController<TService extends IBaseService<Long, TInp
         return R.ok();
     }
 
+    @RepeatSubmit
     @WinterPreAuthorize(hasPermi = ApiConstants.DELETE, useControllerModule = true)
     @Log(businessType = BusinessType.DELETE, useServiceModuleName = true)
     @ApiOperation("批量删除")
