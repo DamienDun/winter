@@ -111,6 +111,7 @@ public abstract class AbstractDtClient implements IDtClient {
             try {
                 OapiGetJsapiTicketResponse body = client.execute(req, getAccessToken());
                 LocalCacheUtil.set(JSAPI_TICKET, body.getTicket(), body.getExpiresIn() * 1000);
+                return body.getTicket();
             } catch (ApiException e) {
                 log.error(e.getMessage(), e);
                 throw new BaseException("创建jsapi ticket失败");
@@ -123,11 +124,11 @@ public abstract class AbstractDtClient implements IDtClient {
             CreateJsapiTicketResponse response = client.createJsapiTicketWithOptions(createJsapiTicketHeaders, new RuntimeOptions());
             jsapiTicket = response.getBody().getJsapiTicket();
             LocalCacheUtil.set(JSAPI_TICKET, jsapiTicket, response.getBody().getExpireIn() * 1000);
+            return jsapiTicket;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BaseException("创建jsapi ticket失败");
         }
-        return jsapiTicket;
     }
 
     /**
