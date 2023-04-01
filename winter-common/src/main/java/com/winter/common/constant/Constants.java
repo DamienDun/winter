@@ -158,4 +158,34 @@ public interface Constants {
      * 响应头-允许暴露
      */
     String RESP_ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+
+    /**
+     * 点
+     */
+    String DOT = ".";
+
+    /**
+     * 换行符
+     */
+    String LINE_FEED = "\n";
+
+    /**
+     * 百分号
+     */
+    String PER_CENT = "%";
+
+    /**
+     * 单引号
+     */
+    String SINGLE_QUOTES = "'";
+
+    /**
+     * 左圆括号
+     */
+    String LEFT_PARENTHESES = "(";
+
+    /**
+     * 右圆括号
+     */
+    String RIGHT_PARENTHESES = ")";
 }
