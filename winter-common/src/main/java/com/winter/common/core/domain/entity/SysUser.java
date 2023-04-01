@@ -6,6 +6,7 @@ import com.winter.common.annotation.Excel.Type;
 import com.winter.common.annotation.Excels;
 import com.winter.common.core.domain.BaseEntity;
 import com.winter.common.xss.Xss;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -21,6 +22,7 @@ import java.util.List;
  *
  * @author winter
  */
+@ApiModel(value = "用户")
 public class SysUser extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
