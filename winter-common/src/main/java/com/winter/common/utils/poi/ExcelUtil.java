@@ -236,29 +236,42 @@ public class ExcelUtil<T> {
      * @return 转换后集合
      */
     public List<T> importExcel(InputStream is) throws Exception {
-        return importExcel(is, 0);
+        return importExcel(is, 0, null);
     }
 
     /**
      * 对excel表单默认第一个索引名转换成list
      *
-     * @param is       输入流
-     * @param titleNum 标题占用行数
+     * @param is          输入流
+     * @param limitRowNum 限制解析的行数
      * @return 转换后集合
      */
-    public List<T> importExcel(InputStream is, int titleNum) throws Exception {
-        return importExcel(StringUtils.EMPTY, is, titleNum);
+    public List<T> importExcel(InputStream is, Integer limitRowNum) throws Exception {
+        return importExcel(is, 0, limitRowNum);
+    }
+
+    /**
+     * 对excel表单默认第一个索引名转换成list
+     *
+     * @param is          输入流
+     * @param titleNum    标题占用行数
+     * @param limitRowNum 限制解析的行数
+     * @return 转换后集合
+     */
+    public List<T> importExcel(InputStream is, int titleNum, Integer limitRowNum) throws Exception {
+        return importExcel(StringUtils.EMPTY, is, titleNum, limitRowNum);
     }
 
     /**
      * 对excel表单指定表格索引名转换成list
      *
-     * @param sheetName 表格索引名
-     * @param titleNum  标题占用行数
-     * @param is        输入流
+     * @param sheetName   表格索引名
+     * @param is          输入流
+     * @param titleNum    标题占用行数
+     * @param limitRowNum 限制解析的行数
      * @return 转换后集合
      */
-    public List<T> importExcel(String sheetName, InputStream is, int titleNum) throws Exception {
+    public List<T> importExcel(String sheetName, InputStream is, int titleNum, Integer limitRowNum) throws Exception {
         this.type = Type.IMPORT;
         this.wb = WorkbookFactory.create(is);
         this.formulaEvaluator = this.wb.getCreationHelper().createFormulaEvaluator();
@@ -277,6 +290,9 @@ public class ExcelUtil<T> {
         }
         // 获取最后一个非空行的行下标，比如总行数为n，则返回的为n-1
         int rows = sheet.getLastRowNum();
+        if (Objects.nonNull(limitRowNum)) {
+            rows = limitRowNum;
+        }
 
         if (rows > 0) {
             // 定义一个map用于存放excel列的序号和field.
