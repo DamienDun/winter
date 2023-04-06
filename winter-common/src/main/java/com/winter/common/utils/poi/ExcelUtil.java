@@ -290,7 +290,7 @@ public class ExcelUtil<T> {
         }
         // 获取最后一个非空行的行下标，比如总行数为n，则返回的为n-1
         int rows = sheet.getLastRowNum();
-        if (Objects.nonNull(limitRowNum)) {
+        if (Objects.nonNull(limitRowNum) && rows < limitRowNum) {
             rows = limitRowNum;
         }
 
