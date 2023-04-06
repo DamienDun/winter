@@ -1308,7 +1308,7 @@ public class ExcelUtil<T> {
         }
         for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
+            if (cell != null && cell.getCellType() != CellType.BLANK && StringUtils.isNotEmpty(cell.getStringCellValue())) {
                 return false;
             }
         }
