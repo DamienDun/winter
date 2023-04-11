@@ -1308,14 +1308,14 @@ public class ExcelUtil<T> {
         }
         for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
-            if (Objects.isNull(cell) || cell.getCellType() == CellType.BLANK) {
-                return true;
+            if (Objects.nonNull(cell) && cell.getCellType() == CellType.STRING && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                return false;
             }
-            if (cell.getCellType() == CellType.STRING && StringUtils.isEmpty(cell.getStringCellValue())) {
-                return true;
+            if (Objects.nonNull(cell) && cell.getCellType() != CellType.BLANK && cell.getCellType() != CellType.STRING) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
