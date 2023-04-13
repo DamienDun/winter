@@ -1,12 +1,13 @@
 package com.winter.quartz.util;
 
+import com.winter.common.utils.StringUtils;
+import com.winter.common.utils.spring.SpringUtils;
+import com.winter.quartz.domain.SysJob;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
-import com.winter.common.utils.StringUtils;
-import com.winter.common.utils.spring.SpringUtils;
-import com.winter.quartz.domain.SysJob;
 
 /**
  * 任务执行工具
@@ -34,7 +35,7 @@ public class JobInvokeUtil
         }
         else
         {
-            Object bean = Class.forName(beanName).newInstance();
+            Object bean = Class.forName(beanName).getDeclaredConstructor().newInstance();
             invokeMethod(bean, methodName, methodParams);
         }
     }
@@ -64,7 +65,7 @@ public class JobInvokeUtil
 
     /**
      * 校验是否为为class包名
-     * 
+     *
      * @param invokeTarget 名称
      * @return true是 false否
      */
@@ -75,7 +76,7 @@ public class JobInvokeUtil
 
     /**
      * 获取bean名称
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return bean名称
      */
@@ -87,7 +88,7 @@ public class JobInvokeUtil
 
     /**
      * 获取bean方法
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return method方法
      */
@@ -99,7 +100,7 @@ public class JobInvokeUtil
 
     /**
      * 获取method方法参数相关列表
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return method方法相关参数列表
      */
@@ -146,7 +147,7 @@ public class JobInvokeUtil
 
     /**
      * 获取参数类型
-     * 
+     *
      * @param methodParams 参数相关列表
      * @return 参数类型列表
      */
@@ -164,7 +165,7 @@ public class JobInvokeUtil
 
     /**
      * 获取参数值
-     * 
+     *
      * @param methodParams 参数相关列表
      * @return 参数值列表
      */
