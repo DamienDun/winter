@@ -3,6 +3,8 @@ package com.winter.common.config;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 public class OkHttpConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(OkHttpConfig.class);
 
     /**
      * cookie存储
@@ -97,10 +101,8 @@ public class OkHttpConfig {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[]{x509TrustManager()}, new SecureRandom());
             return sslContext.getSocketFactory();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            log.error(e.getMessage(), e);
         }
         return null;
     }
