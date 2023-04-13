@@ -36,7 +36,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
                     setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
                 }
             } catch (Exception e) {
-                log.error("获取不到当前登录用户信息,跳过字段{}的自动填充", CreateAuditing.FIELD_CREATED_USER_ID);
+                log.warn("获取不到当前登录用户信息,跳过字段{}的自动填充", CreateAuditing.FIELD_CREATED_USER_ID);
             }
 
         }
@@ -55,7 +55,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         try {
             loginUser = SecurityUtils.getLoginUser();
         } catch (Exception e) {
-            log.error("获取不到当前登录用户信息,跳过审计字段的自动填充");
+            log.warn("获取不到当前登录用户信息,跳过审计字段的自动填充");
         }
         Date nowDate = DateUtils.getNowDate();
         if (metaObject.hasGetter(DeleteAuditing.FIELD_DELETED) &&
