@@ -45,6 +45,12 @@
         <dingtalk.new.version>1.4.15</dingtalk.new.version>
         <spring.security.oauth2.version>2.3.8.RELEASE</spring.security.oauth2.version>
         <security.jwt.version>1.0.9.RELEASE</security.jwt.version>
+        <postgresql.jdbc.version>42.2.5</postgresql.jdbc.version>
+        <hive.jdbc.version>2.1.0</hive.jdbc.version>
+        <oracle.jdbc.version>21.1.0.0</oracle.jdbc.version>
+        <sqlserver.jdbc.version>4.0</sqlserver.jdbc.version>
+        <presto.jdbc.version>0.240</presto.jdbc.version>
+        <clickhouse.jdbc.version>0.2.4</clickhouse.jdbc.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -348,6 +354,45 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-jwt</artifactId>
                 <version>${security.jwt.version}</version>
+            </dependency>
+
+            <!-- postgre依赖-->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.jdbc.version}</version>
+            </dependency>
+            <!-- sqlserver依赖-->
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqlserver.jdbc.version}</version>
+            </dependency>
+            <!-- oracle依赖-->
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${oracle.jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.facebook.presto</groupId>
+                <artifactId>presto-jdbc</artifactId>
+                <version>${presto.jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.yandex.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.jdbc.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
