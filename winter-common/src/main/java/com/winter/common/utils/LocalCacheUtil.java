@@ -16,7 +16,7 @@ public class LocalCacheUtil {
     /**
      * 缓存Map
      */
-    private static ConcurrentHashMap<String, LocalCacheData> CACHE_MAP = new ConcurrentHashMap<String, LocalCacheData>();
+    private static final ConcurrentHashMap<String, LocalCacheData> CACHE_MAP = new ConcurrentHashMap<String, LocalCacheData>();
 
     /**
      * 设置缓存

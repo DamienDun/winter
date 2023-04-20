@@ -1,5 +1,6 @@
 package com.winter.common.exception;
 
+import com.winter.common.constant.Constants;
 import com.winter.common.enums.result.BaseResultEnum;
 
 /**
@@ -28,7 +29,7 @@ public class BusinessException extends RuntimeException {
         StringBuilder sb = new StringBuilder();
         sb.append(msg);
         for (String appendMsg : appendMsgs) {
-            sb.append(":").append(appendMsg);
+            sb.append(Constants.COLON).append(appendMsg);
         }
         return sb.toString();
     }
