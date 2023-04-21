@@ -14,6 +14,7 @@ import com.winter.datasource.util.JdbcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -398,6 +399,16 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     }
 
     @Override
+    public <T> T queryForObject(String sql, RowMapper<T> rowMapper) {
+        try {
+            return jdbcTemplate.queryForObject(sql, rowMapper);
+        } catch (Exception e) {
+            logger.error("SQLException query object error", e);
+        }
+        return null;
+    }
+
+    @Override
     public <T> List<T> queryForList(String sql, Class<T> requiredType) {
         try {
             return jdbcTemplate.queryForList(sql, requiredType);
@@ -447,5 +458,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
 
     public String getDatasourceType() {
         return datasourceType;
+    }
+
+    @Override
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 }

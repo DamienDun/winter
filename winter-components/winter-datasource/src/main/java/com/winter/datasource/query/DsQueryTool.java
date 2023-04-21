@@ -1,6 +1,8 @@
 package com.winter.datasource.query;
 
 import com.winter.datasource.info.ColumnInfo;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,13 @@ public interface DsQueryTool {
      * 关闭连接对象
      */
     void closeConn();
+
+    /**
+     * 获取jdbcTemplate
+     *
+     * @return
+     */
+    JdbcTemplate getJdbcTemplate();
 
     /**
      * 验证表是否存在
@@ -116,6 +125,16 @@ public interface DsQueryTool {
     <T> T queryForObject(String sql, Class<T> requiredType);
 
     /**
+     * 查询 Object 适用于对象
+     *
+     * @param sql       查询sql
+     * @param rowMapper 行数据的映射
+     * @param <T>       泛型
+     * @return
+     */
+    <T> T queryForObject(String sql, RowMapper<T> rowMapper);
+
+    /**
      * 查询 Object
      *
      * @param <T>          泛型
@@ -127,6 +146,7 @@ public interface DsQueryTool {
 
     /**
      * 获取当前表maxId
+     *
      * @param tableName
      * @param primaryKey
      * @return
