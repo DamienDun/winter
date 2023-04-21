@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.druid.util.JdbcUtils;
 import com.winter.common.utils.LocalCacheUtil;
+import com.winter.common.utils.sign.AESUtil;
 import com.winter.datasource.info.DatasourceInfo;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -50,7 +51,12 @@ public class JdbcUtil implements JdbcConstants {
     private static DruidDataSource createDruidDataSource(DatasourceInfo datasourceInfo) throws SQLException {
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUsername(datasourceInfo.getJdbcUsername());
-        dataSource.setPassword(datasourceInfo.getJdbcPassword());
+        if (datasourceInfo.isAesEncryptPassword()) {
+            dataSource.setPassword(AESUtil.decrypt(datasourceInfo.getJdbcPassword()));
+        }
+        if (!datasourceInfo.isAesEncryptPassword()) {
+            dataSource.setPassword(datasourceInfo.getJdbcPassword());
+        }
         dataSource.setUrl(datasourceInfo.getJdbcUrl());
         dataSource.setDriverClassName(datasourceInfo.getJdbcDriverClass());
 
@@ -80,7 +86,12 @@ public class JdbcUtil implements JdbcConstants {
     private static DataSource createHikariDataSource(DatasourceInfo datasourceInfo) throws SQLException {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername(datasourceInfo.getJdbcUsername());
-        dataSource.setPassword(datasourceInfo.getJdbcPassword());
+        if (datasourceInfo.isAesEncryptPassword()) {
+            dataSource.setPassword(AESUtil.decrypt(datasourceInfo.getJdbcPassword()));
+        }
+        if (!datasourceInfo.isAesEncryptPassword()) {
+            dataSource.setPassword(datasourceInfo.getJdbcPassword());
+        }
         dataSource.setJdbcUrl(datasourceInfo.getJdbcUrl());
         dataSource.setDriverClassName(datasourceInfo.getJdbcDriverClass());
         dataSource.setMaximumPoolSize(1);

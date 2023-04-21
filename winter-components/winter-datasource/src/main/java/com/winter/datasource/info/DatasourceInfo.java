@@ -65,6 +65,11 @@ public class DatasourceInfo {
      */
     private boolean disableCache;
 
+    /**
+     * 是否AES加密了密码
+     */
+    private boolean aesEncryptPassword = true;
+
     public String getKey() {
         if (StringUtils.isNotEmpty(key)) {
             return key;
