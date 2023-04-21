@@ -49,6 +49,11 @@ public class WinterConfig {
      */
     private static String captchaType;
 
+    /**
+     * AES key
+     */
+    private static String aesKey = "JAD42F6697B038B75";
+
     public String getName() {
         return name;
     }
@@ -131,5 +136,13 @@ public class WinterConfig {
      */
     public static String getUploadPath() {
         return getProfile() + "/upload";
+    }
+
+    public static String getAesKey() {
+        return aesKey;
+    }
+
+    public static void setAesKey(String aesKey) {
+        WinterConfig.aesKey = aesKey;
     }
 }
