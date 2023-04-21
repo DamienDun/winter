@@ -419,6 +419,16 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     }
 
     @Override
+    public <T> List<T> queryForList(String sql, RowMapper<T> rowMapper) {
+        try {
+            return jdbcTemplate.query(sql, rowMapper);
+        } catch (Exception e) {
+            logger.error("SQLException query object error", e);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     public long queryMaxIdVal(String tableName, String primaryKey) {
         Statement stmt = null;
         ResultSet rs = null;

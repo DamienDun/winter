@@ -135,7 +135,7 @@ public interface DsQueryTool {
     <T> T queryForObject(String sql, RowMapper<T> rowMapper);
 
     /**
-     * 查询 Object
+     * 查询 Object集合
      *
      * @param <T>          泛型
      * @param sql          查询sql
@@ -143,6 +143,16 @@ public interface DsQueryTool {
      * @return 查询的数据
      */
     <T> List<T> queryForList(String sql, Class<T> requiredType);
+
+    /**
+     * 查询 Object集合 适用于对象集合
+     *
+     * @param sql       查询sql
+     * @param rowMapper 行数据的映射
+     * @param <T>       泛型
+     * @return
+     */
+    <T> List<T> queryForList(String sql, RowMapper<T> rowMapper);
 
     /**
      * 获取当前表maxId
