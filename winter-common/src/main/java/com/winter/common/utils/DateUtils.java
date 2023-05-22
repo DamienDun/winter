@@ -163,13 +163,12 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * 计算两个时间差多少小时
      */
     public static Integer timeDistanceHour(Date endDate, Date nowDate) {
-        long nd = 1000 * 24 * 60 * 60;
         long nh = 1000 * 60 * 60;
         // long ns = 1000;
         // 获得两个时间的毫秒时间差异
         long diff = endDate.getTime() - nowDate.getTime();
         // 计算差多少小时
-        long hour = diff % nd / nh;
+        long hour = diff / nh;
         return Integer.valueOf(String.valueOf(hour));
     }
 
