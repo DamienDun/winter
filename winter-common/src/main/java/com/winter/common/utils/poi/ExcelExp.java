@@ -1,5 +1,6 @@
 package com.winter.common.utils.poi;
 
+import com.winter.common.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +37,14 @@ public class ExcelExp {
 
     public ExcelExp(String sheetName, List data, Class clazz) {
         this.sheetName = sheetName;
+        this.title = StringUtils.EMPTY;
+        this.data = data;
+        this.clazz = clazz;
+    }
+
+    public ExcelExp(String sheetName, String title, List data, Class clazz) {
+        this.sheetName = sheetName;
+        this.title = title;
         this.data = data;
         this.clazz = clazz;
     }
