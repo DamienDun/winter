@@ -539,6 +539,68 @@ public class ExcelUtil<T> {
     }
 
     /**
+     * 对list数据源将其里面的数据导入到excel表单
+     *
+     * @param response 返回数据
+     * @param list     导出数据集合
+     * @return 结果
+     * @throws IOException
+     */
+    public void exportExcelManySheet(HttpServletResponse response, List<ExcelExp> list) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
+        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.SUCCESS));
+        try {
+            createWorkbook();
+            for (int index = 0; index < list.size(); index++) {
+                ExcelExp excelExp = list.get(index);
+                this.clazz = excelExp.getClazz();
+                this.init(excelExp.getData(), excelExp.getSheetName(), excelExp.getTitle(), Excel.Type.EXPORT);
+                // 取出一共有多少个sheet.
+//                    double sheetNo = Math.ceil(list.size() / sheetSize);
+                createSheetManySheet(index);
+                // 产生一行
+                Row row = sheet.createRow(0);
+                int column = 0;
+                // 写入各个字段的列头名称
+                for (Object[] os : fields) {
+                    Field field = (Field) os[0];
+                    Excel excel = (Excel) os[1];
+                    if (Collection.class.isAssignableFrom(field.getType())) {
+                        for (Field subField : subFields) {
+                            Excel subExcel = subField.getAnnotation(Excel.class);
+                            this.createHeadCell(subExcel, row, column++);
+                        }
+                    } else {
+                        this.createHeadCell(excel, row, column++);
+                    }
+                }
+                if (Excel.Type.EXPORT.equals(type)) {
+                    fillExcelData(index, row);
+                    addStatisticsRow();
+                }
+            }
+            wb.write(response.getOutputStream());
+        } catch (IOException e) {
+            log.error("导出Excel异常{}", e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(wb);
+        }
+    }
+
+    /**
+     * 创建工作表
+     *
+     * @param index 序号
+     */
+    public void createSheetManySheet(int index) {
+        this.sheet = wb.createSheet();
+        this.styles = createStyles(wb);
+        wb.setSheetName(index, sheetName);
+    }
+
+    /**
      * 创建写入数据到Sheet
      */
     public void writeSheet() {
