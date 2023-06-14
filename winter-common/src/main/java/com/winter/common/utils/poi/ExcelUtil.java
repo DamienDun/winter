@@ -552,33 +552,47 @@ public class ExcelUtil<T> {
         response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.SUCCESS));
         try {
             this.wb = new SXSSFWorkbook(500);
+            this.formulaEvaluator = this.wb.getCreationHelper().createFormulaEvaluator();
+            //记录所有的sheet
+            int wholeSheetNo = 0;
             for (int index = 0; index < list.size(); index++) {
                 ExcelExp excelExp = list.get(index);
                 this.clazz = excelExp.getClazz();
-                this.init(excelExp.getData(), excelExp.getSheetName(), excelExp.getTitle(), Excel.Type.EXPORT);
+                this.list = excelExp.getData();
+                this.sheetName = excelExp.getSheetName();
+                this.title = excelExp.getTitle();
+                this.type = Type.EXPORT;
+                createExcelField();
+                createTitle();
+                createSubHead();
+
                 // 取出一共有多少个sheet.
-//                    double sheetNo = Math.ceil(list.size() / sheetSize);
-                createSheetManySheet(index);
-                // 产生一行
-                Row row = sheet.createRow(0);
-                int column = 0;
-                // 写入各个字段的列头名称
-                for (Object[] os : fields) {
-                    Field field = (Field) os[0];
-                    Excel excel = (Excel) os[1];
-                    if (Collection.class.isAssignableFrom(field.getType())) {
-                        for (Field subField : subFields) {
-                            Excel subExcel = subField.getAnnotation(Excel.class);
-                            this.createHeadCell(subExcel, row, column++);
+                int sheetNo = Math.max(1, (int) Math.ceil(list.size() * 1.0 / sheetSize));
+                for (int j = 0; j < sheetNo; j++) {
+                    wholeSheetNo = createSheetManySheet(wholeSheetNo, sheetNo, j);
+
+                    // 产生一行
+                    Row row = sheet.createRow(rownum);
+                    int column = 0;
+                    // 写入各个字段的列头名称
+                    for (Object[] os : fields) {
+                        Field field = (Field) os[0];
+                        Excel excel = (Excel) os[1];
+                        if (Collection.class.isAssignableFrom(field.getType())) {
+                            for (Field subField : subFields) {
+                                Excel subExcel = subField.getAnnotation(Excel.class);
+                                this.createHeadCell(subExcel, row, column++);
+                            }
+                        } else {
+                            this.createHeadCell(excel, row, column++);
                         }
-                    } else {
-                        this.createHeadCell(excel, row, column++);
+                    }
+                    if (Type.EXPORT.equals(type)) {
+                        fillExcelData(j, row);
+                        addStatisticsRow();
                     }
                 }
-                if (Excel.Type.EXPORT.equals(type)) {
-                    fillExcelData(index, row);
-                    addStatisticsRow();
-                }
+                wholeSheetNo++;
             }
             wb.write(response.getOutputStream());
         } catch (IOException e) {
@@ -591,12 +605,20 @@ public class ExcelUtil<T> {
     /**
      * 创建工作表
      *
-     * @param index 序号
+     * @param wholeSheetNo 整体sheet索引
+     * @param sheetNo      当前数据sheet索引
+     * @param index        序号
      */
-    public void createSheetManySheet(int index) {
+    public int createSheetManySheet(int wholeSheetNo, int sheetNo, int index) {
         this.sheet = wb.createSheet();
         this.styles = createStyles(wb);
-        wb.setSheetName(index, sheetName);
+        if (sheetNo > 1 && index > 0) {
+            wholeSheetNo = wholeSheetNo + index;
+            wb.setSheetName(wholeSheetNo, sheetName + index);
+            return wholeSheetNo;
+        }
+        wb.setSheetName(wholeSheetNo, sheetName);
+        return wholeSheetNo;
     }
 
     /**
