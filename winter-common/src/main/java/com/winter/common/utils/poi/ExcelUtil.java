@@ -544,15 +544,14 @@ public class ExcelUtil<T> {
      * @param response 返回数据
      * @param list     导出数据集合
      * @return 结果
-     * @throws IOException
      */
-    public void exportExcelManySheet(HttpServletResponse response, List<ExcelExp> list) throws IOException {
+    public void exportExcelManySheet(HttpServletResponse response, List<ExcelExp> list) {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
         response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.SUCCESS));
         try {
-            createWorkbook();
+            this.wb = new SXSSFWorkbook(500);
             for (int index = 0; index < list.size(); index++) {
                 ExcelExp excelExp = list.get(index);
                 this.clazz = excelExp.getClazz();
