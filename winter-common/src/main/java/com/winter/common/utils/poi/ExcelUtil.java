@@ -540,12 +540,13 @@ public class ExcelUtil<T> {
 
     /**
      * 对list数据源将其里面的数据导入到excel表单
+     * 支持多个sheet,多个结果类型
      *
-     * @param response 返回数据
-     * @param list     导出数据集合
+     * @param response     返回数据
+     * @param excelExpList 导出数据集合
      * @return 结果
      */
-    public void exportExcelManySheet(HttpServletResponse response, List<ExcelExp> list) {
+    public void exportExcelManySheet(HttpServletResponse response, List<ExcelExp> excelExpList) {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
@@ -555,8 +556,7 @@ public class ExcelUtil<T> {
             this.formulaEvaluator = this.wb.getCreationHelper().createFormulaEvaluator();
             //记录所有的sheet
             int wholeSheetNo = 0;
-            for (int index = 0; index < list.size(); index++) {
-                ExcelExp excelExp = list.get(index);
+            for (ExcelExp excelExp : excelExpList) {
                 this.clazz = excelExp.getClazz();
                 this.list = excelExp.getData();
                 this.sheetName = excelExp.getSheetName();
@@ -567,9 +567,9 @@ public class ExcelUtil<T> {
                 createSubHead();
 
                 // 取出一共有多少个sheet.
-                int sheetNo = Math.max(1, (int) Math.ceil(list.size() * 1.0 / sheetSize));
-                for (int j = 0; j < sheetNo; j++) {
-                    wholeSheetNo = createSheetManySheet(wholeSheetNo, sheetNo, j);
+                int sheetNo = Math.max(1, (int) Math.ceil(this.list.size() * 1.0 / sheetSize));
+                for (int index = 0; index < sheetNo; index++) {
+                    wholeSheetNo = createSheetManySheet(wholeSheetNo, sheetNo, index);
 
                     // 产生一行
                     Row row = sheet.createRow(rownum);
@@ -588,7 +588,7 @@ public class ExcelUtil<T> {
                         }
                     }
                     if (Type.EXPORT.equals(type)) {
-                        fillExcelData(j, row);
+                        fillExcelData(index, row);
                         addStatisticsRow();
                     }
                 }
