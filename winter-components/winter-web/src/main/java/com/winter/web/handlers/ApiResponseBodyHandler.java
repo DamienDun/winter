@@ -9,6 +9,7 @@ import com.winter.common.core.domain.R;
 import com.winter.common.core.domain.Rpage;
 import com.winter.common.core.page.TableDataInfo;
 import com.winter.common.exception.ServiceException;
+import com.winter.common.utils.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,10 @@ public class ApiResponseBodyHandler implements ResponseBodyAdvice<Object> {
         if (!response.getHeaders().containsKey(Constants.RESP_HEADER_CODE)) {
             response.getHeaders().add(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
             response.getHeaders().add(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.OK.value()));
+        }
+        if (!response.getHeaders().containsKey(Constants.RESP_HEADER_DATE)) {
+            response.getHeaders().add(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_DATE);
+            response.getHeaders().add(Constants.RESP_HEADER_DATE, DateUtils.getTime());
         }
         boolean isApi;
         if (request instanceof ServletServerHttpRequest) {

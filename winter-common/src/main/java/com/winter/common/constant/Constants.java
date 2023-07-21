@@ -155,6 +155,11 @@ public interface Constants {
     String RESP_HEADER_CODE = "resp-code";
 
     /**
+     * 响应头日期
+     */
+    String RESP_HEADER_DATE = "resp-date";
+
+    /**
      * 响应头-允许暴露
      */
     String RESP_ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
