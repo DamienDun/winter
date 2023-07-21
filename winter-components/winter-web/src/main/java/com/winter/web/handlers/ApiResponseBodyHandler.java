@@ -49,8 +49,10 @@ public class ApiResponseBodyHandler implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        response.getHeaders().add(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.getHeaders().add(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.OK.value()));
+        if (!response.getHeaders().containsKey(Constants.RESP_HEADER_CODE)) {
+            response.getHeaders().add(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
+            response.getHeaders().add(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.OK.value()));
+        }
         boolean isApi;
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest httpRequest = (ServletServerHttpRequest) request;
