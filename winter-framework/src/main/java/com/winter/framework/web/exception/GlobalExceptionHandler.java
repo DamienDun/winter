@@ -38,6 +38,7 @@ public class GlobalExceptionHandler {
     public AjaxResult handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',权限校验失败'{}'", requestURI, e.getMessage());
+        addResponseHeader(response, String.valueOf(HttpStatus.FORBIDDEN));
         return AjaxResult.error(HttpStatus.FORBIDDEN, "没有权限，请联系管理员授权");
     }
 
@@ -49,8 +50,7 @@ public class GlobalExceptionHandler {
                                                           HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.ERROR));
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(e.getMessage());
     }
 
@@ -61,8 +61,7 @@ public class GlobalExceptionHandler {
     public AjaxResult handleServiceException(ServiceException e, HttpServletRequest request, HttpServletResponse response) {
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(code));
+        addResponseHeader(response, Objects.nonNull(code) ? String.valueOf(code) : String.valueOf(HttpStatus.ERROR));
         return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
     }
 
@@ -70,9 +69,10 @@ public class GlobalExceptionHandler {
      * 请求路径中缺少必需的路径变量
      */
     @ExceptionHandler(MissingPathVariableException.class)
-    public AjaxResult handleMissingPathVariableException(MissingPathVariableException e, HttpServletRequest request) {
+    public AjaxResult handleMissingPathVariableException(MissingPathVariableException e, HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求路径中缺少必需的路径变量'{}',发生系统异常.", requestURI, e);
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(String.format("请求路径中缺少必需的路径变量[%s]", e.getVariableName()));
     }
 
@@ -80,11 +80,12 @@ public class GlobalExceptionHandler {
      * 请求参数类型不匹配
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public AjaxResult handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+    public AjaxResult handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
         Class<?> requiredType = e.getRequiredType();
         String requiredTypeName = Objects.nonNull(requiredType) ? requiredType.getName() : "";
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), requiredTypeName, e.getValue()));
     }
 
@@ -95,6 +96,7 @@ public class GlobalExceptionHandler {
     public AjaxResult handleRuntimeException(RuntimeException e, HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(e.getMessage());
     }
 
@@ -105,8 +107,7 @@ public class GlobalExceptionHandler {
     public AjaxResult handleException(Exception e, HttpServletRequest request, HttpServletResponse response) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生系统异常.", requestURI, e);
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.ERROR));
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(e.getMessage());
     }
 
@@ -117,8 +118,7 @@ public class GlobalExceptionHandler {
     public AjaxResult handleBindException(BindException e, HttpServletResponse response) {
         log.error(e.getMessage(), e);
         String message = e.getAllErrors().get(0).getDefaultMessage();
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.ERROR));
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(message);
     }
 
@@ -129,8 +129,7 @@ public class GlobalExceptionHandler {
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletResponse response) {
         log.error(e.getMessage(), e);
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.ERROR));
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error(message);
     }
 
@@ -139,8 +138,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DemoModeException.class)
     public AjaxResult handleDemoModeException(DemoModeException e, HttpServletResponse response) {
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(HttpStatus.ERROR));
+        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
         return AjaxResult.error("演示模式，不允许操作");
     }
 
@@ -150,8 +148,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public AjaxResult handleBindException(BusinessException e, HttpServletResponse response) {
         log.error(e.getMessage(), e);
-        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
-        response.addHeader(Constants.RESP_HEADER_CODE, String.valueOf(e.getResultEnum().getCode()));
+        addResponseHeader(response, String.valueOf(e.getResultEnum().getCode()));
         return AjaxResult.error(e.getResultEnum().getCode(), e.getMessage());
+    }
+
+    /**
+     * 添加响应头信息
+     *
+     * @param response       响应体
+     * @param respHeaderCode 响应头码
+     */
+    private void addResponseHeader(HttpServletResponse response, String respHeaderCode) {
+        response.addHeader(Constants.RESP_ACCESS_CONTROL_EXPOSE_HEADERS, Constants.RESP_HEADER_CODE);
+        response.addHeader(Constants.RESP_HEADER_CODE, StringUtils.isNotEmpty(respHeaderCode) ? respHeaderCode : String.valueOf(HttpStatus.ERROR));
     }
 }
