@@ -6,6 +6,7 @@ import com.winter.system.service.ISysMenuService;
 import com.winter.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -63,7 +64,7 @@ public class SysPermissionService
         else
         {
             List<SysRole> roles = user.getRoles();
-            if (!roles.isEmpty() && roles.size() > 1)
+            if (!CollectionUtils.isEmpty(roles))
             {
                 // 多角色设置permissions属性，以便数据权限匹配权限
                 for (SysRole role : roles)
