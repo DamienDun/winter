@@ -9,13 +9,11 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.winter.common.utils.DateUtils;
 import com.winter.common.utils.StringUtils;
+import com.winter.common.utils.reflect.ReflectUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * LocalDateTime 序列化
@@ -37,16 +35,10 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> imple
         Class<?> aClass = gen.getCurrentValue().getClass();
         // 获取字段名
         String currentName = gen.getOutputContext().getCurrentName();
-        List<Field> fieldList = new ArrayList<>();
-        fieldList.addAll(Arrays.asList(aClass.getFields()));
-        fieldList.addAll(Arrays.asList(aClass.getDeclaredFields()));
-        for (Field field : fieldList) {
-            if (field.getName().equals(currentName)) {
-                JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
-                if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
-                    format = jsonFormat.pattern();
-                }
-            }
+        Field field = ReflectUtils.getAccessibleField(aClass, currentName);
+        JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
+        if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
+            format = jsonFormat.pattern();
         }
         String formattedDate = DateUtils.parseDateToStr(format, DateUtils.from(value));
         gen.writeString(formattedDate);
