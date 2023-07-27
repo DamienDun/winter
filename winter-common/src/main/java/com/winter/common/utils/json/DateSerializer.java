@@ -14,6 +14,7 @@ import com.winter.common.utils.reflect.ReflectUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Date序列化
@@ -26,19 +27,33 @@ import java.util.Date;
  */
 public class DateSerializer extends JsonSerializer<Date> implements ContextualSerializer {
 
-    public final static DateSerializer INSTANCE = new DateSerializer();
+    public final static DateSerializer INSTANCE = new DateSerializer(DateUtils.YYYY_MM_DD_HH_MM_SS);
+
+    /**
+     * 格式
+     */
+    private String pattern;
+
+    public DateSerializer(String pattern) {
+        this.pattern = pattern;
+    }
 
     @Override
     public void serialize(Date value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        String format = DateUtils.YYYY_MM_DD_HH_MM_SS;
+        String format = pattern;
         // 获取value来源的类
         Class<?> aClass = gen.getCurrentValue().getClass();
         // 获取字段名
         String currentName = gen.getOutputContext().getCurrentName();
-        Field field = ReflectUtils.getAccessibleField(aClass, currentName);
-        JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
-        if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
-            format = jsonFormat.pattern();
+        Field field = ReflectUtils.getAccessibleFieldByClass(aClass, currentName);
+        if (Objects.nonNull(field)) {
+            JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
+            if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
+                format = jsonFormat.pattern();
+            }
+        }
+        if (StringUtils.isEmpty(format)) {
+            format = DateUtils.YYYY_MM_DD_HH_MM_SS;
         }
         String formattedDate = DateUtils.parseDateToStr(format, value);
         gen.writeString(formattedDate);

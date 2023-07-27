@@ -14,6 +14,7 @@ import com.winter.common.utils.reflect.ReflectUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * LocalDateTime 序列化
@@ -26,19 +27,33 @@ import java.time.LocalDateTime;
  */
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> implements ContextualSerializer {
 
-    public final static LocalDateTimeSerializer INSTANCE = new LocalDateTimeSerializer();
+    public final static DateSerializer INSTANCE = new DateSerializer(DateUtils.YYYY_MM_DD_HH_MM_SS);
+
+    /**
+     * 格式
+     */
+    private String pattern;
+
+    public LocalDateTimeSerializer(String pattern) {
+        this.pattern = pattern;
+    }
 
     @Override
     public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        String format = DateUtils.YYYY_MM_DD_HH_MM_SS;
+        String format = pattern;
         // 获取value来源的类
         Class<?> aClass = gen.getCurrentValue().getClass();
         // 获取字段名
         String currentName = gen.getOutputContext().getCurrentName();
-        Field field = ReflectUtils.getAccessibleField(aClass, currentName);
-        JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
-        if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
-            format = jsonFormat.pattern();
+        Field field = ReflectUtils.getAccessibleFieldByClass(aClass, currentName);
+        if (Objects.nonNull(field)) {
+            JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
+            if (jsonFormat != null && StringUtils.isNotEmpty(jsonFormat.pattern())) {
+                format = jsonFormat.pattern();
+            }
+        }
+        if (StringUtils.isEmpty(format)) {
+            format = DateUtils.YYYY_MM_DD_HH_MM_SS;
         }
         String formattedDate = DateUtils.parseDateToStr(format, DateUtils.from(value));
         gen.writeString(formattedDate);
