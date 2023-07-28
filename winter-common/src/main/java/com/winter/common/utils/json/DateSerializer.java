@@ -27,12 +27,16 @@ import java.util.Objects;
  */
 public class DateSerializer extends JsonSerializer<Date> implements ContextualSerializer {
 
-    public final static DateSerializer INSTANCE = new DateSerializer(DateUtils.YYYY_MM_DD_HH_MM_SS);
+    public final static DateSerializer INSTANCE = new DateSerializer();
 
     /**
      * 格式
      */
     private String pattern;
+
+    public DateSerializer() {
+        this.pattern = DateUtils.YYYY_MM_DD_HH_MM_SS;
+    }
 
     public DateSerializer(String pattern) {
         this.pattern = pattern;

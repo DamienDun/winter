@@ -27,12 +27,16 @@ import java.util.Objects;
  */
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> implements ContextualSerializer {
 
-    public final static DateSerializer INSTANCE = new DateSerializer(DateUtils.YYYY_MM_DD_HH_MM_SS);
+    public final static LocalDateTimeSerializer INSTANCE = new LocalDateTimeSerializer();
 
     /**
      * 格式
      */
     private String pattern;
+
+    public LocalDateTimeSerializer() {
+        this.pattern = DateUtils.YYYY_MM_DD_HH_MM_SS;
+    }
 
     public LocalDateTimeSerializer(String pattern) {
         this.pattern = pattern;
