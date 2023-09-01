@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * OkHttp 请求客户端
@@ -122,11 +123,12 @@ public class OkHttpCli {
     /**
      * post 请求
      *
-     * @param url    请求url地址
-     * @param params 请求参数 map
+     * @param url       请求url地址
+     * @param params    请求参数 map
+     * @param headerMap 请求头Map
      * @return string
      */
-    public String doPost(String url, Map<String, Object> params) {
+    public String doPost(String url, Map<String, Object> params, Map<String, String> headerMap) {
         FormBody.Builder builder = new FormBody.Builder();
 
         if (params != null && params.keySet().size() > 0) {
@@ -134,12 +136,42 @@ public class OkHttpCli {
                 builder.add(key, String.valueOf(params.get(key)));
             }
         }
-        Request request = new Request.Builder().url(url).post(builder.build()).build();
+
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(url).post(builder.build());
+        if (Objects.nonNull(headerMap) && headerMap.keySet().size() > 0) {
+            headerMap.keySet().forEach(key -> requestBuilder.addHeader(key, headerMap.get(key)));
+        }
+        Request request = requestBuilder.build();
         log.info("do post request and url[{}]", url);
 
         return execute(request);
     }
 
+    /**
+     * post 请求
+     *
+     * @param url    请求url地址
+     * @param params 请求参数 map
+     * @return string
+     */
+    public String doPost(String url, Map<String, Object> params) {
+        return doPost(url, params, null);
+    }
+
+
+    /**
+     * post 请求, 请求数据为 json 的字符串
+     *
+     * @param url       请求url地址
+     * @param json      请求数据, json 字符串
+     * @param headerMap 请求头Map
+     * @return string
+     */
+    public String doPostJson(String url, String json, Map<String, String> headerMap) {
+        log.info("do post request and url[{}]", url);
+        return exectePost(url, json, JSON, headerMap);
+    }
 
     /**
      * post 请求, 请求数据为 json 的字符串
@@ -150,7 +182,20 @@ public class OkHttpCli {
      */
     public String doPostJson(String url, String json) {
         log.info("do post request and url[{}]", url);
-        return exectePost(url, json, JSON);
+        return exectePost(url, json, JSON, null);
+    }
+
+    /**
+     * post 请求, 请求数据为 xml 的字符串
+     *
+     * @param url       请求url地址
+     * @param xml       请求数据, xml 字符串
+     * @param headerMap 请求头Map
+     * @return string
+     */
+    public String doPostXml(String url, String xml, Map<String, String> headerMap) {
+        log.info("do post request and url[{}]", url);
+        return exectePost(url, xml, XML, headerMap);
     }
 
     /**
@@ -162,13 +207,17 @@ public class OkHttpCli {
      */
     public String doPostXml(String url, String xml) {
         log.info("do post request and url[{}]", url);
-        return exectePost(url, xml, XML);
+        return exectePost(url, xml, XML, null);
     }
 
-
-    private String exectePost(String url, String data, MediaType contentType) {
+    private String exectePost(String url, String data, MediaType contentType, Map<String, String> headerMap) {
         RequestBody requestBody = RequestBody.create(contentType, data);
-        Request request = new Request.Builder().url(url).post(requestBody).build();
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(url).post(requestBody);
+        if (Objects.nonNull(headerMap) && headerMap.keySet().size() > 0) {
+            headerMap.keySet().forEach(key -> requestBuilder.addHeader(key, headerMap.get(key)));
+        }
+        Request request = requestBuilder.build();
         return execute(request);
     }
 
