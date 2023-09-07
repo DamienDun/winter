@@ -1,6 +1,7 @@
 package com.winter.framework.config;
 
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.winter.common.factory.TrimmedAnnotationFormatterFactory;
 import com.winter.common.utils.json.DateDeserializer;
 import com.winter.common.utils.json.DateSerializer;
 import com.winter.common.utils.json.LocalDateTimeDeserializer;
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.LocalDateTime;
@@ -46,5 +48,10 @@ public class ApplicationConfig implements WebMvcConfigurer {
             jacksonObjectMapperBuilder.serializerByType(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
             jacksonObjectMapperBuilder.deserializerByType(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
         };
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatterForFieldAnnotation(new TrimmedAnnotationFormatterFactory());
     }
 }
