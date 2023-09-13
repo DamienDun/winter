@@ -71,14 +71,14 @@ public class SysDictData extends BaseEntity {
     /**
      * 是否默认（Y是 N否）
      */
-    @Excel(name = "是否默认", readConverterExp = "Y=是,N=否")
+    @Excel(name = "是否默认", readConverterExp = "Y=是,N=否", prompt = "示例:是/否", combo = {"是", "否"})
     @ApiModelProperty(value = "是否默认（Y是 N否）")
     private String isDefault;
 
     /**
      * 状态（0正常 1停用）
      */
-    @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "状态", readConverterExp = "0=正常,1=停用", prompt = "示例:正常/停用", combo = {"正常", "停用"})
     @ApiModelProperty(value = "状态（0正常 1停用）")
     private String status;
 

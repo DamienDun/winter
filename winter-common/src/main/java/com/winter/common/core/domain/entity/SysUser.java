@@ -43,12 +43,12 @@ public class SysUser extends BaseEntity {
     /**
      * 用户账号
      */
-    @Excel(name = "登录名称")
+    @Excel(name = "用户账号")
     @ApiModelProperty(value = "用户账号")
     private String userName;
 
     /**
-     * 用户昵称
+     * 用户名称
      */
     @Excel(name = "用户名称")
     @ApiModelProperty(value = "用户名称")
@@ -71,7 +71,7 @@ public class SysUser extends BaseEntity {
     /**
      * 用户性别
      */
-    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知")
+    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知", prompt = "示例:男/女/未知", combo = {"男", "女", "未知"})
     @ApiModelProperty(value = "用户性别,0=男,1=女,2=未知")
     private String sex;
 
@@ -90,7 +90,7 @@ public class SysUser extends BaseEntity {
     /**
      * 帐号状态（0正常 1停用）
      */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用", prompt = "示例:正常/停用", combo = {"正常", "停用"})
     @ApiModelProperty(value = "帐号状态,0=正常,1=停用")
     private String status;
 

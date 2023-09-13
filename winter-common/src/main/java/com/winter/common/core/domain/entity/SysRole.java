@@ -53,7 +53,9 @@ public class SysRole extends BaseEntity {
     /**
      * 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限）
      */
-    @Excel(name = "数据范围", readConverterExp = "1=所有数据权限,2=自定义数据权限,3=本部门数据权限,4=本部门及以下数据权限,5=仅本人数据权限")
+    @Excel(name = "数据范围", readConverterExp = "1=所有数据权限,2=自定义数据权限,3=本部门数据权限,4=本部门及以下数据权限,5=仅本人数据权限",
+            prompt = "示例:所有数据权限/自定义数据权限/本部门数据权限/本部门及以下数据权限/仅本人数据权限",
+            combo = {"所有数据权限", "自定义数据权限", "本部门数据权限", "本部门及以下数据权限", "仅本人数据权限"})
     @ApiModelProperty(value = "数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限）")
     private String dataScope;
 
@@ -72,7 +74,7 @@ public class SysRole extends BaseEntity {
     /**
      * 角色状态（0正常 1停用）
      */
-    @Excel(name = "角色状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "角色状态", readConverterExp = "0=正常,1=停用", prompt = "示例:正常/停用", combo = {"正常", "停用"})
     @ApiModelProperty(value = "角色状态（0正常 1停用）")
     private String status;
 
