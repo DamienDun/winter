@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -151,7 +152,12 @@ public class TokenService {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, tokenConfig.getSecret()).compact();
-        return token;
+        if (Constants.TOKEN_CREATE_JWT.equalsIgnoreCase(tokenConfig.getCreateType())) {
+            return token;
+        }
+        String uuid = UUID.randomUUID().toString();
+        redisCache.setCacheObject(getTokenJwtKey(uuid), token, tokenConfig.getExpireTime(), TimeUnit.MINUTES);
+        return uuid;
     }
 
     /**
@@ -161,6 +167,9 @@ public class TokenService {
      * @return 数据声明
      */
     private Claims parseToken(String token) {
+        if (Constants.TOKEN_CREATE_REDIS.equalsIgnoreCase(tokenConfig.getCreateType())) {
+            token = redisCache.getCacheObject(getTokenJwtKey(token));
+        }
         return Jwts.parser()
                 .setSigningKey(tokenConfig.getSecret())
                 .parseClaimsJws(token)
@@ -194,5 +203,15 @@ public class TokenService {
 
     private String getTokenKey(String uuid) {
         return CacheConstants.LOGIN_TOKEN_KEY + uuid;
+    }
+
+    /**
+     * 缓存jwt token的redis key
+     *
+     * @param uuid
+     * @return
+     */
+    private String getTokenJwtKey(String uuid) {
+        return CacheConstants.LOGIN_TOKEN_JWT_KEY + uuid;
     }
 }

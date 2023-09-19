@@ -1,5 +1,6 @@
 package com.winter.common.config;
 
+import com.winter.common.constant.Constants;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,4 +36,9 @@ public class TokenConfig {
      * 令牌有效期（默认30分钟）
      */
     private int expireTime;
+
+    /**
+     * 生成方式,默认jwt
+     */
+    private String createType = Constants.TOKEN_CREATE_JWT;
 }

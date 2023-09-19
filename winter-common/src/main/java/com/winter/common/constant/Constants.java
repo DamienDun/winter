@@ -193,4 +193,14 @@ public interface Constants {
      * 右圆括号
      */
     String RIGHT_PARENTHESES = ")";
+
+    /**
+     * JWT方式生成token
+     */
+    String TOKEN_CREATE_JWT = "jwt";
+
+    /**
+     * redis普通方式生成token(实际也是jwt,只是用了redis去缓存)
+     */
+    String TOKEN_CREATE_REDIS = "redis";
 }

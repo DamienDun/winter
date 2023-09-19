@@ -12,6 +12,11 @@ public interface CacheConstants {
     String LOGIN_TOKEN_KEY = "login_tokens:";
 
     /**
+     * 登录用户 jwt token redis key
+     */
+    String LOGIN_TOKEN_JWT_KEY = "login_token_jwt:";
+
+    /**
      * 验证码 redis key
      */
     String CAPTCHA_CODE_KEY = "captcha_codes:";
