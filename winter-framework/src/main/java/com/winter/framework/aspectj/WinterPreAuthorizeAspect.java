@@ -1,5 +1,6 @@
 package com.winter.framework.aspectj;
 
+import com.winter.common.annotation.NoPreAuthorizeLimit;
 import com.winter.common.annotation.WinterPreAuthorize;
 import com.winter.common.constant.Constants;
 import com.winter.common.core.controller.DefaultController;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * 自定义权限注解处理
@@ -40,10 +42,15 @@ public class WinterPreAuthorizeAspect {
      */
     @Before("@annotation(winterPreAuthorize)")
     public void before(JoinPoint joinPoint, WinterPreAuthorize winterPreAuthorize) {
+        Class<?> controllerClass = joinPoint.getTarget().getClass();
+        NoPreAuthorizeLimit noPreAuthorizeLimit = controllerClass.getAnnotation(NoPreAuthorizeLimit.class);
+        if (Objects.nonNull(noPreAuthorizeLimit) && noPreAuthorizeLimit.allMethod()) {
+            return;
+        }
         String permission = winterPreAuthorize.hasPermi();
         if (winterPreAuthorize.useControllerModule()) {
             try {
-                Method getControllerModule = joinPoint.getTarget().getClass().getMethod(DefaultController.METHOD_GET_CONTROLLER_MODULE);
+                Method getControllerModule = controllerClass.getMethod(DefaultController.METHOD_GET_CONTROLLER_MODULE);
                 String prefix = String.valueOf(getControllerModule.invoke(joinPoint.getTarget())).trim();
                 if (prefix.endsWith(Constants.COLON)) {
                     prefix = prefix.substring(0, prefix.length() - 1);
