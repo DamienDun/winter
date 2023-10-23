@@ -2,10 +2,7 @@ package com.winter.framework.config;
 
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.winter.common.factory.TrimmedAnnotationFormatterFactory;
-import com.winter.common.utils.json.DateDeserializer;
-import com.winter.common.utils.json.DateSerializer;
-import com.winter.common.utils.json.LocalDateTimeDeserializer;
-import com.winter.common.utils.json.LocalDateTimeSerializer;
+import com.winter.common.utils.json.*;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +44,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
             jacksonObjectMapperBuilder.serializerByType(LocalDateTime.class, LocalDateTimeSerializer.INSTANCE);
             jacksonObjectMapperBuilder.deserializerByType(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
+
+            jacksonObjectMapperBuilder.deserializerByType(String.class, StringTrimmedDeserializer.INSTANCE);
         };
     }
 
