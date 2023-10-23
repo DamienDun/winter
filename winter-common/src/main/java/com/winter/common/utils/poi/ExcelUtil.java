@@ -240,7 +240,7 @@ public class ExcelUtil<T> {
      * @param is 输入流
      * @return 转换后集合
      */
-    public List<T> importExcel(InputStream is) throws Exception {
+    public List<T> importExcel(InputStream is) {
         return importExcel(is, 0, null);
     }
 
@@ -251,7 +251,7 @@ public class ExcelUtil<T> {
      * @param limitRowNum 限制解析的行数
      * @return 转换后集合
      */
-    public List<T> importExcel(InputStream is, Integer limitRowNum) throws Exception {
+    public List<T> importExcel(InputStream is, Integer limitRowNum) {
         return importExcel(is, 0, limitRowNum);
     }
 
@@ -263,8 +263,17 @@ public class ExcelUtil<T> {
      * @param limitRowNum 限制解析的行数
      * @return 转换后集合
      */
-    public List<T> importExcel(InputStream is, int titleNum, Integer limitRowNum) throws Exception {
-        return importExcel(StringUtils.EMPTY, is, titleNum, limitRowNum);
+    public List<T> importExcel(InputStream is, int titleNum, Integer limitRowNum) {
+        List<T> list = null;
+        try {
+            list = importExcel(StringUtils.EMPTY, is, titleNum, limitRowNum);
+        } catch (Exception e) {
+            log.error("导入Excel异常{}", e.getMessage());
+            throw new UtilException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+        return list;
     }
 
     /**
