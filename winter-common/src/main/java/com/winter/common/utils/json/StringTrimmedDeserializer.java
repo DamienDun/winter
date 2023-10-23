@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.winter.common.annotation.Trimmed;
 import com.winter.common.factory.TrimmedAnnotationFormatterFactory;
+import com.winter.common.utils.StringUtils;
 import com.winter.common.utils.reflect.ReflectUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -22,16 +24,23 @@ import java.util.Objects;
  * @description
  * @create 2023/10/23 14:04
  */
+@Slf4j
 public class StringTrimmedDeserializer extends JsonDeserializer<String> {
 
     public final static StringTrimmedDeserializer INSTANCE = new StringTrimmedDeserializer();
 
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        if (Objects.isNull(p.getCurrentValue())) {
+            return p.getText();
+        }
         // 获取value来源的类
         Class<?> aClass = p.getCurrentValue().getClass();
         // 获取字段名
         String currentName = p.getCurrentName();
+        if (StringUtils.isEmpty(currentName)) {
+            return p.getText();
+        }
         Field field = ReflectUtils.getAccessibleFieldByClass(aClass, currentName);
         if (Objects.nonNull(field)) {
             Trimmed trimmed = field.getAnnotation(Trimmed.class);
@@ -39,6 +48,6 @@ public class StringTrimmedDeserializer extends JsonDeserializer<String> {
                 return TrimmedAnnotationFormatterFactory.trimString(p.getValueAsString(), trimmed.value());
             }
         }
-        return p.getValueAsString();
+        return p.getText();
     }
 }

@@ -44,11 +44,17 @@ public class DateSerializer extends JsonSerializer<Date> implements ContextualSe
 
     @Override
     public void serialize(Date value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if (Objects.isNull(gen.getCurrentValue()) || Objects.isNull(gen.getOutputContext())) {
+            return;
+        }
         String format = pattern;
         // 获取value来源的类
         Class<?> aClass = gen.getCurrentValue().getClass();
         // 获取字段名
         String currentName = gen.getOutputContext().getCurrentName();
+        if (StringUtils.isEmpty(currentName)) {
+            return;
+        }
         Field field = ReflectUtils.getAccessibleFieldByClass(aClass, currentName);
         if (Objects.nonNull(field)) {
             JsonFormat jsonFormat = field.getAnnotation(JsonFormat.class);
