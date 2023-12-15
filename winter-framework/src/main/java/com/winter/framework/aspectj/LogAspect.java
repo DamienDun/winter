@@ -89,7 +89,7 @@ public class LogAspect {
             try {
                 loginUser = SecurityUtils.getLoginUser();
             } catch (Exception er) {
-                log.error("获取不到当前登录用户信息,跳过操作人名称的填充");
+                log.debug("获取不到当前登录用户信息,跳过操作人名称的填充");
             }
 
             // *========数据库日志=========*//
