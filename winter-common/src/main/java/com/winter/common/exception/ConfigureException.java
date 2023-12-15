@@ -16,7 +16,7 @@ public class ConfigureException extends BaseException {
     private static final long serialVersionUID = 3287227748986662769L;
 
     public ConfigureException(String defaultMessage) {
-        super("configure", defaultMessage);
+        super("configure", String.valueOf(WinterError.SystemErrorCode.CONFIGURE_ERRORCODE), null, defaultMessage);
     }
 
     public ConfigureException(Throwable cause, String defaultMessage) {

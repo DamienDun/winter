@@ -16,7 +16,7 @@ public class ValidException extends BaseException {
     private static final long serialVersionUID = 3287227748986662769L;
 
     public ValidException(String defaultMessage) {
-        super("valid", defaultMessage);
+        super("valid", String.valueOf(WinterError.SystemErrorCode.VALIDATION_ERRORCODE), null, defaultMessage);
     }
 
     public ValidException(Throwable cause, String defaultMessage) {

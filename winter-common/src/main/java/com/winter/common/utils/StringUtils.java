@@ -712,4 +712,48 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static boolean isWhiteChar(char c) {
         return c == ' ' || c == '\t' || c == '\r' || c == '\n';
     }
+
+    /**
+     * 返回一个新字符串，该字符串通过在此实例中的字符左侧填充字符来达到指定的总长度，从而实现右对齐。
+     *
+     * @param str
+     * @param totalWidth  总账度
+     * @param paddingChar 填充的字符串
+     * @return
+     * @author
+     */
+    public static String padLeft(String str, int totalWidth, char paddingChar) {
+        int diff = totalWidth - str.length();
+        if (diff <= 0) {
+            return str;
+        }
+        char[] charr = new char[totalWidth];
+        System.arraycopy(str.toCharArray(), 0, charr, diff, str.length());
+        for (int i = 0; i < diff; i++) {
+            charr[i] = paddingChar;
+        }
+        return new String(charr);
+    }
+
+    /**
+     * 返回一个新字符串，该字符串通过在此字符串中的字符右侧填充指定的 Unicode 字符来达到指定的总长度，从而使这些字符左对齐。
+     *
+     * @param str
+     * @param totalWidth  总账度
+     * @param paddingChar 填充的字符串
+     * @return
+     * @author
+     */
+    public static String padRight(String str, int totalWidth, char paddingChar) {
+        int diff = totalWidth - str.length();
+        if (diff <= 0) {
+            return str;
+        }
+        char[] charr = new char[totalWidth];
+        System.arraycopy(str.toCharArray(), 0, charr, 0, str.length());
+        for (int i = str.length(); i < totalWidth; i++) {
+            charr[i] = paddingChar;
+        }
+        return new String(charr);
+    }
 }

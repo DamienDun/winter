@@ -16,7 +16,7 @@ public class NotSupportException extends BaseException {
     private static final long serialVersionUID = 3287227748986662769L;
 
     public NotSupportException(String defaultMessage) {
-        super("notsupport", defaultMessage);
+        super("notsupport", String.valueOf(WinterError.SystemErrorCode.NOT_SUPPORT_ERRORCODE), null, defaultMessage);
     }
 
     public NotSupportException(Throwable cause, String defaultMessage) {
