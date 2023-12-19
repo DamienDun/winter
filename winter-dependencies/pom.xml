@@ -53,11 +53,18 @@
         <sqlserver.jdbc.version>4.0</sqlserver.jdbc.version>
         <presto.jdbc.version>0.240</presto.jdbc.version>
         <clickhouse.jdbc.version>0.2.4</clickhouse.jdbc.version>
+        <redisson.version>3.16.3</redisson.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
@@ -254,6 +261,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-web</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>cn.bestwu</groupId>
                 <artifactId>fastdfs-client-java</artifactId>
                 <version>${fastdfs.client.version}</version>
@@ -403,6 +416,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>net.sf.proguard</groupId>
+                <artifactId>proguard-base</artifactId>
+                <version>6.2.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -422,6 +440,10 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
         <repository>
             <id>public</id>
             <name>aliyun nexus</name>
