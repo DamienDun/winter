@@ -62,6 +62,11 @@ public class WinterStorageProperties implements Serializable {
     private MinioStorageClientProperties minio = new MinioStorageClientProperties();
 
     /**
+     * 最大同时大文件上传数量
+     */
+    private int uploadBigFileCount = 10000;
+
+    /**
      *
      */
     public WinterStorageProperties() {

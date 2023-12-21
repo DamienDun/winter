@@ -1,5 +1,7 @@
 package com.winter.file.storage.configure;
 
+import com.winter.common.client.DistributionLockCli;
+import com.winter.common.runtime.cache.ProxyCacheManager;
 import com.winter.file.storage.StorageClient;
 import com.winter.file.storage.StorageClientContext;
 import com.winter.file.storage.clients.aliyun.AliyunStorageClient;
@@ -14,10 +16,14 @@ import com.winter.file.storage.clients.tencent.TencentStorageClient;
 import com.winter.file.storage.clients.tencent.TencentStorageClientProperties;
 import com.winter.file.storage.impl.StorageClientContextImpl;
 import com.winter.file.storage.properties.WinterStorageProperties;
+import com.winter.file.storage.service.BigFileUploadMinioService;
+import com.winter.file.storage.service.FsBigFileUploadTaskService;
+import com.winter.file.storage.service.impl.BigFileUploadMinioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -118,6 +124,16 @@ public class WinterStorageAutoConfiguration {
     @ConditionalOnMissingBean(MinioStorageClient.class)
     public StorageClient minioStorageClient(WinterStorageProperties properties) {
         return new MinioStorageClient(properties.getMinio());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = MinioStorageClientProperties.BEAN_CONDITIONAL_PROPERTY, havingValue = "true")
+    @ConditionalOnBean({StorageClient.class, DistributionLockCli.class, ProxyCacheManager.class})
+    @ConditionalOnMissingBean(BigFileUploadMinioService.class)
+    public BigFileUploadMinioService bigFileUploadMinioService(WinterStorageProperties properties, DistributionLockCli distributionLockCli,
+                                                               ProxyCacheManager proxyCacheManager, FsBigFileUploadTaskService fsBigFileUploadTaskService) {
+        return new BigFileUploadMinioServiceImpl((MinioStorageClient) minioStorageClient(properties), distributionLockCli,
+                proxyCacheManager, fsBigFileUploadTaskService, properties);
     }
 
     /**

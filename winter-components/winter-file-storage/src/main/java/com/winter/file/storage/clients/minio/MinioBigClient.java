@@ -3,6 +3,7 @@ package com.winter.file.storage.clients.minio;
 import io.minio.MinioClient;
 import io.minio.ServerSideEncryption;
 import io.minio.errors.*;
+import io.minio.messages.ListPartsResult;
 import io.minio.messages.Part;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -315,5 +316,21 @@ public class MinioBigClient extends MinioClient {
     @Override
     public void abortMultipartUpload(String bucketName, String objectName, String uploadId) throws InvalidBucketNameException, IllegalArgumentException, NoSuchAlgorithmException, InsufficientDataException, IOException, InvalidKeyException, XmlParserException, ErrorResponseException, InternalException, InvalidResponseException {
         super.abortMultipartUpload(bucketName, objectName, uploadId);
+    }
+
+    @Override
+    public ListPartsResult listParts(String bucketName, String objectName, Integer maxParts, Integer partNumberMarker, String uploadId) throws InvalidBucketNameException, IllegalArgumentException, NoSuchAlgorithmException, InsufficientDataException, IOException, InvalidKeyException, XmlParserException, ErrorResponseException, InternalException, InvalidResponseException {
+        return super.listParts(bucketName, objectName, maxParts, partNumberMarker, uploadId);
+    }
+
+    public void completeMultipartUpload(String bucketName, String objectName, String uploadId, List<Part> totalParts) throws InvalidBucketNameException, IllegalArgumentException, NoSuchAlgorithmException, InsufficientDataException, IOException, InvalidKeyException, XmlParserException, ErrorResponseException, InternalException, InvalidResponseException {
+        Part[] parts = new Part[totalParts.size()];
+        for (int i = 0; i < totalParts.size(); i++) {
+            Part tag = totalParts.get(i);
+            if (tag != null) {
+                parts[i] = tag;
+            }
+        }
+        super.completeMultipartUpload(bucketName, objectName, uploadId, parts);
     }
 }
