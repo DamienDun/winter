@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,12 +56,14 @@ public class TokenService {
         String token = getToken(request);
         if (StringUtils.isNotEmpty(token)) {
             try {
-                Claims claims = parseToken(token);
-                // 解析对应的权限以及用户信息
-                String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
-                String userKey = getTokenKey(uuid);
-                LoginUser user = redisCache.getCacheObject(userKey);
-                return user;
+                String redisKey = getTokenKey(token);
+                if (Constants.TOKEN_CREATE_JWT.equalsIgnoreCase(tokenConfig.getCreateType())) {
+                    Claims claims = parseToken(token);
+                    // 解析对应的权限以及用户信息
+                    String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
+                    redisKey = getTokenKey(uuid);
+                }
+                return redisCache.getCacheObject(redisKey);
             } catch (Exception e) {
                 log.error("获取用户信息异常'{}'", e.getMessage());
             }
@@ -100,7 +101,9 @@ public class TokenService {
         loginUser.setToken(token);
         setUserAgent(loginUser);
         refreshToken(loginUser);
-
+        if (Constants.TOKEN_CREATE_REDIS.equalsIgnoreCase(tokenConfig.getCreateType())) {
+            return token;
+        }
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constants.LOGIN_USER_KEY, token);
         return createToken(claims);
@@ -154,15 +157,9 @@ public class TokenService {
      * @return 令牌
      */
     private String createToken(Map<String, Object> claims) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, tokenConfig.getSecret()).compact();
-        if (Constants.TOKEN_CREATE_JWT.equalsIgnoreCase(tokenConfig.getCreateType())) {
-            return token;
-        }
-        String uuid = UUID.randomUUID().toString();
-        redisCache.setCacheObject(getTokenJwtKey(uuid), token, tokenConfig.getExpireTime(), TimeUnit.MINUTES);
-        return uuid;
     }
 
     /**
@@ -172,9 +169,6 @@ public class TokenService {
      * @return 数据声明
      */
     private Claims parseToken(String token) {
-        if (Constants.TOKEN_CREATE_REDIS.equalsIgnoreCase(tokenConfig.getCreateType())) {
-            token = redisCache.getCacheObject(getTokenJwtKey(token));
-        }
         return Jwts.parser()
                 .setSigningKey(tokenConfig.getSecret())
                 .parseClaimsJws(token)
@@ -208,15 +202,5 @@ public class TokenService {
 
     private String getTokenKey(String uuid) {
         return CacheConstants.LOGIN_TOKEN_KEY + uuid;
-    }
-
-    /**
-     * 缓存jwt token的redis key
-     *
-     * @param uuid
-     * @return
-     */
-    private String getTokenJwtKey(String uuid) {
-        return CacheConstants.LOGIN_TOKEN_JWT_KEY + uuid;
     }
 }
