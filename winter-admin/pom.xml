@@ -37,7 +37,7 @@
             <version>1.6.2</version>
         </dependency>
 
-         <!-- Mysql驱动包 -->
+        <!-- Mysql驱动包 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -50,16 +50,32 @@
         </dependency>
 
         <!-- 定时任务-->
-        <dependency>
-            <groupId>com.winter</groupId>
-            <artifactId>winter-quartz</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.winter</groupId>-->
+<!--            <artifactId>winter-quartz</artifactId>-->
+<!--        </dependency>-->
 
         <!-- 代码生成-->
         <dependency>
             <groupId>com.winter</groupId>
             <artifactId>winter-generator</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.winter</groupId>
+            <artifactId>winter-swagger</artifactId>
+            <version>1.1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.winter</groupId>
+            <artifactId>winter-file-storage</artifactId>
+            <version>1.1.5</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>net.sf.proguard</groupId>-->
+<!--            <artifactId>proguard-base</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
 
@@ -89,6 +105,43 @@
                     <warName>${project.artifactId}</warName>
                 </configuration>
            </plugin>
+            <!--  代码混淆proguard maven插件  -->
+<!--            <plugin>-->
+<!--                <groupId>com.github.wvengen</groupId>-->
+<!--                <artifactId>proguard-maven-plugin</artifactId>-->
+<!--                <version>2.2.0</version>-->
+<!--                <executions>-->
+<!--                    &lt;!&ndash;   package时执行proguard   &ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>proguard</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash;  输入的jar包  &ndash;&gt;-->
+<!--                    <injar>${project.build.finalName}.jar</injar>-->
+<!--                    &lt;!&ndash;  输出的jar包  &ndash;&gt;-->
+<!--                    <outjar>${project.build.finalName}.jar</outjar>-->
+<!--                    &lt;!&ndash;  是否进行混淆，默认为true  &ndash;&gt;-->
+<!--                    <obfuscate>true</obfuscate>-->
+<!--                    &lt;!&ndash;  配置文件,通常为proguard.cfg,主要对options选项进行配置,所有的options选项都可以进行配置  &ndash;&gt;-->
+<!--                    <proguardInclude>${project.basedir}/proguard.cfg</proguardInclude>-->
+<!--                    &lt;!&ndash;  额外的jar,项目编译所需的jar  &ndash;&gt;-->
+<!--                    <libs>-->
+<!--                        <lib>${java.home}/lib/rt.jar</lib>-->
+<!--                        &lt;!&ndash;<lib>${java.home}/lib/jce.jar</lib>&ndash;&gt;-->
+<!--                        <lib>${java.home}/lib/jsse.jar</lib>-->
+<!--                    </libs>-->
+<!--                    &lt;!&ndash;  对输入jar进行过滤，如对META-INFO文件不处理  &ndash;&gt;-->
+<!--                    <inLibsFilter>!META-INF/**,!META-INF/versions/**</inLibsFilter>-->
+<!--                    &lt;!&ndash;  输出路径配置,必须包含injar标签中填写的jar  &ndash;&gt;-->
+<!--                    <outputDirectory>${project.build.directory}</outputDirectory>-->
+<!--                    &lt;!&ndash;  上面使用了conf配置文件，options无需配置  &ndash;&gt;-->
+<!--                    &lt;!&ndash;<options></options>&ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>
