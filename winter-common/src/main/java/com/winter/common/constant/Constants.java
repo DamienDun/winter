@@ -59,6 +59,26 @@ public interface Constants {
     String LOGIN_FAIL = "Error";
 
     /**
+     * 所有权限标识
+     */
+    String ALL_PERMISSION = "*:*:*";
+
+    /**
+     * 管理员角色权限标识
+     */
+    String SUPER_ADMIN = "admin";
+
+    /**
+     * 角色权限分隔符
+     */
+    String ROLE_DELIMETER = ",";
+
+    /**
+     * 权限标识分隔符
+     */
+    String PERMISSION_DELIMETER = ",";
+
+    /**
      * 验证码有效期（分钟）
      */
     Integer CAPTCHA_EXPIRATION = 2;
