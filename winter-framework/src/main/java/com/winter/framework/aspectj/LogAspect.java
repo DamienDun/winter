@@ -3,6 +3,7 @@ package com.winter.framework.aspectj;
 import com.alibaba.fastjson2.JSON;
 import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.DefaultController;
+import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginUser;
 import com.winter.common.enums.BusinessStatus;
 import com.winter.common.enums.HttpMethod;
@@ -101,6 +102,10 @@ public class LogAspect {
             operLog.setOperUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, 255));
             if (loginUser != null) {
                 operLog.setOperName(loginUser.getUsername());
+                SysUser currentUser = loginUser.getUser();
+                if (StringUtils.isNotNull(currentUser) && StringUtils.isNotNull(currentUser.getDept())) {
+                    operLog.setDeptName(currentUser.getDept().getDeptName());
+                }
             }
 
             if (e != null) {
