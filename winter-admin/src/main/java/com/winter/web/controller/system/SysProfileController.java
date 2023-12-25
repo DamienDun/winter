@@ -91,9 +91,10 @@ public class SysProfileController extends BaseController {
         if (SecurityUtils.matchesPassword(newPassword, password)) {
             return error("新密码不能与旧密码相同");
         }
-        if (userService.resetUserPwd(userName, SecurityUtils.encryptPassword(newPassword)) > 0) {
+        String encryptPassword = SecurityUtils.encryptPassword(newPassword);
+        if (userService.resetUserPwd(userName, encryptPassword) > 0) {
             // 更新缓存用户密码
-            loginUser.getUser().setPassword(SecurityUtils.encryptPassword(newPassword));
+            loginUser.getUser().setPassword(encryptPassword);
             tokenService.setLoginUser(loginUser);
             return success();
         }
