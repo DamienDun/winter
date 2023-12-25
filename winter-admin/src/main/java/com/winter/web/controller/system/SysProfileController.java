@@ -59,10 +59,10 @@ public class SysProfileController extends BaseController {
         SysUser sysUser = loginUser.getUser();
         user.setUserName(sysUser.getUserName());
         if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
-            return error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
+            return error("修改用户'" + loginUser.getUsername() + "'失败，手机号码已存在");
         }
         if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
-            return error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            return error("修改用户'" + loginUser.getUsername() + "'失败，邮箱账号已存在");
         }
         user.setUserId(sysUser.getUserId());
         user.setPassword(null);
