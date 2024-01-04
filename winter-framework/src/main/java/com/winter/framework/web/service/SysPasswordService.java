@@ -1,25 +1,22 @@
 package com.winter.framework.web.service;
 
-import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import com.winter.common.constant.CacheConstants;
-import com.winter.common.constant.Constants;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.redis.RedisCache;
 import com.winter.common.exception.user.UserPasswordNotMatchException;
 import com.winter.common.exception.user.UserPasswordRetryLimitExceedException;
-import com.winter.common.utils.MessageUtils;
 import com.winter.common.utils.SecurityUtils;
-import com.winter.framework.manager.AsyncManager;
-import com.winter.framework.manager.factory.AsyncFactory;
 import com.winter.framework.security.context.AuthenticationContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 登录密码方法
- * 
+ *
  * @author winter
  */
 @Component
@@ -36,7 +33,7 @@ public class SysPasswordService
 
     /**
      * 登录账户密码错误次数缓存键名
-     * 
+     *
      * @param username 用户名
      * @return 缓存键key
      */
@@ -60,16 +57,12 @@ public class SysPasswordService
 
         if (retryCount >= Integer.valueOf(maxRetryCount).intValue())
         {
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL,
-                    MessageUtils.message("user.password.retry.limit.exceed", maxRetryCount, lockTime)));
             throw new UserPasswordRetryLimitExceedException(maxRetryCount, lockTime);
         }
 
         if (!matches(user, password))
         {
             retryCount = retryCount + 1;
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL,
-                    MessageUtils.message("user.password.retry.limit.count", retryCount)));
             redisCache.setCacheObject(getCacheKey(username), retryCount, lockTime, TimeUnit.MINUTES);
             throw new UserPasswordNotMatchException();
         }
