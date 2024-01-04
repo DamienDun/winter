@@ -1,10 +1,5 @@
 package com.winter.generator.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.apache.velocity.VelocityContext;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.winter.common.constant.GenConstants;
@@ -12,10 +7,16 @@ import com.winter.common.utils.DateUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.generator.domain.GenTable;
 import com.winter.generator.domain.GenTableColumn;
+import org.apache.velocity.VelocityContext;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 模板处理工具类
- * 
+ *
  * @author winter
  */
 public class VelocityUtils
@@ -123,11 +124,17 @@ public class VelocityUtils
 
     /**
      * 获取模板信息
-     *
+     * @param tplCategory 生成的模板
+     * @param tplWebType 前端类型
      * @return 模板列表
      */
-    public static List<String> getTemplateList(String tplCategory)
+    public static List<String> getTemplateList(String tplCategory, String tplWebType)
     {
+        String useWebType = "vm/vue";
+        if ("element-plus".equals(tplWebType))
+        {
+            useWebType = "vm/vue/v3";
+        }
         List<String> templates = new ArrayList<String>();
         templates.add("vm/java/domain.java.vm");
         templates.add("vm/java/mapper.java.vm");
@@ -139,15 +146,15 @@ public class VelocityUtils
         templates.add("vm/js/api.js.vm");
         if (GenConstants.TPL_CRUD.equals(tplCategory))
         {
-            templates.add("vm/vue/index.vue.vm");
+            templates.add(useWebType + "/index.vue.vm");
         }
         else if (GenConstants.TPL_TREE.equals(tplCategory))
         {
-            templates.add("vm/vue/index-tree.vue.vm");
+            templates.add(useWebType + "/index-tree.vue.vm");
         }
         else if (GenConstants.TPL_SUB.equals(tplCategory))
         {
-            templates.add("vm/vue/index.vue.vm");
+            templates.add(useWebType + "/index.vue.vm");
             templates.add("vm/java/sub-domain.java.vm");
         }
         return templates;
@@ -234,7 +241,7 @@ public class VelocityUtils
 
     /**
      * 根据列类型获取导入包
-     * 
+     *
      * @param genTable 业务表对象
      * @return 返回需要导入的包列表
      */
@@ -264,7 +271,7 @@ public class VelocityUtils
 
     /**
      * 根据列类型获取字典组
-     * 
+     *
      * @param genTable 业务表对象
      * @return 返回字典组
      */
@@ -283,7 +290,7 @@ public class VelocityUtils
 
     /**
      * 添加字典列表
-     * 
+     *
      * @param dicts 字典列表
      * @param columns 列集合
      */

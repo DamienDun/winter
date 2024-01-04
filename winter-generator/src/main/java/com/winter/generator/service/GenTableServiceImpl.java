@@ -1,26 +1,5 @@
 package com.winter.generator.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.winter.common.constant.Constants;
@@ -36,10 +15,32 @@ import com.winter.generator.mapper.GenTableMapper;
 import com.winter.generator.util.GenUtils;
 import com.winter.generator.util.VelocityInitializer;
 import com.winter.generator.util.VelocityUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 业务 服务层实现
- * 
+ *
  * @author winter
  */
 @Service
@@ -55,7 +56,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 查询业务信息
-     * 
+     *
      * @param id 业务ID
      * @return 业务信息
      */
@@ -69,7 +70,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 查询业务列表
-     * 
+     *
      * @param genTable 业务信息
      * @return 业务集合
      */
@@ -81,7 +82,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 查询据库列表
-     * 
+     *
      * @param genTable 业务信息
      * @return 数据库表集合
      */
@@ -93,7 +94,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 查询据库列表
-     * 
+     *
      * @param tableNames 表名称组
      * @return 数据库表集合
      */
@@ -105,7 +106,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 查询所有表信息
-     * 
+     *
      * @return 表信息集合
      */
     @Override
@@ -116,7 +117,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 修改业务
-     * 
+     *
      * @param genTable 业务信息
      * @return 结果
      */
@@ -138,7 +139,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 删除业务对象
-     * 
+     *
      * @param tableIds 需要删除的数据ID
      * @return 结果
      */
@@ -152,7 +153,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 导入表结构
-     * 
+     *
      * @param tableList 导入表列表
      */
     @Override
@@ -187,7 +188,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 预览代码
-     * 
+     *
      * @param tableId 表编号
      * @return 预览数据列表
      */
@@ -206,7 +207,7 @@ public class GenTableServiceImpl implements IGenTableService
         VelocityContext context = VelocityUtils.prepareContext(table);
 
         // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory(), table.getTplWebType());
         for (String template : templates)
         {
             // 渲染模板
@@ -220,7 +221,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 生成代码（下载方式）
-     * 
+     *
      * @param tableName 表名称
      * @return 数据
      */
@@ -236,7 +237,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 生成代码（自定义路径）
-     * 
+     *
      * @param tableName 表名称
      */
     @Override
@@ -254,7 +255,7 @@ public class GenTableServiceImpl implements IGenTableService
         VelocityContext context = VelocityUtils.prepareContext(table);
 
         // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory(), table.getTplWebType());
         for (String template : templates)
         {
             if (!StringUtils.containsAny(template, "sql.vm", "api.js.vm", "index.vue.vm", "index-tree.vue.vm"))
@@ -278,7 +279,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 同步数据库
-     * 
+     *
      * @param tableName 表名称
      */
     @Override
@@ -333,7 +334,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 批量生成代码（下载方式）
-     * 
+     *
      * @param tableNames 表数组
      * @return 数据
      */
@@ -367,7 +368,7 @@ public class GenTableServiceImpl implements IGenTableService
         VelocityContext context = VelocityUtils.prepareContext(table);
 
         // 获取模板列表
-        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory());
+        List<String> templates = VelocityUtils.getTemplateList(table.getTplCategory(), table.getTplWebType());
         for (String template : templates)
         {
             // 渲染模板
@@ -392,7 +393,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 修改保存参数校验
-     * 
+     *
      * @param genTable 业务信息
      */
     @Override
@@ -430,7 +431,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 设置主键列信息
-     * 
+     *
      * @param table 业务表信息
      */
     public void setPkColumn(GenTable table)
@@ -466,7 +467,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 设置主子表信息
-     * 
+     *
      * @param table 业务表信息
      */
     public void setSubTable(GenTable table)
@@ -480,7 +481,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 设置代码生成其他选项值
-     * 
+     *
      * @param genTable 设置后的生成对象
      */
     public void setTableFromOptions(GenTable genTable)
@@ -504,7 +505,7 @@ public class GenTableServiceImpl implements IGenTableService
 
     /**
      * 获取代码生成地址
-     * 
+     *
      * @param table 业务表信息
      * @param template 模板文件路径
      * @return 生成地址
