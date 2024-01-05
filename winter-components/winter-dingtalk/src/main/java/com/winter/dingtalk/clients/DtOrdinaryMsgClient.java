@@ -48,11 +48,12 @@ public class DtOrdinaryMsgClient extends AbstractDtClient implements IDtClient {
             log.info("ding commonmsg sendMsg rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getReceiver();
+            } else {
+                throw new BaseException(String.format("发送普通消息失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("发送普通消息");
+            throw new BaseException(String.format("发送普通消息失败:%s", e.getMessage()));
         }
-        throw new BaseException("发送普通消息");
     }
 }

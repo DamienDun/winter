@@ -48,12 +48,13 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice sendMsg rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getTaskId();
+            } else {
+                throw new BaseException(String.format("钉钉发送工作通知失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("钉钉发送工作通知失败");
+            throw new BaseException(String.format("钉钉发送工作通知失败:%s", e.getMessage()));
         }
-        throw new BaseException("钉钉发送工作通知失败");
     }
 
     /**
@@ -101,12 +102,13 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice sendMsgResult rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp;
+            } else {
+                throw new BaseException(String.format("获取工作通知消息的发送结果失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("获取工作通知消息的发送结果失败");
+            throw new BaseException(String.format("获取工作通知消息的发送结果失败:%s", e.getMessage()));
         }
-        throw new BaseException("获取工作通知消息的发送结果失败");
     }
 
     /**
@@ -139,10 +141,10 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice updatestatus rsp:{}", rsp.getBody());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("更新工作通知状态栏失败");
+            throw new BaseException(String.format("更新工作通知状态栏失败:%s", e.getMessage()));
         }
         if (!rsp.isSuccess()) {
-            throw new BaseException("更新工作通知状态栏失败:{}", rsp.getMessage());
+            throw new BaseException(String.format("更新工作通知状态栏失败:%s", rsp.getMessage()));
         }
     }
 
@@ -162,12 +164,13 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice getsendprogress rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp;
+            } else {
+                throw new BaseException(String.format("获取工作通知消息的发送进度失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("获取工作通知消息的发送进度失败");
+            throw new BaseException(String.format("获取工作通知消息的发送进度失败:%s", e.getMessage()));
         }
-        throw new BaseException("获取工作通知消息的发送进度失败");
     }
 
     /**
@@ -186,12 +189,13 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice getsendresult rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp;
+            } else {
+                throw new BaseException(String.format("获取工作通知消息的发送进度失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("获取工作通知消息的发送进度失败");
+            throw new BaseException(String.format("获取工作通知消息的发送进度失败:%s", e.getMessage()));
         }
-        throw new BaseException("获取工作通知消息的发送进度失败");
     }
 
     /**
@@ -210,10 +214,10 @@ public class DtNoticeClient extends AbstractDtClient implements IDtClient {
             log.info("ding notice recall rsp:{}", rsp.getBody());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("撤回工作通知消息失败");
+            throw new BaseException(String.format("撤回工作通知消息失败:%s", e.getMessage()));
         }
         if (!rsp.isSuccess()) {
-            throw new BaseException("撤回工作通知消息失败:{}", rsp.getErrmsg());
+            throw new BaseException(String.format("撤回工作通知消息失败:%s", rsp.getErrmsg()));
         }
     }
 }

@@ -48,12 +48,13 @@ public class DtChatClient extends AbstractDtClient implements IDtClient {
             log.info("ding chat sendMsg rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getMessageId();
+            } else {
+                throw new BaseException(String.format("发送消息到企业群失败,chatId:{%s}:%s", chatId, rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("发送消息到企业群失败,chatId:{}", chatId);
+            throw new BaseException(String.format("发送消息到企业群失败,chatId:{%s}:%s", chatId, e.getMessage()));
         }
-        throw new BaseException("发送消息到企业群失败,chatId:{}", chatId);
     }
 
     /**
@@ -94,11 +95,12 @@ public class DtChatClient extends AbstractDtClient implements IDtClient {
             log.info("ding chat getReadList rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp;
+            } else {
+                throw new BaseException(String.format("查询群消息已读人员列表失败,messageId:{%s},%s", messageId, rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("查询群消息已读人员列表失败,messageId:{}", messageId);
+            throw new BaseException(String.format("查询群消息已读人员列表失败,messageId:{%s},%s", messageId, e.getMessage()));
         }
-        throw new BaseException("查询群消息已读人员列表失败,messageId:{}", messageId);
     }
 }

@@ -87,7 +87,7 @@ public class DtH5Client extends AbstractDtClient implements IDtClient {
             signature = byteToHex(crypt.digest());
             return signature;
         } catch (Exception e) {
-            log.error("生成钉钉H5 JsapiTicket签名失败");
+            log.error(String.format("生成钉钉H5 JsapiTicket签名失败:%s", e.getMessage()));
         }
         return signature;
     }

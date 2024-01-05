@@ -47,12 +47,13 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
             log.info("ding getuserinfo rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getResult();
+            } else {
+                throw new BaseException(String.format("通过免登码获取用户信息失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("通过免登码获取用户信息失败");
+            throw new BaseException(String.format("通过免登码获取用户信息失败:%s", e.getMessage()));
         }
-        throw new BaseException("通过免登码获取用户信息失败");
     }
 
     /**
@@ -71,12 +72,13 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
             log.info("ding sso getuserinfo rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp;
+            } else {
+                throw new BaseException(String.format("获取应用管理后台免登的用户信息失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("获取应用管理后台免登的用户信息失败");
+            throw new BaseException(String.format("获取应用管理后台免登的用户信息失败:%s", e.getMessage()));
         }
-        throw new BaseException("获取应用管理后台免登的用户信息失败");
     }
 
     /**
@@ -94,11 +96,12 @@ public class DtAuthClient extends AbstractDtClient implements IDtClient {
             log.info("ding sns getuserinfo rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getUserInfo();
+            } else {
+                throw new BaseException(String.format("根据sns临时授权码获取用户信息失败:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("根据sns临时授权码获取用户信息失败");
+            throw new BaseException(String.format("根据sns临时授权码获取用户信息失败:%s", e.getMessage()));
         }
-        throw new BaseException("根据sns临时授权码获取用户信息失败");
     }
 }

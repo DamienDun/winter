@@ -52,12 +52,13 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
             log.info("ding get userinfo rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getResult();
+            } else {
+                throw new BaseException(String.format("ding get userinfo fail:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("ding get userinfo fail");
+            throw new BaseException(String.format("ding get userinfo fail:%s", e.getMessage()));
         }
-        throw new BaseException("ding get userinfo fail");
     }
 
     /**
@@ -75,12 +76,13 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
             log.info("ding userid getbymobile rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getResult().getUserid();
+            } else {
+                throw new BaseException(String.format("ding get userid by mobile fail:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("ding get userid by mobile fail");
+            throw new BaseException(String.format("ding get userid by mobile fail:%s", e.getMessage()));
         }
-        throw new BaseException("ding get userid by mobile fail");
     }
 
     /**
@@ -98,12 +100,13 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
             log.info("ding userid getbyunionid rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getResult().getUserid();
+            } else {
+                throw new BaseException(String.format("ding get userid by unionid fail:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("ding get userid by unionid fail");
+            throw new BaseException(String.format("ding get userid by unionid fail:%s", e.getMessage()));
         }
-        throw new BaseException("ding get userid by unionid fail");
     }
 
     /**
@@ -122,11 +125,12 @@ public class DtUserClient extends AbstractDtClient implements IDtClient {
             log.info("ding userid listbydeptid rsp:{}", rsp.getBody());
             if (rsp.isSuccess()) {
                 return rsp.getResult().getUseridList();
+            } else {
+                throw new BaseException(String.format("ding userid listbydeptid fail:%s", rsp.getErrmsg()));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BaseException("ding userid listbydeptid fail");
+            throw new BaseException(String.format("ding userid listbydeptid fail:%s", e.getMessage()));
         }
-        throw new BaseException("ding userid listbydeptid fail");
     }
 }
