@@ -64,7 +64,7 @@ public class SysUser extends BaseEntity {
     /**
      * 手机号码
      */
-    @Excel(sort = 8, name = "手机号码")
+    @Excel(sort = 8, name = "手机号码", cellType = ColumnType.TEXT)
     @ApiModelProperty(value = "手机号码")
     private String phonenumber;
 
