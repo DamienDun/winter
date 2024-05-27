@@ -2,6 +2,8 @@ package com.winter.common.constant;
 
 import io.jsonwebtoken.Claims;
 
+import java.util.Locale;
+
 /**
  * 通用常量信息
  *
@@ -17,6 +19,11 @@ public interface Constants {
      * GBK 字符集
      */
     String GBK = "GBK";
+
+    /**
+     * 系统语言
+     */
+    public static final Locale DEFAULT_LOCALE = Locale.SIMPLIFIED_CHINESE;
 
     /**
      * www主域
