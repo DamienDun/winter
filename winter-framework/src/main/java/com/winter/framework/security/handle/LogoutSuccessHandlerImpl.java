@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.winter.common.constant.Constants;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.model.LoginUser;
+import com.winter.common.utils.MessageUtils;
 import com.winter.common.utils.ServletUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.framework.manager.AsyncManager;
@@ -43,8 +44,8 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
             // 删除用户缓存记录
             tokenService.delLoginUser(loginUser.getToken());
             // 记录用户退出日志
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, "退出成功"));
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, MessageUtils.message("user.logout.success")));
         }
-        ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success("退出成功")));
+        ServletUtils.renderString(response, JSON.toJSONString(AjaxResult.success(MessageUtils.message("user.logout.success"))));
     }
 }
