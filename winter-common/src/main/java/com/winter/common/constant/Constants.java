@@ -156,7 +156,7 @@ public interface Constants {
     /**
      * 定时任务白名单配置（仅允许访问的包名，如其他需要可以自行添加）
      */
-    String[] JOB_WHITELIST_STR = {"com.winter"};
+    String[] JOB_WHITELIST_STR = {"com.winter.quartz.task"};
 
     /**
      * 定时任务违规的字符
