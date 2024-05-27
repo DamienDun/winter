@@ -6,7 +6,6 @@ import com.winter.common.constant.Constants;
 import com.winter.common.constant.GenConstants;
 import com.winter.common.core.text.CharsetKit;
 import com.winter.common.exception.ServiceException;
-import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.StringUtils;
 import com.winter.generator.domain.GenTable;
 import com.winter.generator.domain.GenTableColumn;
@@ -152,15 +151,26 @@ public class GenTableServiceImpl implements IGenTableService
     }
 
     /**
+     * 创建表
+     *
+     * @param sql 创建表语句
+     * @return 结果
+     */
+    @Override
+    public boolean createTable(String sql)
+    {
+        return genTableMapper.createTable(sql) == 0;
+    }
+
+    /**
      * 导入表结构
      *
      * @param tableList 导入表列表
      */
     @Override
     @Transactional
-    public void importGenTable(List<GenTable> tableList)
+    public void importGenTable(List<GenTable> tableList, String operName)
     {
-        String operName = SecurityUtils.getUsername();
         try
         {
             for (GenTable table : tableList)

@@ -1,26 +1,39 @@
 package com.winter.generator.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
 import com.winter.common.core.text.Convert;
 import com.winter.common.constant.BusinessType;
+import com.winter.common.utils.SecurityUtils;
+import com.winter.common.utils.sql.SqlUtil;
 import com.winter.generator.domain.GenTable;
 import com.winter.generator.domain.GenTableColumn;
 import com.winter.generator.service.IGenTableColumnService;
 import com.winter.generator.service.IGenTableService;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 代码生成 操作处理
@@ -103,8 +116,45 @@ public class GenController extends BaseController
         String[] tableNames = Convert.toStrArray(tables);
         // 查询表信息
         List<GenTable> tableList = genTableService.selectDbTableListByNames(tableNames);
-        genTableService.importGenTable(tableList);
+        genTableService.importGenTable(tableList, SecurityUtils.getUsername());
         return success();
+    }
+
+    /**
+     * 创建表结构（保存）
+     */
+    @PreAuthorize("@ss.hasRole('admin')")
+    @Log(title = "创建表", businessType = BusinessType.OTHER)
+    @PostMapping("/createTable")
+    public AjaxResult createTableSave(String sql)
+    {
+        try
+        {
+            SqlUtil.filterKeyword(sql);
+            List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, DbType.mysql);
+            List<String> tableNames = new ArrayList<>();
+            for (SQLStatement sqlStatement : sqlStatements)
+            {
+                if (sqlStatement instanceof MySqlCreateTableStatement)
+                {
+                    MySqlCreateTableStatement createTableStatement = (MySqlCreateTableStatement) sqlStatement;
+                    if (genTableService.createTable(createTableStatement.toString()))
+                    {
+                        String tableName = createTableStatement.getTableName().replaceAll("`", "");
+                        tableNames.add(tableName);
+                    }
+                }
+            }
+            List<GenTable> tableList = genTableService.selectDbTableListByNames(tableNames.toArray(new String[tableNames.size()]));
+            String operName = SecurityUtils.getUsername();
+            genTableService.importGenTable(tableList, operName);
+            return AjaxResult.success();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return AjaxResult.error("创建表结构异常");
+        }
     }
 
     /**
