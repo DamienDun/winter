@@ -260,7 +260,7 @@ public class RedisCache {
     public Collection<String> scans(final String pattern) {
         return (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
             Set<String> keysTmp = new HashSet<>();
-            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(pattern).build());
+            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(pattern).count(1000).build());
             while (cursor.hasNext()) {
                 keysTmp.add(new String(cursor.next()));
             }
