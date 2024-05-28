@@ -1,19 +1,18 @@
 package com.winter.common.enums;
 
 /**
- * 数据源
- * 
+ * 数据源类型
+ *
  * @author winter
  */
-public enum DataSourceType
-{
+public interface DataSourceType {
     /**
      * 主库
      */
-    MASTER,
+    String MASTER = "master";
 
     /**
      * 从库
      */
-    SLAVE
+    String SLAVE = "slave";
 }

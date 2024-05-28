@@ -1,6 +1,8 @@
 package com.winter.framework.aspectj;
 
-import java.util.Objects;
+import com.winter.common.annotation.DataSource;
+import com.winter.common.utils.StringUtils;
+import com.winter.framework.datasource.DynamicDataSourceContextHolder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,13 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import com.winter.common.annotation.DataSource;
-import com.winter.common.utils.StringUtils;
-import com.winter.framework.datasource.DynamicDataSourceContextHolder;
+
+import java.util.Objects;
 
 /**
  * 多数据源处理
- * 
+ *
  * @author winter
  */
 @Aspect
@@ -41,7 +42,7 @@ public class DataSourceAspect
 
         if (StringUtils.isNotNull(dataSource))
         {
-            DynamicDataSourceContextHolder.setDataSourceType(dataSource.value().name());
+            DynamicDataSourceContextHolder.setDataSourceType(dataSource.value());
         }
 
         try
