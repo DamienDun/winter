@@ -54,6 +54,7 @@
         <presto.jdbc.version>0.240</presto.jdbc.version>
         <clickhouse.jdbc.version>0.2.4</clickhouse.jdbc.version>
         <redisson.version>3.16.3</redisson.version>
+        <proguard.version>6.2.2</proguard.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -227,59 +228,6 @@
                 <version>${kaptcha.version}</version>
             </dependency>
 
-            <!-- 定时任务-->
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-quartz</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <!-- 代码生成-->
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-generator</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <!-- 核心模块-->
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-framework</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <!-- 系统模块-->
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-system</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <!-- 通用工具-->
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-common</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-web</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-swagger</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.winter</groupId>
-                <artifactId>winter-file-storage</artifactId>
-                <version>${winter.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>cn.bestwu</groupId>
                 <artifactId>fastdfs-client-java</artifactId>
@@ -433,7 +381,60 @@
             <dependency>
                 <groupId>net.sf.proguard</groupId>
                 <artifactId>proguard-base</artifactId>
-                <version>6.2.2</version>
+                <version>${proguard.version}</version>
+            </dependency>
+
+            <!-- 通用工具-->
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-common</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <!-- 定时任务-->
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-quartz</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <!-- 代码生成-->
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-generator</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <!-- 核心模块-->
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-framework</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <!-- 系统模块-->
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-system</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-web</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-swagger</artifactId>
+                <version>${winter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.winter</groupId>
+                <artifactId>winter-file-storage</artifactId>
+                <version>${winter.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
