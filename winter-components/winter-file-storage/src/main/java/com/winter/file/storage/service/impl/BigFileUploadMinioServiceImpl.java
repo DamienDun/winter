@@ -232,7 +232,7 @@ public class BigFileUploadMinioServiceImpl implements BigFileUploadMinioService 
         input.valid();
         MultiPartUploadStatus status = null;
         // 是否加锁根据需求，如果不加锁则可能在取消上传或多现客户端不正确的上传或并发上传就会出错
-        String lockKey = String.join(Constants.COLON, LOCK_PREFIX, input.getUploadId(), String.valueOf(input.getUploadId()));
+        String lockKey = String.join(Constants.COLON, LOCK_PREFIX, input.getUploadId(), String.valueOf(input.getPartNumber()));
         Integer bigFileUploadTaskStatus = FsBigFileUploadTaskStatusEnum.UPLOADING.getCode();
         uploadBigFileCount.incrementAndGet();
         try {
