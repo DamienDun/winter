@@ -30,13 +30,9 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
             if (Objects.isNull(getFieldValByName(CreateAuditing.FIELD_GMT_CREATE, metaObject))) {
                 setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, DateUtils.getNowDate(), metaObject);
             }
-            try {
-                LoginUser loginUser = SecurityUtils.getLoginUser();
-                if (loginUser != null) {
-                    setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
-                }
-            } catch (Exception e) {
-                log.debug("获取不到当前登录用户信息,跳过字段{}的自动填充", CreateAuditing.FIELD_CREATED_USER_ID);
+            LoginUser loginUser = getLoginUser();
+            if (loginUser != null) {
+                setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
             }
 
         }
@@ -51,12 +47,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
      */
     @Override
     public void updateFill(MetaObject metaObject) {
-        LoginUser loginUser = null;
-        try {
-            loginUser = SecurityUtils.getLoginUser();
-        } catch (Exception e) {
-            log.debug("获取不到当前登录用户信息,跳过审计字段的自动填充");
-        }
+        LoginUser loginUser = getLoginUser();
         Date nowDate = DateUtils.getNowDate();
         if (metaObject.hasGetter(DeleteAuditing.FIELD_DELETED) &&
                 CommonEnum.Deleted.TRUE.getCode().equals(metaObject.getValue(DeleteAuditing.FIELD_DELETED))) {
@@ -76,4 +67,17 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         }
     }
 
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
+    private LoginUser getLoginUser() {
+        try {
+            return SecurityUtils.getLoginUser();
+        } catch (Exception e) {
+            log.debug("获取不到当前登录用户信息,跳过审计字段的自动填充");
+        }
+        return null;
+    }
 }
