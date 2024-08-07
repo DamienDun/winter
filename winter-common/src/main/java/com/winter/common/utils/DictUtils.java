@@ -5,10 +5,12 @@ import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.domain.entity.SysDictData;
 import com.winter.common.core.redis.RedisCache;
 import com.winter.common.utils.spring.SpringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 字典工具类
@@ -53,6 +55,9 @@ public class DictUtils {
      * @return 字典标签
      */
     public static String getDictLabel(String dictType, String dictValue) {
+        if (StringUtils.isEmpty(dictValue)) {
+            return StringUtils.EMPTY;
+        }
         return getDictLabel(dictType, dictValue, SEPARATOR);
     }
 
@@ -64,6 +69,9 @@ public class DictUtils {
      * @return 字典值
      */
     public static String getDictValue(String dictType, String dictLabel) {
+        if (StringUtils.isEmpty(dictLabel)) {
+            return StringUtils.EMPTY;
+        }
         return getDictValue(dictType, dictLabel, SEPARATOR);
     }
 
@@ -78,22 +86,22 @@ public class DictUtils {
     public static String getDictLabel(String dictType, String dictValue, String separator) {
         StringBuilder propertyString = new StringBuilder();
         List<SysDictData> datas = getDictCache(dictType);
-
-        if (StringUtils.isNotNull(datas)) {
-            if (StringUtils.containsAny(separator, dictValue)) {
-                for (SysDictData dict : datas) {
-                    for (String value : dictValue.split(separator)) {
-                        if (value.equals(dict.getDictValue())) {
-                            propertyString.append(dict.getDictLabel()).append(separator);
-                            break;
-                        }
+        if (CollectionUtils.isEmpty(datas)) {
+            return StringUtils.EMPTY;
+        }
+        if (StringUtils.containsAny(separator, dictValue)) {
+            for (SysDictData dict : datas) {
+                for (String value : dictValue.split(separator)) {
+                    if (value.equals(dict.getDictValue())) {
+                        propertyString.append(dict.getDictLabel()).append(separator);
+                        break;
                     }
                 }
-            } else {
-                for (SysDictData dict : datas) {
-                    if (dictValue.equals(dict.getDictValue())) {
-                        return dict.getDictLabel();
-                    }
+            }
+        } else {
+            for (SysDictData dict : datas) {
+                if (dictValue.equals(dict.getDictValue())) {
+                    return dict.getDictLabel();
                 }
             }
         }
@@ -111,8 +119,10 @@ public class DictUtils {
     public static String getDictValue(String dictType, String dictLabel, String separator) {
         StringBuilder propertyString = new StringBuilder();
         List<SysDictData> datas = getDictCache(dictType);
-
-        if (StringUtils.containsAny(separator, dictLabel) && StringUtils.isNotEmpty(datas)) {
+        if (CollectionUtils.isEmpty(datas)) {
+            return StringUtils.EMPTY;
+        }
+        if (StringUtils.containsAny(separator, dictLabel)) {
             for (SysDictData dict : datas) {
                 for (String label : dictLabel.split(separator)) {
                     if (label.equals(dict.getDictLabel())) {
@@ -129,6 +139,56 @@ public class DictUtils {
             }
         }
         return StringUtils.stripEnd(propertyString.toString(), separator);
+    }
+
+    /**
+     * 根据字典类型获取字典所有值
+     *
+     * @param dictType 字典类型
+     * @return 字典值
+     */
+    public static String getDictValues(String dictType) {
+        StringBuilder propertyString = new StringBuilder();
+        List<SysDictData> datas = getDictCache(dictType);
+        if (CollectionUtils.isEmpty(datas)) {
+            return StringUtils.EMPTY;
+        }
+        for (SysDictData dict : datas) {
+            propertyString.append(dict.getDictValue()).append(SEPARATOR);
+        }
+        return StringUtils.stripEnd(propertyString.toString(), SEPARATOR);
+    }
+
+    /**
+     * 根据字典类型获取字典所有标签
+     *
+     * @param dictType 字典类型
+     * @return 字典值
+     */
+    public static String getDictLabels(String dictType) {
+        StringBuilder propertyString = new StringBuilder();
+        List<SysDictData> datas = getDictCache(dictType);
+        if (CollectionUtils.isEmpty(datas)) {
+            return StringUtils.EMPTY;
+        }
+        for (SysDictData dict : datas) {
+            propertyString.append(dict.getDictLabel()).append(SEPARATOR);
+        }
+        return StringUtils.stripEnd(propertyString.toString(), SEPARATOR);
+    }
+
+    /**
+     * 根据字典类型获取字典所有标签
+     *
+     * @param dictType 字典类型
+     * @return 字典值
+     */
+    public static String[] getDictLabelArr(String dictType) {
+        List<SysDictData> datas = getDictCache(dictType);
+        if (CollectionUtils.isEmpty(datas)) {
+            return new String[0];
+        }
+        return datas.stream().map(SysDictData::getDictLabel).collect(Collectors.toList()).toArray(new String[datas.size()]);
     }
 
     /**

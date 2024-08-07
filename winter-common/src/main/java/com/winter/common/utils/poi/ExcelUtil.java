@@ -57,11 +57,6 @@ public class ExcelUtil<T> {
     public static final String[] FORMULA_STR = {"=", "-", "+", "@"};
 
     /**
-     * 用于dictType属性数据存储，避免重复查缓存
-     */
-    public Map<String, String> sysDictMap = new HashMap<>();
-
-    /**
      * Excel sheet最大行数，默认65536
      */
     public static final int sheetSize = 65536;
@@ -315,12 +310,7 @@ public class ExcelUtil<T> {
             Row heard = sheet.getRow(titleNum);
             for (int i = 0; i < heard.getPhysicalNumberOfCells(); i++) {
                 Cell cell = heard.getCell(i);
-                if (StringUtils.isNotNull(cell)) {
-                    String value = this.getCellValue(heard, i).toString();
-                    cellMap.put(value, i);
-                } else {
-                    cellMap.put(null, i);
-                }
+                cellMap.put(Objects.isNull(cell) ? null : this.getCellValue(heard, i).toString(), i);
             }
             // 有数据时才处理 得到类的所有field.
             List<Object[]> fields = this.getFields();
@@ -362,23 +352,30 @@ public class ExcelUtil<T> {
                                 val = Convert.toStr(val);
                             }
                         }
-                    } else if ((Integer.TYPE == fieldType || Integer.class == fieldType) && StringUtils.isNumeric(Convert.toStr(val))) {
+                    }
+                    if ((Integer.TYPE == fieldType || Integer.class == fieldType) && StringUtils.isNumeric(Convert.toStr(val))) {
                         val = Convert.toInt(val);
-                    } else if ((Long.TYPE == fieldType || Long.class == fieldType) && StringUtils.isNumeric(Convert.toStr(val))) {
+                    }
+                    if ((Long.TYPE == fieldType || Long.class == fieldType) && StringUtils.isNumeric(Convert.toStr(val))) {
                         val = Convert.toLong(val);
-                    } else if (Double.TYPE == fieldType || Double.class == fieldType) {
+                    }
+                    if (Double.TYPE == fieldType || Double.class == fieldType) {
                         val = Convert.toDouble(val);
-                    } else if (Float.TYPE == fieldType || Float.class == fieldType) {
+                    }
+                    if (Float.TYPE == fieldType || Float.class == fieldType) {
                         val = Convert.toFloat(val);
-                    } else if (BigDecimal.class == fieldType) {
+                    }
+                    if (BigDecimal.class == fieldType) {
                         val = Convert.toBigDecimal(val);
-                    } else if (Date.class == fieldType) {
+                    }
+                    if (Date.class == fieldType) {
                         if (val instanceof String) {
                             val = DateUtils.parseDate(val);
                         } else if (val instanceof Double) {
                             val = DateUtil.getJavaDate((Double) val);
                         }
-                    } else if (Boolean.TYPE == fieldType || Boolean.class == fieldType) {
+                    }
+                    if (Boolean.TYPE == fieldType || Boolean.class == fieldType) {
                         val = Convert.toBool(val, false);
                     }
                     if (StringUtils.isNotNull(fieldType)) {
@@ -948,19 +945,23 @@ public class ExcelUtil<T> {
      * 创建表格样式
      */
     public void setDataValidation(Excel attr, Row row, int column) {
-        if (attr.name().indexOf("注：") >= 0) {
+        if (attr.name().contains("注：")) {
             sheet.setColumnWidth(column, 6000);
         } else {
             // 设置列宽
             sheet.setColumnWidth(column, (int) ((attr.width() + 0.72) * 256));
         }
-        if (StringUtils.isNotEmpty(attr.prompt()) || attr.combo().length > 0) {
-            if (attr.combo().length > 15 || StringUtils.join(attr.combo()).length() > 255) {
+        if (StringUtils.isNotEmpty(attr.prompt()) || attr.combo().length > 0 || attr.comboReadDict()) {
+            String[] comboArray = attr.combo();
+            if (attr.comboReadDict()) {
+                comboArray = DictUtils.getDictLabelArr(attr.dictType());
+            }
+            if (comboArray.length > 15 || StringUtils.join(comboArray).length() > 255) {
                 // 如果下拉数大于15或字符串长度大于255，则使用一个新sheet存储，避免生成的模板下拉值获取不到
-                setXSSFValidationWithHidden(sheet, attr.combo(), attr.prompt(), 1, 100, column, column);
+                setXSSFValidationWithHidden(sheet, comboArray, attr.prompt(), 1, 100, column, column);
             } else {
                 // 提示信息或只能选择不能输入的列内容.
-                setPromptOrValidation(sheet, attr.combo(), attr.prompt(), 1, 100, column, column);
+                setPromptOrValidation(sheet, comboArray, attr.prompt(), 1, 100, column, column);
             }
         }
     }
@@ -994,11 +995,7 @@ public class ExcelUtil<T> {
                 } else if (StringUtils.isNotEmpty(readConverterExp) && StringUtils.isNotNull(value)) {
                     cell.setCellValue(convertByExp(Convert.toStr(value), readConverterExp, separator));
                 } else if (StringUtils.isNotEmpty(dictType) && StringUtils.isNotNull(value)) {
-                    if (!sysDictMap.containsKey(dictType + value)) {
-                        String lable = convertDictByExp(Convert.toStr(value), dictType, separator);
-                        sysDictMap.put(dictType + value, lable);
-                    }
-                    cell.setCellValue(sysDictMap.get(dictType + value));
+                    cell.setCellValue(convertDictByExp(Convert.toStr(value), dictType, separator));
                 } else if (value instanceof BigDecimal && -1 != attr.scale()) {
                     cell.setCellValue((((BigDecimal) value).setScale(attr.scale(), attr.roundingMode())).doubleValue());
                 } else if (!attr.handler().equals(ExcelHandlerAdapter.class)) {
