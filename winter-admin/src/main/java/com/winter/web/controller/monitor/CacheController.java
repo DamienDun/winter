@@ -1,29 +1,21 @@
 package com.winter.web.controller.monitor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.utils.StringUtils;
 import com.winter.system.domain.SysCache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 /**
  * 缓存监控
- * 
+ *
  * @author winter
  */
 @RestController
@@ -80,7 +72,7 @@ public class CacheController
     public AjaxResult getCacheKeys(@PathVariable String cacheName)
     {
         Set<String> cacheKeys = redisTemplate.keys(cacheName + "*");
-        return AjaxResult.success(cacheKeys);
+        return AjaxResult.success(CollectionUtils.isEmpty(cacheKeys) ? Collections.emptySet() : new TreeSet<>(cacheKeys));
     }
 
     @PreAuthorize("@ss.hasPermi('monitor:cache:list')")

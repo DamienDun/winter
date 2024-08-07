@@ -3,10 +3,12 @@ package com.winter.framework.web.exception;
 import com.winter.common.constant.Constants;
 import com.winter.common.constant.HttpStatus;
 import com.winter.common.core.domain.AjaxResult;
+import com.winter.common.core.text.Convert;
 import com.winter.common.exception.BusinessException;
 import com.winter.common.exception.DemoModeException;
 import com.winter.common.exception.ServiceException;
 import com.winter.common.utils.StringUtils;
+import com.winter.common.utils.html.EscapeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -80,13 +82,14 @@ public class GlobalExceptionHandler {
      * 请求参数类型不匹配
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public AjaxResult handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request, HttpServletResponse response) {
+    public AjaxResult handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        String value = Convert.toStr(e.getValue());
+        if (StringUtils.isNotEmpty(value)) {
+            value = EscapeUtil.clean(value);
+        }
         log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
-        Class<?> requiredType = e.getRequiredType();
-        String requiredTypeName = Objects.nonNull(requiredType) ? requiredType.getName() : "";
-        addResponseHeader(response, String.valueOf(HttpStatus.ERROR));
-        return AjaxResult.error(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), requiredTypeName, e.getValue()));
+        return AjaxResult.error(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), value));
     }
 
     /**

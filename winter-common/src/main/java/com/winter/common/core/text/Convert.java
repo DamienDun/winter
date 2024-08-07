@@ -324,6 +324,9 @@ public class Convert {
      * @return 结果
      */
     public static String[] toStrArray(String split, String str) {
+        if (StringUtils.isEmpty(str)) {
+            return new String[]{};
+        }
         return str.split(split);
     }
 

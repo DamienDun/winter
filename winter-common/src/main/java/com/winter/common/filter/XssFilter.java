@@ -1,22 +1,19 @@
 package com.winter.common.filter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import com.winter.common.enums.HttpMethod;
+import com.winter.common.utils.StringUtils;
+
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.winter.common.utils.StringUtils;
-import com.winter.common.enums.HttpMethod;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 防止XSS攻击的过滤器
- * 
+ *
  * @author winter
  */
 public class XssFilter implements Filter
@@ -32,11 +29,8 @@ public class XssFilter implements Filter
         String tempExcludes = filterConfig.getInitParameter("excludes");
         if (StringUtils.isNotEmpty(tempExcludes))
         {
-            String[] url = tempExcludes.split(",");
-            for (int i = 0; url != null && i < url.length; i++)
-            {
-                excludes.add(url[i]);
-            }
+            String[] urls = tempExcludes.split(",");
+            excludes.addAll(Arrays.asList(urls));
         }
     }
 
