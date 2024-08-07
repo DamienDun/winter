@@ -266,10 +266,13 @@ public abstract class BaseService<TKey extends Serializable,
         if (CollectionUtils.isEmpty(inputs)) {
             return;
         }
-        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
-        int batchSize = batchAddBefore(entities, inputs);
-        mapper.insertInBatch(entities, batchSize);
+        List<TEntity> entities = batchAddBefore(inputs);
+        mapper.insertInBatch(entities, setBatchSize());
         batchAddAfter(entities, inputs);
+    }
+
+    protected int setBatchSize() {
+        return DEFAULT_BATCH_SIZE;
     }
 
     protected void batchAddAfter(List<TEntity> entities, List<TInput> inputs) {
@@ -279,13 +282,12 @@ public abstract class BaseService<TKey extends Serializable,
     /**
      * 批量增加前
      *
-     * @param entities
      * @param inputs
      * @return
      */
-    protected int batchAddBefore(List<TEntity> entities, List<TInput> inputs) {
+    protected List<TEntity> batchAddBefore(List<TInput> inputs) {
 
-        return DEFAULT_BATCH_SIZE;
+        return inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
     }
 
     @Override
@@ -294,9 +296,9 @@ public abstract class BaseService<TKey extends Serializable,
         if (CollectionUtils.isEmpty(inputs)) {
             return;
         }
-        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
+        List<TEntity> oldEntities = mapper.selectBatchIds(inputs.stream().map(TInput::getId).collect(Collectors.toList()));
         UpdateBatchWrapper<TEntity> wrapper = new UpdateBatchWrapper<>(getEntityClass());
-        int batchSize = batchUpdateBefore(entities, inputs, wrapper);
+        List<TEntity> entities = batchUpdateBefore(inputs, oldEntities, wrapper);
         // 如果实现了修改审计接口,默认更新字段
         if (ModifiedAuditing.class.isAssignableFrom(entityClass)) {
             wrapper.addFieldIfAbsent(ModifiedAuditing.COLUMN_MODIFIED_USER_ID, ModifiedAuditing.COLUMN_GMT_MODIFIED);
@@ -304,30 +306,31 @@ public abstract class BaseService<TKey extends Serializable,
         if (CollectionUtils.isEmpty(wrapper.getUpdateFields())) {
             throw new RuntimeException("未设置要更新的字段");
         }
-        mapper.updateInBatch(entities, wrapper, batchSize);
-        batchUpdateAfter(entities, inputs);
+        mapper.updateInBatch(entities, wrapper, setBatchSize());
+        batchUpdateAfter(inputs, entities, oldEntities);
     }
 
     /**
      * 批量更新后
      *
-     * @param entities
      * @param inputs
+     * @param entities
+     * @param oldEntities
      */
-    protected void batchUpdateAfter(List<TEntity> entities, List<TInput> inputs) {
+    protected void batchUpdateAfter(List<TInput> inputs, List<TEntity> entities, List<TEntity> oldEntities) {
 
     }
 
     /**
      * 批量更新前
      *
-     * @param entities
      * @param inputs
+     * @param oldEntities
      * @return
      */
-    protected int batchUpdateBefore(List<TEntity> entities, List<TInput> inputs, UpdateBatchWrapper<TEntity> wrapper) {
+    protected List<TEntity> batchUpdateBefore(List<TInput> inputs, List<TEntity> oldEntities, UpdateBatchWrapper<TEntity> wrapper) {
 
-        return DEFAULT_BATCH_SIZE;
+        return inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
     }
 
     /**
@@ -341,33 +344,34 @@ public abstract class BaseService<TKey extends Serializable,
         if (CollectionUtils.isEmpty(inputs)) {
             return;
         }
-        final List<TEntity> entities = inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
-        int batchSize = batchReplaceBefore(entities, inputs);
+        List<TEntity> oldEntities = mapper.selectBatchIds(inputs.stream().map(TInput::getId).collect(Collectors.toList()));
+        List<TEntity> entities = batchReplaceBefore(inputs, oldEntities);
 
-        mapper.replaceInBatch(entities, batchSize);
+        mapper.replaceInBatch(entities, setBatchSize());
 
-        batchReplaceAfter(entities, inputs);
+        batchReplaceAfter(inputs, entities, oldEntities);
     }
 
     /**
      * 批量替换后
      *
-     * @param entities
      * @param inputs
+     * @param entities
+     * @param oldEntities
      */
-    protected void batchReplaceAfter(List<TEntity> entities, List<TInput> inputs) {
+    protected void batchReplaceAfter(List<TInput> inputs, List<TEntity> entities, List<TEntity> oldEntities) {
 
     }
 
     /**
      * 批量替换前
      *
-     * @param entities
      * @param inputs
+     * @param oldEntities
      * @return
      */
-    protected int batchReplaceBefore(List<TEntity> entities, List<TInput> inputs) {
+    protected List<TEntity> batchReplaceBefore(List<TInput> inputs, List<TEntity> oldEntities) {
 
-        return DEFAULT_BATCH_SIZE;
+        return inputs.stream().map(item -> AutoMapUtils.map(item, getEntityClass())).collect(Collectors.toList());
     }
 }
