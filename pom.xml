@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.winter</groupId>
         <artifactId>winter-dependencies</artifactId>
-        <version>1.1.6</version>
+        <version>1.1.7</version>
         <relativePath>./winter-dependencies/pom.xml</relativePath>
     </parent>
 
     <artifactId>winter</artifactId>
-    <version>1.1.6</version>
+    <version>1.1.7</version>
 
     <name>winter</name>
     <description>Winter Management System</description>
