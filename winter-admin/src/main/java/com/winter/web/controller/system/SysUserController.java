@@ -119,6 +119,8 @@ public class SysUserController extends BaseController {
     @PostMapping
     @ApiOperation("新增用户")
     public AjaxResult add(@Validated @RequestBody SysUser user) {
+        deptService.checkDeptDataScope(user.getDeptId());
+        roleService.checkRoleDataScope(user.getRoleIds());
         if (!userService.checkUserNameUnique(user)) {
             return error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
         }

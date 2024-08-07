@@ -29,7 +29,7 @@ public class SysUser extends BaseEntity {
     /**
      * 用户ID
      */
-    @Excel(sort = 1, name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
+    @Excel(sort = 1, name = "用户序号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户编号")
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
