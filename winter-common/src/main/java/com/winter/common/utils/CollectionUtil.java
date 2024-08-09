@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  * @description
  * @create 2022/9/13 8:40
  */
-public class CollectionUtil {
+public class CollectionUtil extends CollectionUtils {
 
     /**
      * 判断集合不为空,过滤null元素
