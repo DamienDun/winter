@@ -1,5 +1,6 @@
 package com.winter.common.client;
 
+import com.winter.common.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -230,6 +231,7 @@ public class OkHttpCli {
             }
         } catch (Exception e) {
             log.error(ExceptionUtils.getStackTrace(e));
+            throw new ServiceException(e.getMessage());
         }
         return "";
     }
