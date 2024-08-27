@@ -113,7 +113,7 @@ public class SwaggerConfig
                 // 描述
                 .description("描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...")
                 // 作者信息
-                .contact(new Contact(winterConfig.getName(), null, null))
+                .contact(new Contact(WinterConfig.getName(), null, null))
                 // 版本
                 .version("版本号:" + winterConfig.getVersion())
                 .build();

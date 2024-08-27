@@ -1,16 +1,12 @@
 package com.winter.common.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import com.winter.common.constant.CacheConstants;
 import com.winter.common.enums.LimitType;
+
+import java.lang.annotation.*;
 
 /**
  * 限流注解
- * 
+ *
  * @author winter
  */
 @Target(ElementType.METHOD)
@@ -21,7 +17,7 @@ public @interface RateLimiter
     /**
      * 限流key
      */
-    String key() default CacheConstants.RATE_LIMIT_KEY;
+    String key() default "winter:rate_limit:";
 
     /**
      * 限流时间,单位秒

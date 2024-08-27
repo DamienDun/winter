@@ -17,7 +17,7 @@ public class WinterConfig {
     /**
      * 项目名称
      */
-    private String name;
+    private static String name;
 
     /**
      * 版本
@@ -49,12 +49,12 @@ public class WinterConfig {
      */
     private static String aesKey = "JAD42F6697B038B75";
 
-    public String getName() {
+    public static String getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        WinterConfig.name = name;
     }
 
     public String getVersion() {
