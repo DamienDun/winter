@@ -5,9 +5,11 @@ import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.domain.entity.SysMenu;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginBody;
+import com.winter.common.core.domain.model.LoginUser;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.framework.web.service.SysLoginService;
 import com.winter.framework.web.service.SysPermissionService;
+import com.winter.framework.web.service.TokenService;
 import com.winter.system.service.ISysMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +39,9 @@ public class SysLoginController {
     @Autowired
     private SysPermissionService permissionService;
 
+    @Autowired
+    private TokenService tokenService;
+
     /**
      * 登录方法
      *
@@ -62,11 +67,16 @@ public class SysLoginController {
     @GetMapping("getInfo")
     @ApiOperation("获取用户信息")
     public AjaxResult getInfo() {
-        SysUser user = SecurityUtils.getLoginUser().getUser();
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        SysUser user = loginUser.getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
+        if (!loginUser.getPermissions().equals(permissions)) {
+            loginUser.setPermissions(permissions);
+            tokenService.refreshToken(loginUser);
+        }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("user", user);
         ajax.put("roles", roles);
