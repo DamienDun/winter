@@ -37,7 +37,7 @@ public class JdbcUtil implements JdbcConstants {
                 LocalCacheUtil.remove(datasourceInfo.getKey());
                 dataSource = createDruidDataSource(datasourceInfo);
             }
-            LocalCacheUtil.set(datasourceInfo.getKey(), dataSource, 4 * 60 * 60 * 1000);
+            LocalCacheUtil.set(datasourceInfo.getKey(), dataSource, datasourceInfo.getCacheTime() > 0 ? datasourceInfo.getCacheTime() : 4 * 60 * 60 * 1000);
             return dataSource;
         }
     }
@@ -60,20 +60,19 @@ public class JdbcUtil implements JdbcConstants {
         dataSource.setUrl(datasourceInfo.getJdbcUrl());
         dataSource.setDriverClassName(datasourceInfo.getJdbcDriverClass());
 
-        // 兼容oracle测试校验
-        String validationQuery = JdbcConstants.ORACLE.equals(datasourceInfo.getDatasourceType()) ? "SELECT 1 FROM DUAL" : "SELECT 1";
-        dataSource.setValidationQuery(validationQuery);
-
-        dataSource.setMaxActive(20);
-        dataSource.setInitialSize(5);
-        dataSource.setMaxWait(60000L);
-        dataSource.setTimeBetweenEvictionRunsMillis(60000L);
-        dataSource.setMinEvictableIdleTimeMillis(30000L);
-        dataSource.setTestWhileIdle(true);
-        dataSource.setTestOnBorrow(false);
-        dataSource.setTestOnReturn(false);
-        dataSource.setBreakAfterAcquireFailure(true);
-        dataSource.setConnectionErrorRetryAttempts(1);
+        dataSource.setMaxActive(datasourceInfo.getMaxActive());
+        dataSource.setInitialSize(datasourceInfo.getInitialSize());
+        dataSource.setMaxWait(datasourceInfo.getMaxWait());
+        dataSource.setTimeBetweenEvictionRunsMillis(datasourceInfo.getTimeBetweenEvictionRunsMillis());
+        dataSource.setMinEvictableIdleTimeMillis(datasourceInfo.getMinEvictableIdleTimeMillis());
+        dataSource.setTestWhileIdle(datasourceInfo.isTestWhileIdle());
+        dataSource.setTestOnBorrow(datasourceInfo.isTestOnBorrow());
+        dataSource.setTestOnReturn(datasourceInfo.isTestOnReturn());
+        dataSource.setBreakAfterAcquireFailure(datasourceInfo.isBreakAfterAcquireFailure());
+        dataSource.setConnectionErrorRetryAttempts(datasourceInfo.getConnectionErrorRetryAttempts());
+        dataSource.setValidationQuery(datasourceInfo.getValidationQuery());
+        dataSource.setConnectTimeout(datasourceInfo.getConnectTimeout());
+        dataSource.setSocketTimeout(datasourceInfo.getSocketTimeout());
         return dataSource;
     }
 
