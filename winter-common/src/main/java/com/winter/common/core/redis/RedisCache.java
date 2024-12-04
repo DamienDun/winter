@@ -2,6 +2,7 @@ package com.winter.common.core.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -258,11 +259,23 @@ public class RedisCache {
      * @return 对象列表
      */
     public Collection<String> scans(final String pattern) {
+        return scans(pattern, 1000);
+    }
+
+    /**
+     * scans方式获得缓存的基本对象列表
+     *
+     * @param pattern
+     * @param count
+     * @return
+     */
+    public Collection<String> scans(final String pattern, int count) {
         return (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
             Set<String> keysTmp = new HashSet<>();
-            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(pattern).count(1000).build());
+            RedisSerializer serializer = redisTemplate.getKeySerializer();
+            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(pattern).count(count).build());
             while (cursor.hasNext()) {
-                keysTmp.add(new String(cursor.next()));
+                keysTmp.add(String.valueOf(serializer.deserialize(cursor.next())));
             }
             return keysTmp;
         });
