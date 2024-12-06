@@ -26,15 +26,23 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
+        Date nowDate = DateUtils.getNowDate();
+        LoginUser loginUser = getLoginUser();
         if (CreateAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
             if (Objects.isNull(getFieldValByName(CreateAuditing.FIELD_GMT_CREATE, metaObject))) {
-                setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, DateUtils.getNowDate(), metaObject);
+                setFieldValByName(CreateAuditing.FIELD_GMT_CREATE, nowDate, metaObject);
             }
-            LoginUser loginUser = getLoginUser();
-            if (loginUser != null) {
+            if (loginUser != null && Objects.isNull(getFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, metaObject))) {
                 setFieldValByName(CreateAuditing.FIELD_CREATED_USER_ID, loginUser.getUserId(), metaObject);
             }
-
+        }
+        if (ModifiedAuditing.class.isAssignableFrom(metaObject.getOriginalObject().getClass())) {
+            if (Objects.isNull(getFieldValByName(ModifiedAuditing.FIELD_GMT_MODIFIED, metaObject))) {
+                setFieldValByName(ModifiedAuditing.FIELD_GMT_MODIFIED, nowDate, metaObject);
+            }
+            if (loginUser != null && Objects.isNull(getFieldValByName(ModifiedAuditing.FIELD_MODIFIED_USER_ID, metaObject))) {
+                setFieldValByName(ModifiedAuditing.FIELD_MODIFIED_USER_ID, loginUser.getUserId(), metaObject);
+            }
         }
     }
 
