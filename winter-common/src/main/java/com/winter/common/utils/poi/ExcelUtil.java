@@ -589,7 +589,7 @@ public class ExcelUtil<T> {
                 // 取出一共有多少个sheet.
                 int sheetNo = Math.max(1, (int) Math.ceil(this.list.size() * 1.0 / sheetSize));
                 for (int index = 0; index < sheetNo; index++) {
-                    wholeSheetNo = createSheetManySheet(wholeSheetNo, sheetNo, index);
+                    createSheetManySheet(wholeSheetNo, sheetNo, index);
 
                     // 产生一行
                     Row row = sheet.createRow(rownum);
@@ -611,8 +611,8 @@ public class ExcelUtil<T> {
                         fillExcelData(index, row);
                         addStatisticsRow();
                     }
+                    wholeSheetNo++;
                 }
-                wholeSheetNo++;
             }
             wb.write(response.getOutputStream());
         } catch (IOException e) {
@@ -629,15 +629,14 @@ public class ExcelUtil<T> {
      * @param sheetNo      当前数据sheet索引
      * @param index        序号
      */
-    public int createSheetManySheet(int wholeSheetNo, int sheetNo, int index) {
+    public void createSheetManySheet(int wholeSheetNo, int sheetNo, int index) {
         this.sheet = wb.createSheet();
         this.styles = createStyles(wb);
         if (sheetNo > 1 && index > 0) {
             wb.setSheetName(wholeSheetNo, sheetName + index);
-            return wholeSheetNo;
+        } else {
+            wb.setSheetName(wholeSheetNo, sheetName);
         }
-        wb.setSheetName(wholeSheetNo, sheetName);
-        return wholeSheetNo;
     }
 
     /**
