@@ -633,7 +633,6 @@ public class ExcelUtil<T> {
         this.sheet = wb.createSheet();
         this.styles = createStyles(wb);
         if (sheetNo > 1 && index > 0) {
-            wholeSheetNo = wholeSheetNo + index;
             wb.setSheetName(wholeSheetNo, sheetName + index);
             return wholeSheetNo;
         }
