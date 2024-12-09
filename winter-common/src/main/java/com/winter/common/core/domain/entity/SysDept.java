@@ -1,5 +1,6 @@
 package com.winter.common.core.domain.entity;
 
+import com.winter.common.annotation.Trimmed;
 import com.winter.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,6 +45,7 @@ public class SysDept extends BaseEntity {
      * 部门名称
      */
     @ApiModelProperty(value = "部门名称")
+    @Trimmed
     private String deptName;
 
     /**

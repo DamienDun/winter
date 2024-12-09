@@ -2,6 +2,7 @@ package com.winter.common.core.domain.entity;
 
 import com.winter.common.annotation.Excel;
 import com.winter.common.annotation.Excel.ColumnType;
+import com.winter.common.annotation.Trimmed;
 import com.winter.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,6 +35,7 @@ public class SysRole extends BaseEntity {
      */
     @Excel(name = "角色名称")
     @ApiModelProperty(value = "角色名称")
+    @Trimmed
     private String roleName;
 
     /**

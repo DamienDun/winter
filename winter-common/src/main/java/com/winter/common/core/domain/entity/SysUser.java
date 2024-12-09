@@ -4,6 +4,7 @@ import com.winter.common.annotation.Excel;
 import com.winter.common.annotation.Excel.ColumnType;
 import com.winter.common.annotation.Excel.Type;
 import com.winter.common.annotation.Excels;
+import com.winter.common.annotation.Trimmed;
 import com.winter.common.core.domain.BaseEntity;
 import com.winter.common.xss.Xss;
 import io.swagger.annotations.ApiModel;
@@ -45,6 +46,7 @@ public class SysUser extends BaseEntity {
      */
     @Excel(sort = 5, name = "用户账号")
     @ApiModelProperty(value = "用户账号")
+    @Trimmed
     private String userName;
 
     /**
@@ -52,6 +54,7 @@ public class SysUser extends BaseEntity {
      */
     @Excel(sort = 6, name = "用户名称")
     @ApiModelProperty(value = "用户名称")
+    @Trimmed
     private String nickName;
 
     /**

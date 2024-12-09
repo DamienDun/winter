@@ -1,5 +1,6 @@
 package com.winter.common.core.domain.entity;
 
+import com.winter.common.annotation.Trimmed;
 import com.winter.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,6 +32,7 @@ public class SysMenu extends BaseEntity {
      * 菜单名称
      */
     @ApiModelProperty(value = "菜单名称")
+    @Trimmed
     private String menuName;
 
     /**
