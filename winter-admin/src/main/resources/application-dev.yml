@@ -92,3 +92,14 @@ swagger:
   enabled: true
   # 请求前缀
   pathMapping: /
+
+winter:
+  storage:
+    client:
+      minio:
+        enable: true
+        endpoint: http://10.36.23.78:19001
+        serverUrl: http://10.36.23.78:19000
+        defaultBucketName: big-file-test
+        accessKey: minioadmin
+        secretKey: minioadmin123

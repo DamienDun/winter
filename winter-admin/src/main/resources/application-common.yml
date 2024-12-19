@@ -12,15 +12,6 @@ winter:
   addressEnabled: false
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
-  storage:
-    client:
-      minio:
-        enable: true
-        endpoint: http://10.36.23.78:19001
-        serverUrl: http://10.36.23.78:19000
-        defaultBucketName: big-file-test
-        accessKey: minioadmin
-        secretKey: minioadmin123
 
 # 开发环境配置
 server:
