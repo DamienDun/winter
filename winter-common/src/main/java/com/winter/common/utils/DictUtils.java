@@ -1,6 +1,7 @@
 package com.winter.common.utils;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.domain.entity.SysDictData;
 import com.winter.common.core.redis.RedisCache;
@@ -204,7 +205,7 @@ public class DictUtils {
      * 清空字典缓存
      */
     public static void clearDictCache() {
-        Collection<String> keys = SpringUtils.getBean(RedisCache.class).keys(CacheConstants.SYS_DICT_KEY + "*");
+        Collection<String> keys = SpringUtils.getBean(RedisCache.class).keys(WinterConfig.joinKey(CacheConstants.SYS_DICT_KEY) + "*");
         SpringUtils.getBean(RedisCache.class).deleteObject(keys);
     }
 
@@ -215,6 +216,6 @@ public class DictUtils {
      * @return 缓存键key
      */
     public static String getCacheKey(String configKey) {
-        return CacheConstants.SYS_DICT_KEY + configKey;
+        return WinterConfig.joinKey(CacheConstants.SYS_DICT_KEY) + configKey;
     }
 }

@@ -1,6 +1,7 @@
 package com.winter.framework.web.service;
 
 import com.winter.common.config.TokenConfig;
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.constant.Constants;
 import com.winter.common.core.domain.model.LoginUser;
@@ -201,6 +202,6 @@ public class TokenService {
     }
 
     private String getTokenKey(String uuid) {
-        return CacheConstants.LOGIN_TOKEN_KEY + uuid;
+        return WinterConfig.joinKey(CacheConstants.LOGIN_TOKEN_KEY) + uuid;
     }
 }

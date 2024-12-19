@@ -1,6 +1,7 @@
 package com.winter.web.controller.monitor;
 
 import com.winter.common.annotation.Log;
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
@@ -37,7 +38,7 @@ public class SysUserOnlineController extends BaseController {
     @PreAuthorize("@ss.hasPermi('monitor:online:list')")
     @GetMapping("/list")
     public TableDataInfo list(String ipaddr, String userName) {
-        Collection<String> keys = redisCache.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
+        Collection<String> keys = redisCache.keys(WinterConfig.joinKey(CacheConstants.LOGIN_TOKEN_KEY) + "*");
         List<SysUserOnline> userOnlineList = new ArrayList<SysUserOnline>();
         for (String key : keys) {
             LoginUser user = redisCache.getCacheObject(key);
@@ -63,7 +64,7 @@ public class SysUserOnlineController extends BaseController {
     @Log(title = "在线用户", businessType = BusinessType.FORCE)
     @DeleteMapping("/{tokenId}")
     public AjaxResult forceLogout(@PathVariable String tokenId) {
-        redisCache.deleteObject(CacheConstants.LOGIN_TOKEN_KEY + tokenId);
+        redisCache.deleteObject(WinterConfig.joinKey(CacheConstants.LOGIN_TOKEN_KEY) + tokenId);
         return success();
     }
 }

@@ -1,6 +1,7 @@
 package com.winter.system.service.impl;
 
 import com.winter.common.annotation.DataSource;
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.constant.UserConstants;
 import com.winter.common.core.redis.RedisCache;
@@ -168,7 +169,7 @@ public class SysConfigServiceImpl implements ISysConfigService {
      */
     @Override
     public void clearConfigCache() {
-        Collection<String> keys = redisCache.keys(CacheConstants.SYS_CONFIG_KEY + "*");
+        Collection<String> keys = redisCache.keys(WinterConfig.joinKey(CacheConstants.SYS_CONFIG_KEY) + "*");
         redisCache.deleteObject(keys);
     }
 
@@ -204,6 +205,6 @@ public class SysConfigServiceImpl implements ISysConfigService {
      * @return 缓存键key
      */
     private String getCacheKey(String configKey) {
-        return CacheConstants.SYS_CONFIG_KEY + configKey;
+        return WinterConfig.joinKey(CacheConstants.SYS_CONFIG_KEY) + configKey;
     }
 }

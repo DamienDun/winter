@@ -1,7 +1,6 @@
 package com.winter.framework.web.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.constant.Constants;
 import com.winter.common.constant.UserConstants;
@@ -17,6 +16,8 @@ import com.winter.framework.manager.AsyncManager;
 import com.winter.framework.manager.factory.AsyncFactory;
 import com.winter.system.service.ISysConfigService;
 import com.winter.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 注册校验方法
@@ -82,7 +83,7 @@ public class SysRegisterService {
      * @return 结果
      */
     public void validateCaptcha(String username, String code, String uuid) {
-        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
+        String verifyKey = WinterConfig.joinKey(CacheConstants.CAPTCHA_CODE_KEY) + StringUtils.nvl(uuid, "");
         String captcha = redisCache.getCacheObject(verifyKey);
         redisCache.deleteObject(verifyKey);
         if (captcha == null) {

@@ -1,5 +1,6 @@
 package com.winter.web.controller.monitor;
 
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.utils.StringUtils;
@@ -27,13 +28,13 @@ public class CacheController
 
     private final static List<SysCache> caches = new ArrayList<SysCache>();
     {
-        caches.add(new SysCache(CacheConstants.LOGIN_TOKEN_KEY, "用户信息"));
-        caches.add(new SysCache(CacheConstants.SYS_CONFIG_KEY, "配置信息"));
-        caches.add(new SysCache(CacheConstants.SYS_DICT_KEY, "数据字典"));
-        caches.add(new SysCache(CacheConstants.CAPTCHA_CODE_KEY, "验证码"));
-        caches.add(new SysCache(CacheConstants.REPEAT_SUBMIT_KEY, "防重提交"));
-        caches.add(new SysCache(CacheConstants.RATE_LIMIT_KEY, "限流处理"));
-        caches.add(new SysCache(CacheConstants.PWD_ERR_CNT_KEY, "密码错误次数"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.LOGIN_TOKEN_KEY), "用户信息"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.SYS_CONFIG_KEY), "配置信息"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.SYS_DICT_KEY), "数据字典"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.CAPTCHA_CODE_KEY), "验证码"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.REPEAT_SUBMIT_KEY), "防重提交"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.RATE_LIMIT_KEY), "限流处理"));
+        caches.add(new SysCache(WinterConfig.joinKey(CacheConstants.PWD_ERR_CNT_KEY), "密码错误次数"));
     }
 
     @PreAuthorize("@ss.hasPermi('monitor:cache:list')")

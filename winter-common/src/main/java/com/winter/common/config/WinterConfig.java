@@ -1,5 +1,6 @@
 package com.winter.common.config;
 
+import com.winter.common.constant.Constants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -131,5 +132,9 @@ public class WinterConfig {
 
     public static void setAesKey(String aesKey) {
         WinterConfig.aesKey = aesKey;
+    }
+
+    public static String joinKey(String cacheKey) {
+        return getName() + Constants.COLON + cacheKey;
     }
 }

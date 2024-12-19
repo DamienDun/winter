@@ -1,5 +1,6 @@
 package com.winter.framework.web.service;
 
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.redis.RedisCache;
@@ -39,7 +40,7 @@ public class SysPasswordService
      */
     private String getCacheKey(String username)
     {
-        return CacheConstants.PWD_ERR_CNT_KEY + username;
+        return WinterConfig.joinKey(CacheConstants.PWD_ERR_CNT_KEY) + username;
     }
 
     public void validate(SysUser user)

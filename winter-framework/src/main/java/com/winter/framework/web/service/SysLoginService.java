@@ -1,5 +1,6 @@
 package com.winter.framework.web.service;
 
+import com.winter.common.config.WinterConfig;
 import com.winter.common.constant.CacheConstants;
 import com.winter.common.constant.Constants;
 import com.winter.common.constant.UserConstants;
@@ -99,7 +100,7 @@ public class SysLoginService {
     public void validateCaptcha(String username, String code, String uuid) {
         boolean captchaEnabled = configService.selectCaptchaEnabled();
         if (captchaEnabled) {
-            String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
+            String verifyKey = WinterConfig.joinKey(CacheConstants.CAPTCHA_CODE_KEY) + StringUtils.nvl(uuid, "");
             String captcha = redisCache.getCacheObject(verifyKey);
             redisCache.deleteObject(verifyKey);
             if (captcha == null) {
