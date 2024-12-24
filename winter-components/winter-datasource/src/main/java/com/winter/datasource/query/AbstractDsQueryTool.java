@@ -70,8 +70,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         this.sqlBuilder = SqlBuilderFactory.getByDbType(datasourceInfo.getDatasourceType());
         this.schema = getSchema(datasourceInfo);
         this.datasourceType = datasourceInfo.getDatasourceType();
-        this.jdbcTemplate = new JdbcTemplate();
-        this.jdbcTemplate.setDataSource(this.datasource);
+        this.jdbcTemplate = new JdbcTemplate(this.datasource);
         return this;
     }
 
@@ -103,11 +102,6 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
 
     @Override
     public void closeConn() {
-        JdbcUtils.close(connection);
-    }
-
-    @Override
-    public void discardConn() {
         JdbcUtil.closeDruidConn((DruidDataSource) datasource, connection);
     }
 

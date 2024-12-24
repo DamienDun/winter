@@ -24,12 +24,6 @@ public interface DsQueryTool {
     void closeConn();
 
     /**
-     * 抛弃连接对象
-     */
-    @Deprecated
-    void discardConn();
-
-    /**
      * 获取jdbcTemplate
      *
      * @return
