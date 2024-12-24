@@ -103,6 +103,11 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
 
     @Override
     public void closeConn() {
+        JdbcUtils.close(connection);
+    }
+
+    @Override
+    public void discardConn() {
         JdbcUtil.closeDruidConn((DruidDataSource) datasource, connection);
     }
 
