@@ -47,7 +47,7 @@ public class DistributionLockCli {
         }
         String permitId = semaphore.tryAcquire(1, 60, TimeUnit.SECONDS);
         if (permitId != null) {
-            log.info("获取分布式锁[key:{},permitId:{}]", key, permitId);
+            log.info("获取分布式锁[key={},permitId={}]", key, permitId);
             //存入全局map
             PERMIT_MAP.put(key, permitId);
             return permitId;
@@ -91,7 +91,7 @@ public class DistributionLockCli {
                 //存入全局map
                 semaphore.release(permitId);
                 PERMIT_MAP.remove(key);
-                log.info("释放分布式锁[xxlJobInfoId:{},permitId:{}]", key, permitId);
+                log.info("释放分布式锁[key={},permitId={}]", key, permitId);
             } catch (Exception ex) {
                 log.warn("该分布式锁[permitId:{}]已经释放", PERMIT_MAP);
             }
