@@ -1,7 +1,6 @@
 package com.winter.datasource.util;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.pool.DruidPooledConnection;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.druid.util.JdbcUtils;
 import com.winter.common.utils.LocalCacheUtil;
@@ -112,7 +111,7 @@ public class JdbcUtil implements JdbcConstants {
             return;
         }
         try {
-            druidDataSource.discardConnection(((DruidPooledConnection) conn).getConnectionHolder());
+            druidDataSource.discardConnection(conn);
         } catch (Exception e) {
             logger.debug("close druid connection error", e);
         }
