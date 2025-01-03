@@ -848,7 +848,7 @@ public class ExcelUtil<T> {
      * @param excel  注解信息
      */
     public void annotationDataStyles(Map<String, CellStyle> styles, Field field, Excel excel) {
-        String key = StringUtils.format("data_{}_{}_{}_{}", excel.align(), excel.color(), excel.backgroundColor(), excel.cellType());
+        String key = StringUtils.format("data_{}_{}_{}_{}_{}", excel.align(), excel.color(), excel.backgroundColor(), excel.cellType(), excel.wrapText());
         if (!styles.containsKey(key)) {
             CellStyle style = wb.createCellStyle();
             style.setAlignment(excel.align());
@@ -863,6 +863,7 @@ public class ExcelUtil<T> {
             style.setBottomBorderColor(IndexedColors.GREY_50_PERCENT.getIndex());
             style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             style.setFillForegroundColor(excel.backgroundColor().getIndex());
+            style.setWrapText(excel.wrapText());
             Font dataFont = wb.createFont();
             dataFont.setFontName("Arial");
             dataFont.setFontHeightInPoints((short) 10);
@@ -888,7 +889,7 @@ public class ExcelUtil<T> {
         cell.setCellStyle(styles.get(StringUtils.format("header_{}_{}", attr.headerColor(), attr.headerBackgroundColor())));
         if (isSubList()) {
             // 填充默认样式，防止合并单元格样式失效
-            sheet.setDefaultColumnStyle(column, styles.get(StringUtils.format("data_{}_{}_{}_{}", attr.align(), attr.color(), attr.backgroundColor(), attr.cellType())));
+            sheet.setDefaultColumnStyle(column, styles.get(StringUtils.format("data_{}_{}_{}_{}_{}", attr.align(), attr.color(), attr.backgroundColor(), attr.cellType(), attr.wrapText())));
             if (attr.needMerge()) {
                 sheet.addMergedRegion(new CellRangeAddress(rownum - 1, rownum, column, column));
             }
@@ -993,7 +994,7 @@ public class ExcelUtil<T> {
                     CellRangeAddress cellAddress = new CellRangeAddress(subMergedFirstRowNum, subMergedLastRowNum, column, column);
                     sheet.addMergedRegion(cellAddress);
                 }
-                cell.setCellStyle(styles.get(StringUtils.format("data_{}_{}_{}_{}", attr.align(), attr.color(), attr.backgroundColor(), attr.cellType())));
+                cell.setCellStyle(styles.get(StringUtils.format("data_{}_{}_{}_{}_{}", attr.align(), attr.color(), attr.backgroundColor(), attr.cellType(), attr.wrapText())));
 
                 // 用于读取对象中的属性
                 Object value = getTargetValue(vo, field, attr);
