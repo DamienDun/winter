@@ -27,13 +27,20 @@ public class JdbcUtil implements JdbcConstants {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
 
+    /**
+     * 获取数据源
+     *
+     * @param datasourceInfo
+     * @return
+     * @throws SQLException
+     */
     public static DataSource getDataSource(DatasourceInfo datasourceInfo) throws SQLException {
         // 增加是否弃用缓存开关
         if (datasourceInfo.isDisableCache()) {
             return createDruidDataSource(datasourceInfo);
         } else {
             DataSource dataSource = (DataSource) LocalCacheUtil.get(datasourceInfo.getKey());
-            if (dataSource == null || !dataSource.getConnection().isValid(500)) {
+            if (dataSource == null) {
                 LocalCacheUtil.remove(datasourceInfo.getKey());
                 dataSource = createDruidDataSource(datasourceInfo);
             }
@@ -100,9 +107,10 @@ public class JdbcUtil implements JdbcConstants {
     }
 
     /**
-     * 关闭druid连接池的连接
+     * 丢弃druid连接池的连接
      */
-    public static void closeDruidConn(DruidDataSource druidDataSource, Connection conn) {
+    @Deprecated
+    public static void discardConnection(DruidDataSource druidDataSource, Connection conn) {
         if (conn == null) {
             return;
         }

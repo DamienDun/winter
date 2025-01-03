@@ -46,8 +46,8 @@ public class SQLServerSqlBuilder extends AbstractSqlBuidler implements SqlBuilde
 
     @Override
     public String queryTableTotal(String schemaName, String tableName) {
-        String tableNameSql = StringUtils.isNotEmpty(tableName) ? " and name like '%" + tableName + "%' " : "";
-        return String.format("SELECT count(*) AS total FROM SysObjects Where XType='U' %s ", tableNameSql);
+        String tableNameSql = StringUtils.isNotEmpty(tableName) ? " AND name LIKE '%" + tableName + "%' " : "";
+        return String.format("SELECT count(*) AS total FROM SysObjects WHERE XType='U' %s ", tableNameSql);
     }
 
     @Override

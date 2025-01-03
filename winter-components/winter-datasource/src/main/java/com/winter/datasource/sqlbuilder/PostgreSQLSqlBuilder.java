@@ -64,7 +64,7 @@ public class PostgreSQLSqlBuilder extends AbstractSqlBuidler implements SqlBuild
     public String queryTableTotal(String schemaName, String tableName) {
         String tableNameSql = StringUtils.isNotEmpty(tableName) ? " and relname like '%" + tableName + "%' " : " ";
         return "SELECT count(*) FROM (select relname as tabname from pg_class c " +
-                "where  relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%' " + tableNameSql + " group by relname order by relname) AS temp ";
+                "where relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%' " + tableNameSql + " group by relname order by relname) AS temp ";
     }
 
     @Override

@@ -44,7 +44,7 @@ public class MySQLSqlBuilder extends AbstractSqlBuidler implements SqlBuilder {
 
     @Override
     public String queryTableTotal(String schemaName, String tableName) {
-        String tableNameSql = StringUtils.isNotEmpty(tableName) ? " where table_name like '%" + tableName + "%' " : "";
+        String tableNameSql = StringUtils.isNotEmpty(tableName) ? " AND table_name LIKE '%" + tableName + "%' " : "";
         return String.format("SELECT count(*) FROM information_schema.TABLES WHERE table_schema = '%s' %s ", schemaName, tableNameSql);
     }
 

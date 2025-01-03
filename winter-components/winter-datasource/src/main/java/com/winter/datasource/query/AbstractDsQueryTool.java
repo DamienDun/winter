@@ -1,6 +1,5 @@
 package com.winter.datasource.query;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.druid.util.JdbcUtils;
 import com.google.common.collect.Lists;
@@ -15,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -43,8 +43,6 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
 
     private DataSource datasource;
 
-    private Connection connection;
-
     private JdbcTemplate jdbcTemplate;
 
     /**
@@ -66,7 +64,6 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
      */
     public AbstractDsQueryTool init(DatasourceInfo datasourceInfo) throws SQLException {
         this.datasource = JdbcUtil.getDataSource(datasourceInfo);
-        this.connection = this.datasource.getConnection();
         this.sqlBuilder = SqlBuilderFactory.getByDbType(datasourceInfo.getDatasourceType());
         this.schema = getSchema(datasourceInfo);
         this.datasourceType = datasourceInfo.getDatasourceType();
@@ -84,15 +81,19 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
             return datasourceInfo.getDatabase();
         }
         String res = null;
+        Connection conn = null;
         try {
-            res = connection.getCatalog();
+            conn = DataSourceUtils.getConnection(datasource);
+            res = conn.getCatalog();
         } catch (SQLException e) {
             try {
-                res = connection.getSchema();
+                res = conn.getSchema();
             } catch (SQLException e1) {
                 logger.error("[SQLException getSchema Exception]", e1);
             }
             logger.error("[SQLException getSchema Exception]", e);
+        } finally {
+            JdbcUtils.close(conn);
         }
         if (StringUtils.isBlank(res) && StringUtils.isNotBlank(datasourceInfo.getJdbcUsername())) {
             res = datasourceInfo.getJdbcUsername().toUpperCase();
@@ -101,15 +102,12 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     }
 
     @Override
-    public void closeConn() {
-        JdbcUtil.closeDruidConn((DruidDataSource) datasource, connection);
-    }
-
-    @Override
     public boolean tableExist(String tableName) {
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            rs = getConnection().getMetaData().getTables(schema, null, tableName, null);
+            conn = datasource.getConnection();
+            rs = conn.getMetaData().getTables(schema, null, tableName, null);
             if (rs.next()) {
                 return true;
             }
@@ -117,6 +115,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
             logger.error("[SQLException valid table exist Exception]", e);
         } finally {
             JdbcUtils.close(rs);
+            JdbcUtils.close(conn);
         }
         return false;
     }
@@ -126,8 +125,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<String> tables = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.queryTables();
             rs = stmt.executeQuery(sql);
@@ -139,6 +140,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return tables;
     }
@@ -148,8 +150,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<String> tables = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.queryTables(tableSchema);
             rs = stmt.executeQuery(sql);
@@ -161,6 +165,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return tables;
     }
@@ -169,13 +174,15 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     public int getTableTotal(String tableSchema, String tableName) {
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.queryTableTotal(tableSchema, tableName);
             logger.info("条件查询表总数量sql：{}", sql);
             rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+            if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
@@ -183,6 +190,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return 0;
     }
@@ -192,8 +200,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<String> tables = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.pageQueryTables(schemaName, tableName, currentPage, pageSize);
             logger.info("分页查询表名sql：{}", sql);
@@ -206,6 +216,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return tables;
     }
@@ -216,13 +227,14 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<String> res = Lists.newArrayList();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
             //获取查询指定表所有字段的sql语句
             String querySql = sqlBuilder.queryFields(tableName);
             logger.info("querySql: {}", querySql);
-
+            conn = datasource.getConnection();
             //获取所有字段
-            stmt = connection.createStatement();
+            stmt = conn.createStatement();
             rs = stmt.executeQuery(querySql);
             ResultSetMetaData metaData = rs.getMetaData();
 
@@ -245,6 +257,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return res;
     }
@@ -255,13 +268,14 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<ColumnInfo> columnInfos = Lists.newArrayList();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
             //获取查询指定表所有字段的sql语句
             String querySql = sqlBuilder.queryFields(tableName);
             logger.info("querySql: {}", querySql);
-
+            conn = datasource.getConnection();
             //获取所有字段
-            stmt = connection.createStatement();
+            stmt = conn.createStatement();
             rs = stmt.executeQuery(querySql);
             ResultSetMetaData metaData = rs.getMetaData();
 
@@ -284,6 +298,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return columnInfos;
     }
@@ -297,9 +312,11 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         if (JdbcConstants.MYSQL.equals(datasourceType) || JdbcConstants.ORACLE.equals(datasourceType)) {
             Statement stmt = null;
             ResultSet rs = null;
+            Connection conn = null;
             try {
-                stmt = connection.createStatement();
-                DatabaseMetaData databaseMetaData = connection.getMetaData();
+                conn = datasource.getConnection();
+                stmt = conn.createStatement();
+                DatabaseMetaData databaseMetaData = conn.getMetaData();
                 rs = databaseMetaData.getPrimaryKeys(null, null, tableName);
                 while (rs.next()) {
                     String name = rs.getString("COLUMN_NAME");
@@ -310,6 +327,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
             } finally {
                 JdbcUtils.close(rs);
                 JdbcUtils.close(stmt);
+                JdbcUtils.close(conn);
             }
         }
     }
@@ -327,8 +345,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
                 //查询字段注释
                 Statement stmt = null;
                 ResultSet rs = null;
+                Connection conn = null;
                 try {
-                    stmt = connection.createStatement();
+                    conn = datasource.getConnection();
+                    stmt = conn.createStatement();
                     rs = stmt.executeQuery(sqlQueryComment);
                     while (rs.next()) {
                         e.setComment(rs.getString(1));
@@ -338,6 +358,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
                 } finally {
                     JdbcUtils.close(rs);
                     JdbcUtils.close(stmt);
+                    JdbcUtils.close(conn);
                 }
             });
         }
@@ -348,8 +369,10 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         List<String> databaseNames = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.queryDatabases();
             rs = stmt.executeQuery(sql);
@@ -361,6 +384,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
         return databaseNames;
     }
@@ -431,9 +455,11 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     public long queryMaxIdVal(String tableName, String primaryKey) {
         Statement stmt = null;
         ResultSet rs = null;
+        Connection conn = null;
         long maxVal = 0;
         try {
-            stmt = connection.createStatement();
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
             //获取sql
             String sql = sqlBuilder.queryMaxId(tableName, primaryKey);
             rs = stmt.executeQuery(sql);
@@ -444,6 +470,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         } finally {
             JdbcUtils.close(rs);
             JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
 
         return maxVal;
@@ -457,9 +484,9 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         return datasource;
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
+//    public Connection getConnection() {
+//        return connection;
+//    }
 
     public String getSchema() {
         return schema;

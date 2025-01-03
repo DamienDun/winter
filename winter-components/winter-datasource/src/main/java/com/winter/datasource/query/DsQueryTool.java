@@ -19,11 +19,6 @@ import java.util.Map;
 public interface DsQueryTool {
 
     /**
-     * 关闭连接对象
-     */
-    void closeConn();
-
-    /**
      * 获取jdbcTemplate
      *
      * @return
