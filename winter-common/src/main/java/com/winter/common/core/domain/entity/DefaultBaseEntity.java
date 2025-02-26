@@ -51,7 +51,7 @@ public class DefaultBaseEntity implements Entity<Long>, CreateAuditing, Modified
     /**
      * 更新时间
      */
-    @TableField(fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date gmtModified;
 
     /**
@@ -69,7 +69,7 @@ public class DefaultBaseEntity implements Entity<Long>, CreateAuditing, Modified
     /**
      * 更新人
      */
-    @TableField(fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long modifiedUserId;
 
     /**
