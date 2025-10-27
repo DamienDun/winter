@@ -5,9 +5,11 @@ import com.winter.common.annotation.Log;
 import com.winter.common.core.controller.DefaultController;
 import com.winter.common.core.domain.entity.SysUser;
 import com.winter.common.core.domain.model.LoginUser;
+import com.winter.common.core.text.Convert;
 import com.winter.common.enums.BusinessStatus;
 import com.winter.common.enums.HttpMethod;
 import com.winter.common.filter.PropertyPreExcludeFilter;
+import com.winter.common.utils.ExceptionUtil;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.ServletUtils;
 import com.winter.common.utils.StringUtils;
@@ -110,7 +112,7 @@ public class LogAspect {
 
             if (e != null) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
-                operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+                operLog.setErrorMsg(StringUtils.substring(Convert.toStr(e.getMessage(), ExceptionUtil.getExceptionMessage(e)), 0, 2000));
             }
             // 设置方法名称
             String className = joinPoint.getTarget().getClass().getName();
