@@ -41,12 +41,12 @@ Winter是基于若依框架进行改造的。
 1.依赖包
 
 (1)MyBatis-plus
-
 (2)mybatis-plus-join
-
 (3)Knife4j
-
 (4)Lombok
+(4)winter-swagger
+(5)winter-file-storage
+(6)winter-dingtalk
 
 2.工具类
 
