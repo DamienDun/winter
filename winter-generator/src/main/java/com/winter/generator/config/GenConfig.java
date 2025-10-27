@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 读取代码生成相关配置
- * 
+ *
  * @author winter
  */
 @Component
@@ -26,6 +26,9 @@ public class GenConfig
 
     /** 表前缀(类名不会包含表前缀) */
     public static String tablePrefix;
+
+    /** 是否允许生成文件覆盖到本地（自定义路径） */
+    public static boolean allowOverwrite;
 
     public static String getAuthor()
     {
@@ -69,5 +72,16 @@ public class GenConfig
     public void setTablePrefix(String tablePrefix)
     {
         GenConfig.tablePrefix = tablePrefix;
+    }
+
+    public static boolean isAllowOverwrite()
+    {
+        return allowOverwrite;
+    }
+
+    @Value("${allowOverwrite}")
+    public void setAllowOverwrite(boolean allowOverwrite)
+    {
+        GenConfig.allowOverwrite = allowOverwrite;
     }
 }

@@ -1,39 +1,34 @@
 package com.winter.generator.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.winter.common.annotation.Log;
+import com.winter.common.constant.BusinessType;
 import com.winter.common.core.controller.BaseController;
 import com.winter.common.core.domain.AjaxResult;
 import com.winter.common.core.page.TableDataInfo;
 import com.winter.common.core.text.Convert;
-import com.winter.common.constant.BusinessType;
 import com.winter.common.utils.SecurityUtils;
 import com.winter.common.utils.sql.SqlUtil;
+import com.winter.generator.config.GenConfig;
 import com.winter.generator.domain.GenTable;
 import com.winter.generator.domain.GenTableColumn;
 import com.winter.generator.service.IGenTableColumnService;
 import com.winter.generator.service.IGenTableService;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 代码生成 操作处理
@@ -213,6 +208,10 @@ public class GenController extends BaseController
     @GetMapping("/genCode/{tableName}")
     public AjaxResult genCode(@PathVariable("tableName") String tableName)
     {
+        if (!GenConfig.isAllowOverwrite())
+        {
+            return AjaxResult.error("【系统预设】不允许生成文件覆盖到本地");
+        }
         genTableService.generatorCode(tableName);
         return success();
     }
