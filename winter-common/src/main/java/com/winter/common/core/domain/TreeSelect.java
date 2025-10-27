@@ -1,10 +1,13 @@
 package com.winter.common.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.winter.common.constant.UserConstants;
 import com.winter.common.core.domain.entity.SysDept;
 import com.winter.common.core.domain.entity.SysMenu;
+import com.winter.common.utils.StringUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
  * @author winter
  */
 @ApiModel("Treeselect树结构")
+@AllArgsConstructor
 public class TreeSelect implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +34,12 @@ public class TreeSelect implements Serializable {
      */
     @ApiModelProperty(value = "节点名称")
     private String label;
+
+    /**
+     * 节点禁用
+     */
+    @ApiModelProperty(value = "节点禁用")
+    private boolean disabled = false;
 
     /**
      * 子节点
@@ -51,6 +61,7 @@ public class TreeSelect implements Serializable {
     public TreeSelect(SysDept dept) {
         this.id = dept.getDeptId();
         this.label = dept.getDeptName();
+        this.disabled = StringUtils.equals(UserConstants.DEPT_DISABLE, dept.getStatus());
         this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
     }
 
@@ -74,6 +85,14 @@ public class TreeSelect implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public List<TreeSelect> getChildren() {
