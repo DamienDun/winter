@@ -27,6 +27,11 @@ public interface UserConstants {
     String USER_DISABLE = "1";
 
     /**
+     * 角色正常状态
+     */
+    String ROLE_NORMAL = "0";
+
+    /**
      * 角色封禁状态
      */
     String ROLE_DISABLE = "1";
@@ -92,7 +97,7 @@ public interface UserConstants {
     String INNER_LINK = "InnerLink";
 
     /**
-     * 校验返回结果码
+     * 校验是否唯一的返回标识
      */
     boolean UNIQUE = true;
     boolean NOT_UNIQUE = false;
