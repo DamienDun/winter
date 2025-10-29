@@ -40,7 +40,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * 业务 服务层实现
  *
- * @author winter
+ * @author ruoyi
  */
 @Service
 public class GenTableServiceImpl implements IGenTableService
@@ -129,9 +129,9 @@ public class GenTableServiceImpl implements IGenTableService
         int row = genTableMapper.updateGenTable(genTable);
         if (row > 0)
         {
-            for (GenTableColumn cenTableColumn : genTable.getColumns())
+            for (GenTableColumn genTableColumn : genTable.getColumns())
             {
-                genTableColumnMapper.updateGenTableColumn(cenTableColumn);
+                genTableColumnMapper.updateGenTableColumn(genTableColumn);
             }
         }
     }
@@ -425,16 +425,16 @@ public class GenTableServiceImpl implements IGenTableService
             {
                 throw new ServiceException("树名称字段不能为空");
             }
-            else if (GenConstants.TPL_SUB.equals(genTable.getTplCategory()))
+        }
+        else if (GenConstants.TPL_SUB.equals(genTable.getTplCategory()))
+        {
+            if (StringUtils.isEmpty(genTable.getSubTableName()))
             {
-                if (StringUtils.isEmpty(genTable.getSubTableName()))
-                {
-                    throw new ServiceException("关联子表的表名不能为空");
-                }
-                else if (StringUtils.isEmpty(genTable.getSubTableFkName()))
-                {
-                    throw new ServiceException("子表关联的外键名不能为空");
-                }
+                throw new ServiceException("关联子表的表名不能为空");
+            }
+            else if (StringUtils.isEmpty(genTable.getSubTableFkName()))
+            {
+                throw new ServiceException("子表关联的外键名不能为空");
             }
         }
     }
@@ -502,7 +502,7 @@ public class GenTableServiceImpl implements IGenTableService
             String treeCode = paramsObj.getString(GenConstants.TREE_CODE);
             String treeParentCode = paramsObj.getString(GenConstants.TREE_PARENT_CODE);
             String treeName = paramsObj.getString(GenConstants.TREE_NAME);
-            String parentMenuId = paramsObj.getString(GenConstants.PARENT_MENU_ID);
+            Long parentMenuId = paramsObj.getLongValue(GenConstants.PARENT_MENU_ID);
             String parentMenuName = paramsObj.getString(GenConstants.PARENT_MENU_NAME);
 
             genTable.setTreeCode(treeCode);
