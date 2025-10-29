@@ -1,5 +1,7 @@
 package com.winter.common.utils.spring;
 
+import com.winter.common.utils.StringUtils;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -8,7 +10,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import com.winter.common.utils.StringUtils;
 
 /**
  * spring工具类 方便在非spring管理环境中获取bean
@@ -120,7 +121,12 @@ public final class SpringUtils implements BeanFactoryPostProcessor, ApplicationC
     @SuppressWarnings("unchecked")
     public static <T> T getAopProxy(T invoker)
     {
-        return (T) AopContext.currentProxy();
+        Object proxy = AopContext.currentProxy();
+        if (((Advised) proxy).getTargetSource().getTargetClass() == invoker.getClass())
+        {
+            return (T) proxy;
+        }
+        return invoker;
     }
 
     /**
