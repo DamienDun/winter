@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ExcelExp {
+public class ExcelExp<T> {
 
     /**
      * sheet的名称
@@ -32,17 +32,17 @@ public class ExcelExp {
     /**
      * sheet里的数据集
      */
-    private List data;
-    private Class clazz;
+    private List<T> data;
+    private Class<T> clazz;
 
-    public ExcelExp(String sheetName, List data, Class clazz) {
+    public ExcelExp(String sheetName, List<T> data, Class<T> clazz) {
         this.sheetName = sheetName;
         this.title = StringUtils.EMPTY;
         this.data = data;
         this.clazz = clazz;
     }
 
-    public ExcelExp(String sheetName, String title, List data, Class clazz) {
+    public ExcelExp(String sheetName, String title, List<T> data, Class<T> clazz) {
         this.sheetName = sheetName;
         this.title = title;
         this.data = data;
