@@ -353,6 +353,17 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
+     * 字符串转list
+     *
+     * @param str 字符串
+     * @param sep 分隔符
+     * @return list集合
+     */
+    public static final List<String> str2List(String str, String sep) {
+        return str2List(str, sep, true, false);
+    }
+
+    /**
      * 判断给定的set列表中是否包含数组array 判断给定的数组array中是否包含给定的元素value
      *
      * @param collection 给定的集合
