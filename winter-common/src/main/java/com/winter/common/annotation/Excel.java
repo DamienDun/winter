@@ -158,6 +158,13 @@ public @interface Excel {
      */
     String[] args() default {};
 
+    /**
+     * 清除字符串结尾.0
+     *
+     * @return
+     */
+    boolean clearStrEndPointZero() default false;
+
     enum Align {
         AUTO(0), LEFT(1), CENTER(2), RIGHT(3);
         private final int value;
