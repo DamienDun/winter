@@ -1,19 +1,18 @@
 package com.winter.common.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RPermitExpirableSemaphore;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * 分布式锁
+ * 分布式锁（基于 Redisson RLock）
  * <p>
+ * 使用可重入锁 + watchdog 自动续期，避免多节点下信号量初始化竞态、以及固定租约到期后锁失效。
  * </p>
  *
  * @author Damien
@@ -25,76 +24,85 @@ import java.util.function.Consumer;
 public class DistributionLockCli {
 
     /**
-     * 分布式锁缓存
+     * 默认等待获取锁的时间（秒），拿不到则快速失败
      */
-    private static final Map<String, String> PERMIT_MAP = new ConcurrentHashMap<>();
+    private static final long DEFAULT_WAIT_SECONDS = 1L;
 
     @Autowired
     private RedissonClient redissonClient;
 
     /**
-     * 根据xxlJobInfoId 获取分布式锁
+     * 尝试获取分布式锁（watchdog 自动续期，直到 unlock）
      *
-     * @param key 唯一
-     * @return 返回null则获取失败
-     * @throws Exception
+     * @param key 锁唯一标识
+     * @return 获取成功返回 key，失败返回 null
      */
     public String lock(String key) throws Exception {
-        // 获取表的分布式锁,同一张表同一时间仅能存在一个抽取任务
-        RPermitExpirableSemaphore semaphore = redissonClient.getPermitExpirableSemaphore(key);
-        if (!semaphore.isExists()) {
-            semaphore.trySetPermits(1);
-        }
-        String permitId = semaphore.tryAcquire(1, 60, TimeUnit.SECONDS);
-        if (permitId != null) {
-            log.info("获取分布式锁[key={},permitId={}]", key, permitId);
-            //存入全局map
-            PERMIT_MAP.put(key, permitId);
-            return permitId;
+        return lock(key, DEFAULT_WAIT_SECONDS, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 尝试获取分布式锁
+     *
+     * @param key      锁唯一标识
+     * @param waitTime 最长等待时间
+     * @param unit     时间单位
+     * @return 获取成功返回 key，失败返回 null
+     */
+    public String lock(String key, long waitTime, TimeUnit unit) throws Exception {
+        RLock lock = redissonClient.getLock(key);
+        // 不指定 leaseTime，由 Redisson watchdog 自动续期，避免业务执行超过固定租约后锁失效
+        boolean acquired = lock.tryLock(waitTime, unit);
+        if (acquired) {
+            log.info("获取分布式锁[key={}]", key);
+            return key;
         }
         return null;
     }
 
     /**
-     * 加锁
-     * <p>
-     * 加锁，若无法获取锁，则一直等待，直到获取锁为止
-     * </p>
+     * 加锁并执行业务；仅在成功获取锁后才执行工作单元
      *
      * @param key              资源名称
      * @param lockUnitOfWorker 工作单元
-     * @throws Exception 其他异常
      */
     public void lock(String key, Consumer<String> lockUnitOfWorker) {
+        String lockId = null;
         try {
-            lock(key);
+            lockId = lock(key);
+            // 抢锁失败时绝不能继续执行，否则多节点会同时进入临界区
+            if (lockId == null) {
+                log.warn("获取分布式锁失败[key={}]", key);
+                return;
+            }
             if (lockUnitOfWorker != null) {
                 lockUnitOfWorker.accept(key);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            unlock(key);
+            if (lockId != null) {
+                unlock(key);
+            }
         }
     }
 
     /**
-     * 根据key 释放分布式锁
+     * 释放当前线程持有的分布式锁
      *
-     * @param key 唯一
+     * @param key 锁唯一标识
      */
     public void unlock(String key) {
-        String permitId = PERMIT_MAP.get(key);
-        if (permitId != null) {
-            try {
-                RPermitExpirableSemaphore semaphore = redissonClient.getPermitExpirableSemaphore(key);
-                //存入全局map
-                semaphore.release(permitId);
-                PERMIT_MAP.remove(key);
-                log.info("释放分布式锁[key={},permitId={}]", key, permitId);
-            } catch (Exception ex) {
-                log.warn("该分布式锁[permitId:{}]已经释放", PERMIT_MAP);
-            }
+        RLock lock = redissonClient.getLock(key);
+        // 只能由持有锁的线程释放，避免误解锁或锁已过期后的异常
+        if (!lock.isHeldByCurrentThread()) {
+            return;
+        }
+        try {
+            lock.unlock();
+            log.info("释放分布式锁[key={}]", key);
+        } catch (Exception ex) {
+            log.warn("释放分布式锁异常[key={}]", key, ex);
         }
     }
 }
