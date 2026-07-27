@@ -24,7 +24,7 @@ public class TableDataInfo implements Serializable {
      * 总记录数
      */
     @ApiModelProperty(value = "总记录数")
-    private long total;
+    private int total;
 
     /**
      * 列表数据
@@ -56,7 +56,7 @@ public class TableDataInfo implements Serializable {
      * @param list  列表数据
      * @param total 总记录数
      */
-    public TableDataInfo(List<?> list, long total) {
+    public TableDataInfo(List<?> list, int total) {
         this.rows = list;
         this.total = total;
     }
