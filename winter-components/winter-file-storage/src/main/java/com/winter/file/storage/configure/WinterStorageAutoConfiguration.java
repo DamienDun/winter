@@ -14,6 +14,8 @@ import com.winter.file.storage.clients.minio.MinioStorageClient;
 import com.winter.file.storage.clients.minio.MinioStorageClientProperties;
 import com.winter.file.storage.clients.tencent.TencentStorageClient;
 import com.winter.file.storage.clients.tencent.TencentStorageClientProperties;
+import com.winter.file.storage.clients.aws.AwsStorageClient;
+import com.winter.file.storage.clients.aws.AwsStorageClientProperties;
 import com.winter.file.storage.impl.StorageClientContextImpl;
 import com.winter.file.storage.properties.WinterStorageProperties;
 import com.winter.file.storage.service.BigFileUploadMinioService;
@@ -124,6 +126,19 @@ public class WinterStorageAutoConfiguration {
     @ConditionalOnMissingBean(MinioStorageClient.class)
     public StorageClient minioStorageClient(WinterStorageProperties properties) {
         return new MinioStorageClient(properties.getMinio());
+    }
+
+    /**
+     * AWS S3 对象存储客户端
+     *
+     * @param properties 属性
+     * @return
+     */
+    @Bean(AwsStorageClientProperties.CHANNEL_BEAN_NAME)
+    @ConditionalOnProperty(name = AwsStorageClientProperties.BEAN_CONDITIONAL_PROPERTY, havingValue = "true")
+    @ConditionalOnMissingBean(AwsStorageClient.class)
+    public StorageClient awsStorageClient(WinterStorageProperties properties) {
+        return new AwsStorageClient(properties.getAws());
     }
 
     @Bean

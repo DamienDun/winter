@@ -6,6 +6,7 @@ import com.winter.file.storage.clients.fastdfs.FastDFSStorageClientProperties;
 import com.winter.file.storage.clients.huawei.HuaWeiStorageClientProperties;
 import com.winter.file.storage.clients.minio.MinioStorageClientProperties;
 import com.winter.file.storage.clients.tencent.TencentStorageClientProperties;
+import com.winter.file.storage.clients.aws.AwsStorageClientProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -60,6 +61,11 @@ public class WinterStorageProperties implements Serializable {
      * Minio 属性
      */
     private MinioStorageClientProperties minio = new MinioStorageClientProperties();
+
+    /**
+     * AWS S3 对象存储属性
+     */
+    private AwsStorageClientProperties aws = new AwsStorageClientProperties();
 
     /**
      * 最大同时大文件上传数量

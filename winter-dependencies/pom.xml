@@ -42,6 +42,8 @@
         <fastdfs.client.version>1.27</fastdfs.client.version>
         <minio.client.version>7.0.2</minio.client.version>
         <aliyun.sdk.oss.version>3.4.2</aliyun.sdk.oss.version>
+        <!-- AWS S3 Java SDK -->
+        <aws.s3.sdk.version>1.12.565</aws.s3.sdk.version>
         <aliyun.sdk.core.version>4.3.1</aliyun.sdk.core.version>
         <dingtalk.old.version>2.0.0</dingtalk.old.version>
         <dingtalk.new.version>1.4.15</dingtalk.new.version>
@@ -237,6 +239,11 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws.s3.sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.huaweicloud</groupId>
