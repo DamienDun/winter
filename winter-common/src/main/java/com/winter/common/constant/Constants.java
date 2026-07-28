@@ -232,6 +232,36 @@ public interface Constants {
     String RIGHT_PARENTHESES = ")";
 
     /**
+     * 空格
+     */
+    String SPACE = " ";
+
+    /**
+     * 斜线
+     */
+    String DIAGONAL = "/";
+
+    /**
+     * 连接号
+     */
+    String HYPHEN = "-";
+
+    /**
+     * 加号
+     */
+    String PLUS_SIGN = "+";
+
+    /**
+     * 减号
+     */
+    String MINUS_SIGN = "-";
+
+    /**
+     * 分号
+     */
+    String SEMICOLON = ";";
+
+    /**
      * JWT方式生成token
      */
     String TOKEN_CREATE_JWT = "jwt";
