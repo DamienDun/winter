@@ -6,8 +6,8 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.temporal.WeekFields;
+import java.util.*;
 
 /**
  * 时间工具类
@@ -393,5 +393,317 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         c.set(Calendar.MONTH, 0);
         c.set(Calendar.DAY_OF_MONTH, 1);
         return parseDateToStr(format, c.getTime());
+    }
+
+    /**
+     * 获取前一天
+     *
+     * @return
+     */
+    public static Date getYesterday(Date fromDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fromDate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return parseDate(dateTime(calendar.getTime()));
+    }
+
+    /**
+     * 获取下一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getNextDay(Date fromDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fromDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return parseDate(dateTime(calendar.getTime()));
+    }
+
+    /**
+     * 查询近几天的日期
+     *
+     * @param fromDate
+     * @param days
+     * @return
+     */
+    public static List<Date> lastDays(Date fromDate, int days) {
+        List<Date> dateList = new ArrayList<>(days);
+        Date beginDate = fromDate;
+        while (days > 0) {
+            dateList.add(beginDate);
+            beginDate = getYesterday(beginDate);
+            days--;
+        }
+        Collections.reverse(dateList);
+        return dateList;
+    }
+
+    /**
+     * 获得指定日期是所在年份的第几周
+     *
+     * @param date                   指定日期
+     * @param minimalDaysInFirstWeek 第一周的最小天数，从1到7
+     * @return
+     */
+    public static int weekOfYear(Date date, int minimalDaysInFirstWeek) {
+        LocalDateTime currentDate = toLocalDateTime(sunday(date));
+        WeekFields weekFields = WeekFields.of(DayOfWeek.SUNDAY, minimalDaysInFirstWeek);
+        return currentDate.get(weekFields.weekOfYear());
+    }
+
+    /**
+     * 获取本周的周一
+     *
+     * @param date@return
+     */
+    public static Date monday(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(parseDate(dateTime(date)));
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+        if (dayOfWeek == 0) {
+            dayOfWeek = 7;
+        }
+        c.add(Calendar.DATE, -dayOfWeek + 1);
+        return c.getTime();
+    }
+
+    /**
+     * 上周周一
+     *
+     * @param date
+     * @return
+     */
+    public static Date lastWeekMonday(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(monday(date));
+        cal.add(Calendar.DATE, -7);
+        return cal.getTime();
+    }
+
+    /**
+     * 下周周一
+     *
+     * @param date
+     * @return
+     */
+    public static Date nextWeekMonday(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(monday(date));
+        cal.add(Calendar.DATE, 7);
+        return cal.getTime();
+    }
+
+    /**
+     * 获取本周的周日
+     *
+     * @param date
+     * @return
+     */
+    public static Date sunday(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(monday(date));
+        cal.add(Calendar.DATE, 6);
+        return cal.getTime();
+    }
+
+    /**
+     * 上周周日
+     *
+     * @param date
+     * @return
+     */
+    public static Date lastWeekSunday(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(monday(date));
+        cal.add(Calendar.DATE, -1);
+        return cal.getTime();
+    }
+
+    /**
+     * 下周周日
+     *
+     * @param date
+     * @return
+     */
+    public static Date nextWeekSunday(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(monday(date));
+        cal.add(Calendar.DATE, 13);
+        return cal.getTime();
+    }
+
+    /**
+     * 获取上个月第一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getLastMonthFirstDay(Date fromDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fromDate);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MONTH, -1);
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取下个月第一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getNextMonthFirstDay(Date fromDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fromDate);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.MONTH, 1);
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取下个月最后一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getNextMonthEndDay(Date fromDate) {
+        return getMonthEndDay(getNextMonthFirstDay(fromDate));
+    }
+
+    /**
+     * 获取上年最后一天
+     *
+     * @param fromDate
+     * @return
+     */
+    private static Date getNextYearEndDay(Date fromDate) {
+        return parseDate(year(fromDate) + 1 + "-12-31");
+    }
+
+    /**
+     * 获取当月最后一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getMonthEndDay(Date fromDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fromDate);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取当月第一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getMonthFirstDay(Date fromDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fromDate);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取本年第一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getYearFirstDay(Date fromDate) {
+        return parseDate(year(fromDate) + "-01-01");
+    }
+
+    /**
+     * 获取本年最后一天
+     *
+     * @param fromDate
+     * @return
+     */
+    public static Date getYearEndDay(Date fromDate) {
+        return parseDate(year(fromDate) + "-12-31");
+    }
+
+    /**
+     * 获取当月最后一天
+     *
+     * @param year
+     * @param month
+     * @return
+     */
+    public static Date getMonthEndDay(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取当月第一天
+     *
+     * @param year
+     * @param month
+     * @return
+     */
+    public static Date getMonthFirstDay(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        return parseDate(dateTime(cal.getTime()));
+    }
+
+    /**
+     * 获取周几 周一返回1 周日返回7
+     *
+     * @param date 时间
+     * @return
+     */
+    public static int dayOfWeek(Date date) {
+        return toLocalDateTime(date).getDayOfWeek().getValue();
+    }
+
+    /**
+     * 获取第几月
+     *
+     * @param date 时间
+     * @return
+     */
+    public static int month(Date date) {
+        return toCalendar(date).get(Calendar.MONTH) + 1;
+    }
+
+    /**
+     * 获取年份
+     *
+     * @param date 时间
+     * @return
+     */
+    public static int year(Date date) {
+        return toCalendar(date).get(Calendar.YEAR);
+    }
+
+    /**
+     * 本月第几天
+     *
+     * @param date
+     * @return
+     */
+    public static int dayOfMonth(Date date) {
+        return toCalendar(date).get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * 获得指定日期是所在年份的第几周 跨年不足一周的不算当年第一周 而是算上年的最后一周
+     *
+     * @param date 指定日期
+     * @return
+     */
+    public static int weekOfYear(Date date) {
+        return weekOfYear(date, 7);
     }
 }
