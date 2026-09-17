@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -56,6 +55,11 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
     private String datasourceType;
 
     /**
+     * 是否由本实例独占 DataSource（disableCache=true 时需在 close 时关闭连接池）
+     */
+    private boolean ownDataSource;
+
+    /**
      * 初始化
      *
      * @param datasourceInfo
@@ -63,6 +67,7 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
      * @throws SQLException
      */
     public AbstractDsQueryTool init(DatasourceInfo datasourceInfo) throws SQLException {
+        this.ownDataSource = datasourceInfo.isDisableCache();
         this.datasource = JdbcUtil.getDataSource(datasourceInfo);
         this.sqlBuilder = SqlBuilderFactory.getByDbType(datasourceInfo.getDatasourceType());
         this.schema = getSchema(datasourceInfo);
@@ -75,7 +80,19 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         init(datasourceInfo);
     }
 
-    //根据connection获取schema
+    /**
+     * 关闭独占连接池。缓存共享的 DataSource 不在此关闭。
+     */
+    public void close() {
+        if (ownDataSource) {
+            JdbcUtil.closeDataSource(datasource);
+            datasource = null;
+            jdbcTemplate = null;
+            ownDataSource = false;
+        }
+    }
+
+    // 根据 connection 获取 schema
     private String getSchema(DatasourceInfo datasourceInfo) {
         if (StringUtils.isNotBlank(datasourceInfo.getDatabase())) {
             return datasourceInfo.getDatabase();
@@ -83,14 +100,15 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
         String res = null;
         Connection conn = null;
         try {
-            conn = DataSourceUtils.getConnection(datasource);
-            res = conn.getCatalog();
-        } catch (SQLException e) {
+            conn = datasource.getConnection();
             try {
+                res = conn.getCatalog();
+            } catch (SQLException e) {
+                // catalog 不可用时再尝试 schema（如部分 Oracle/PG 场景）
+                logger.debug("[getSchema] getCatalog failed, fallback to getSchema", e);
                 res = conn.getSchema();
-            } catch (SQLException e1) {
-                logger.error("[SQLException getSchema Exception]", e1);
             }
+        } catch (SQLException e) {
             logger.error("[SQLException getSchema Exception]", e);
         } finally {
             JdbcUtils.close(conn);
@@ -310,14 +328,11 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
      */
     protected void buildColumnPrimaryKey(List<ColumnInfo> columnInfos, String tableName) {
         if (JdbcConstants.MYSQL.equals(datasourceType) || JdbcConstants.ORACLE.equals(datasourceType)) {
-            Statement stmt = null;
             ResultSet rs = null;
             Connection conn = null;
             try {
                 conn = datasource.getConnection();
-                stmt = conn.createStatement();
-                DatabaseMetaData databaseMetaData = conn.getMetaData();
-                rs = databaseMetaData.getPrimaryKeys(null, null, tableName);
+                rs = conn.getMetaData().getPrimaryKeys(null, null, tableName);
                 while (rs.next()) {
                     String name = rs.getString("COLUMN_NAME");
                     columnInfos.forEach(e -> e.setPrimarykey(e.getName().equals(name)));
@@ -326,7 +341,6 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
                 logger.error("[SQLException BuildPrimaryKey Exception]", e);
             } finally {
                 JdbcUtils.close(rs);
-                JdbcUtils.close(stmt);
                 JdbcUtils.close(conn);
             }
         }
@@ -339,28 +353,34 @@ public abstract class AbstractDsQueryTool implements DsQueryTool {
      * @param tableName
      */
     protected void buildColumnComment(List<ColumnInfo> columnInfos, String tableName) {
-        if (JdbcConstants.MYSQL.equals(datasourceType) || JdbcConstants.ORACLE.equals(datasourceType)) {
-            columnInfos.forEach(e -> {
-                String sqlQueryComment = sqlBuilder.queryFieldComment(schema, tableName, e.getName());
-                //查询字段注释
-                Statement stmt = null;
+        if (!JdbcConstants.MYSQL.equals(datasourceType) && !JdbcConstants.ORACLE.equals(datasourceType)) {
+            return;
+        }
+        // 复用同一连接查询所有字段注释，避免 N 次借还连接
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = datasource.getConnection();
+            stmt = conn.createStatement();
+            for (ColumnInfo columnInfo : columnInfos) {
+                String sqlQueryComment = sqlBuilder.queryFieldComment(schema, tableName, columnInfo.getName());
                 ResultSet rs = null;
-                Connection conn = null;
                 try {
-                    conn = datasource.getConnection();
-                    stmt = conn.createStatement();
                     rs = stmt.executeQuery(sqlQueryComment);
-                    while (rs.next()) {
-                        e.setComment(rs.getString(1));
+                    if (rs.next()) {
+                        columnInfo.setComment(rs.getString(1));
                     }
                 } catch (SQLException e1) {
                     logger.error("[SQLException queryFieldComment Exception]", e1);
                 } finally {
                     JdbcUtils.close(rs);
-                    JdbcUtils.close(stmt);
-                    JdbcUtils.close(conn);
                 }
-            });
+            }
+        } catch (SQLException e) {
+            logger.error("[SQLException buildColumnComment Exception]", e);
+        } finally {
+            JdbcUtils.close(stmt);
+            JdbcUtils.close(conn);
         }
     }
 
